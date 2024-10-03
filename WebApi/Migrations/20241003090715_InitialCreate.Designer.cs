@@ -9,10 +9,10 @@ using WebApi.Data;
 
 #nullable disable
 
-namespace WebApi.Data.Migrations
+namespace WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241001091733_InitialCreate")]
+    [Migration("20241003090715_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -788,8 +788,8 @@ namespace WebApi.Data.Migrations
                         new
                         {
                             Id = new Guid("589165e2-9282-4c48-80b3-1e25fd9102a8"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zades.jpg",
-                            Name = "Zades"
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zadez.jpg",
+                            Name = "Zadez"
                         },
                         new
                         {
@@ -802,6 +802,12 @@ namespace WebApi.Data.Migrations
                             Id = new Guid("f2671cf2-fc2e-4374-945f-e63bed491ad2"),
                             LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/ZTE.png",
                             Name = "ZTE"
+                        },
+                        new
+                        {
+                            Id = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg",
+                            Name = "Denon"
                         });
                 });
 
@@ -1395,6 +1401,11 @@ namespace WebApi.Data.Migrations
                         new
                         {
                             BrandId = new Guid("803f2378-adc8-4bc2-ace0-5d00ce66a22b"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
                             CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
                         });
                 });

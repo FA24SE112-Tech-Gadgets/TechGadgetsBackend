@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace WebApi.Data.Migrations
+namespace WebApi.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -830,7 +830,7 @@ namespace WebApi.Data.Migrations
                     { new Guid("52b8e46c-ed0a-40df-bb25-216c07b39098"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Soundcore.png", "Soundcore" },
                     { new Guid("532ff7b1-71de-46e1-a4c0-d217140cd472"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Itel.jpg", "Itel" },
                     { new Guid("534611d3-4be3-4127-8839-3b5cf6ad50b9"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Divoom.jpg", "Divoom" },
-                    { new Guid("589165e2-9282-4c48-80b3-1e25fd9102a8"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zades.jpg", "Zades" },
+                    { new Guid("589165e2-9282-4c48-80b3-1e25fd9102a8"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zadez.jpg", "Zadez" },
                     { new Guid("5a01f7f3-14ed-4ef6-8a15-4a2415cd9fb4"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Cooler%20Master.jpg", "Cooler Master" },
                     { new Guid("5a90a711-7b72-4fa3-95b3-c7bcd91cc960"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/IValue.jpg", "IValue" },
                     { new Guid("5f74107e-ea36-43da-a7a0-4c43e8aef224"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sdrd.png", "Sdrd" },
@@ -860,6 +860,7 @@ namespace WebApi.Data.Migrations
                     { new Guid("93d79b77-85a3-46d3-bd3a-98844c13f2d6"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Shokz.png", "Shokz" },
                     { new Guid("9f112f02-284a-49d9-8e90-b4e1402ec943"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/KZ.png", "KZ" },
                     { new Guid("a2eecdba-0c2f-4681-bb6f-b5d2df684d8a"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Viettel.jpg", "Viettel" },
+                    { new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg", "Denon" },
                     { new Guid("a953e193-a6f6-4aa0-b804-ed577c39aea1"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/F.Power.png", "F.Power" },
                     { new Guid("aa8a3a33-47be-4e0f-a148-ee3c3c9c82d3"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Fenda.png", "Fenda" },
                     { new Guid("aaa48259-deb6-4fbb-804a-82b24bf006f2"), "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Huawei.jpg", "Huawei" },
@@ -1027,6 +1028,7 @@ namespace WebApi.Data.Migrations
                     { new Guid("93d79b77-85a3-46d3-bd3a-98844c13f2d6"), new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6") },
                     { new Guid("9f112f02-284a-49d9-8e90-b4e1402ec943"), new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6") },
                     { new Guid("a2eecdba-0c2f-4681-bb6f-b5d2df684d8a"), new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d") },
+                    { new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"), new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6") },
                     { new Guid("a953e193-a6f6-4aa0-b804-ed577c39aea1"), new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6") },
                     { new Guid("aa8a3a33-47be-4e0f-a148-ee3c3c9c82d3"), new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6") },
                     { new Guid("aaa48259-deb6-4fbb-804a-82b24bf006f2"), new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0") },
