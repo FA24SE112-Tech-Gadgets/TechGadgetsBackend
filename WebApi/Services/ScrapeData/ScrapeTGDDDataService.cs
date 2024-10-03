@@ -24,49 +24,316 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                 .ToListAsync();
             foreach (var cateWithBrands in categoriesWithBrands)
             {
-                string url = _scrapeDataSettings.TGDD;
                 switch (cateWithBrands.Name)
                 {
                     case "Điện thoại":
-                        url += "dtdd/";
+                        string phoneUrl = _scrapeDataSettings.TGDD + "dtdd";
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            switch (brand.Name)
+                            {
+                                case "Samsung":
+                                    phoneUrl += "#c=42&m=2&o=13&pi=0";
+                                    break;
+                                case "Apple":
+                                    phoneUrl += "#c=42&m=80&o=13&pi=0";
+                                    break;
+                                case "Oppo":
+                                    phoneUrl += "#c=42&m=1971&o=13&pi=0";
+                                    break;
+                                case "Xiaomi":
+                                    phoneUrl += "#c=42&m=2235&o=13&pi=0";
+                                    break;
+                                case "Vivo":
+                                    phoneUrl += "#c=42&m=2236&o=13&pi=0";
+                                    break;
+                                case "Realme":
+                                    phoneUrl += "#c=42&m=17201&o=13&pi=0";
+                                    break;
+                                case "Honor":
+                                    phoneUrl += "#c=42&m=2283&o=13&pi=0";
+                                    break;
+                                case "TCL":
+                                    phoneUrl += "#c=42&m=1541&o=13&pi=0";
+                                    break;
+                                case "Tecno":
+                                    phoneUrl += "#c=42&m=36747&o=13&pi=0";
+                                    break;
+                                case "Nokia":
+                                    phoneUrl += "#c=42&m=1&o=13&pi=0";
+                                    break;
+                                case "Masstel":
+                                    phoneUrl += "#c=42&m=4832&o=13&pi=0";
+                                    break;
+                                case "Mobell":
+                                    phoneUrl += "#c=42&m=19&o=13&pi=0";
+                                    break;
+                                case "Itel":
+                                    phoneUrl += "#c=42&m=5332&o=13&pi=0";
+                                    break;
+                                case "Viettel":
+                                    phoneUrl += "#c=42&m=1711&o=13&pi=0";
+                                    break;
+                                case "Benco":
+                                    phoneUrl += "#c=42&m=38897&o=13&pi=0";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            List<Gadget> listGadgets = new List<Gadget>()!;
+                            try
+                            {
+                                listGadgets = await ScrapeGadgetByBrand(phoneUrl, brand.Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
+                                continue;
+                            }
+                            await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                        }
                         break;
                     case "Laptop":
-                        url += "laptop/";
+                        string laptopUrl = _scrapeDataSettings.TGDD + "laptop";
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            switch (brand.Name)
+                            {
+                                case "Hp":
+                                    laptopUrl += "#c=44&m=122&o=13&pi=0";
+                                    break;
+                                case "Asus":
+                                    laptopUrl += "#c=44&m=128&o=13&pi=0";
+                                    break;
+                                case "Acer":
+                                    laptopUrl += "#c=44&m=119&o=13&pi=0";
+                                    break;
+                                case "Lenovo":
+                                    laptopUrl += "#c=44&m=120&o=13&pi=0";
+                                    break;
+                                case "Dell":
+                                    laptopUrl += "#c=44&m=118&o=13&pi=0";
+                                    break;
+                                case "MSI":
+                                    laptopUrl += "#c=44&m=133&o=13&pi=0";
+                                    break;
+                                case "Apple":
+                                    laptopUrl += "#c=44&m=203&o=13&pi=0";
+                                    break;
+                                case "Samsung":
+                                    laptopUrl += "#c=44&m=646&o=13&pi=0";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            List<Gadget> listGadgets = new List<Gadget>()!;
+                            try
+                            {
+                                listGadgets = await ScrapeGadgetByBrand(laptopUrl, brand.Name);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
+                                continue;
+                            }
+                            await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                        }
                         break;
                     case "Thiết bị âm thanh":
                         foreach (var brand in cateWithBrands.Brands)
                         {
-                            Console.WriteLine(brand.Name);
+                            string soundUrl = _scrapeDataSettings.TGDD;
+                            bool isCaseNormal = true;
+
+                            //Case brand có tai nghe hoặc loa
+                            switch (brand.Name)
+                            {
+                                case "Soul":
+                                    soundUrl += "tai-nghe#c=54&m=37540&o=13&pi=0";
+                                    break;
+                                case "Havit":
+                                    soundUrl += "tai-nghe#c=54&m=36948&o=13&pi=0";
+                                    break;
+                                case "Beats":
+                                    soundUrl += "tai-nghe#c=54&m=8090&o=13&pi=0";
+                                    break;
+                                case "Soundcore":
+                                    soundUrl += "tai-nghe#c=54&m=38905&o=13&pi=0";
+                                    break;
+                                case "Zadez":
+                                    soundUrl += "tai-nghe#c=54&m=37633&o=13&pi=0";
+                                    break;
+                                case "HyperX":
+                                    soundUrl += "tai-nghe#c=54&m=38595&o=13&pi=0";
+                                    break;
+                                case "Oppo":
+                                    soundUrl += "tai-nghe#c=54&m=24552&o=13&pi=0";
+                                    break;
+                                case "Shokz":
+                                    soundUrl += "tai-nghe#c=54&m=38243&o=13&pi=0";
+                                    break;
+                                case "Baseus":
+                                    soundUrl += "tai-nghe#c=54&m=37013&o=13&pi=0";
+                                    break;
+                                case "Soundpeats":
+                                    soundUrl += "tai-nghe#c=54&m=24085&o=13&pi=0";
+                                    break;
+                                case "Asus":
+                                    soundUrl += "tai-nghe#c=54&m=9299&o=13&pi=0";
+                                    break;
+                                case "Realme":
+                                    soundUrl += "tai-nghe#c=54&m=20723&o=13&pi=0";
+                                    break;
+                                case "Apple":
+                                    soundUrl += "tai-nghe#c=54&m=2660&o=13&pi=0";
+                                    break;
+                                case "Denon":
+                                    soundUrl += "tai-nghe#c=54&m=15238&o=13&pi=0";
+                                    break;
+                                case "Harman Kardon":
+                                    soundUrl += "loa-laptop#c=2162&m=20479&o=13&pi=0";
+                                    break;
+                                case "Microlab":
+                                    soundUrl += "loa-laptop#c=2162&m=19768&o=13&pi=0";
+                                    break;
+                                case "Soundmax":
+                                    soundUrl += "loa-laptop#c=2162&m=38725&o=13&pi=0";
+                                    break;
+                                case "LG":
+                                    soundUrl += "loa-laptop#c=2162&m=2197&o=13&pi=0";
+                                    break;
+                                case "Fenda":
+                                    soundUrl += "loa-laptop#c=2162&m=19758&o=13&pi=0";
+                                    break;
+                                case "Alpha Works":
+                                    soundUrl += "loa-laptop#c=2162&m=38245&o=13&pi=0";
+                                    break;
+                                case "Klipsch":
+                                    soundUrl += "loa-laptop#c=2162&m=24025&o=13&pi=0";
+                                    break;
+                                case "Enkor":
+                                    soundUrl += "loa-laptop#c=2162&m=19759&o=13&pi=0";
+                                    break;
+                                case "Nanomax":
+                                    soundUrl += "loa-laptop#c=2162&m=14901&o=13&pi=0";
+                                    break;
+                                case "Zenbos":
+                                    soundUrl += "loa-laptop#c=2162&m=19070&o=13&pi=0";
+                                    break;
+                                case "Jammy":
+                                    soundUrl += "loa-laptop#c=2162&m=19742&o=13&pi=0";
+                                    break;
+                                case "Sumico":
+                                    soundUrl += "loa-laptop#c=2162&m=24319&o=13&pi=0";
+                                    break;
+                                case "Paramax":
+                                    soundUrl += "loa-laptop#c=2162&m=31376&o=13&pi=0";
+                                    break;
+                                case "Dalton":
+                                    soundUrl += "loa-laptop#c=2162&m=11925&o=13&pi=0";
+                                    break;
+                                case "Birici":
+                                    soundUrl += "loa-laptop#c=2162&m=17255&o=13&pi=0";
+                                    break;
+                                case "Mobell":
+                                    soundUrl += "loa-laptop#c=2162&m=16823&o=13&pi=0";
+                                    break;
+                                case "Pasion":
+                                    soundUrl += "loa-laptop#c=2162&m=36790&o=13&pi=0";
+                                    break;
+                                default:
+                                    isCaseNormal = false;
+                                    break;
+
+                            }
+                            if (isCaseNormal)
+                            {
+                                List<Gadget> listGadgets = new List<Gadget>()!;
+                                try
+                                {
+                                    listGadgets = await ScrapeGadgetByBrand(soundUrl, brand.Name);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Thiết bị âm thanh {brand.Name}: {ex}");
+                                    continue;
+                                }
+
+                                await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                                continue;
+                            }
+                            List<string> listSoundUrls = new List<string>()!;
+                            string earPhoneUrl = soundUrl;
+                            string loudspeakerUrl = soundUrl;
+
+                            //Case brand vừa có tai nghe vừa có loa
                             switch (brand.Name)
                             {
                                 case "JBL":
-                                case "Soul":
-                                case "Havit":
-                                case "Beats":
+                                    earPhoneUrl += "tai-nghe#c=54&m=5392&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1176&o=13&pi=0";
+                                    break;
                                 case "AVA":
+                                    earPhoneUrl += "tai-nghe#c=54&m=2987&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1688&o=13&pi=0";
+                                    break;
                                 case "Rezo":
-                                case "Soundcore":
-                                case "Zadez":
+                                    earPhoneUrl += "tai-nghe#c=54&m=29872&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=36826&o=13&pi=0";
+                                    break;
                                 case "Sony":
+                                    earPhoneUrl += "tai-nghe#c=54&m=1842&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=2193&o=13&pi=0";
+                                    break;
                                 case "Marshall":
+                                    earPhoneUrl += "tai-nghe#c=54&m=14583&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1454&o=13&pi=0";
+                                    break;
                                 case "Sounarc":
-                                case "HyperX":
-                                case "Oppo":
+                                    earPhoneUrl += "tai-nghe#c=54&m=38726&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=38719&o=13&pi=0";
+                                    break;
                                 case "Monster":
-                                case "Shokz":
-                                case "Baseus":
+                                    earPhoneUrl += "tai-nghe#c=54&m=36400&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=36396&o=13&pi=0";
+                                    break;
                                 case "Xiaomi":
-                                case "Soundpeats":
-                                case "Asus":
-                                case "Realme":
+                                    earPhoneUrl += "tai-nghe#c=54&m=7710&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=38567&o=13&pi=0";
+                                    break;
                                 case "Mozard":
-                                case "Apple":
+                                    earPhoneUrl += "tai-nghe#c=54&m=8157&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=19762&o=13&pi=0";
+                                    break;
                                 case "Samsung":
-                                case "Denon":
-                                    url += "tai-nghe";
+                                    earPhoneUrl += "tai-nghe#c=54&m=2391&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=2196&o=13&pi=0";
                                     break;
                                 default:
-                                    break;
+                                    continue;
+                            }
+
+                            listSoundUrls.Add(earPhoneUrl);
+                            listSoundUrls.Add(loudspeakerUrl);
+                            if (listSoundUrls.Count > 0)
+                            {
+                                foreach (var urlItem in listSoundUrls)
+                                {
+                                    List<Gadget> listGadgets = new List<Gadget>()!;
+                                    try
+                                    {
+                                        listGadgets = await ScrapeGadgetByBrand(urlItem, brand.Name);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Thiết bị âm thanh {brand.Name}: {ex}");
+                                        continue;
+                                    }
+
+                                    await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                                }
                             }
                         }
                         break;
@@ -76,13 +343,80 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
             }
         }
     }
-    public async Task<List<Gadget>> ScrapeGadgetByBrand(string url, string brandName)
+    private async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory)
+    {
+        foreach (var gadget in gadgets)
+        {
+            var existGadget = await context.Gadgets
+                .Include(g => g.Specifications)
+                .ThenInclude(s => s.SpecificationKeys)
+                .ThenInclude(sk => sk.SpecificationValues)
+                .FirstOrDefaultAsync(g => g.Name == gadget.Name);
+            if (existGadget != null)
+            {
+                // Lặp qua các Specifications của Gadget
+                foreach (var specification in existGadget.Specifications)
+                {
+                    // Lặp qua các SpecificationKeys của mỗi Specification
+                    foreach (var specificationKey in specification.SpecificationKeys)
+                    {
+                        // Xóa tất cả SpecificationValues liên quan đến SpecificationKey
+                        context.SpecificationValues.RemoveRange(specificationKey.SpecificationValues);
+                    }
+
+                    // Xóa tất cả SpecificationKeys liên quan đến Specification
+                    context.SpecificationKeys.RemoveRange(specification.SpecificationKeys);
+                }
+
+                // Xóa tất cả Specifications liên quan đến Gadget
+                context.Specifications.RemoveRange(existGadget.Specifications);
+
+                // Xóa tất cả GadgetDescriptions liên quan đến Gadget
+                context.GadgetDescriptions.RemoveRange(existGadget.GadgetDescriptions);
+
+                // Xóa tất cả GadgetImages liên quan đến Gadget
+                context.GadgetImages.RemoveRange(existGadget.GadgetImages);
+
+                existGadget.Price = gadget.Price;
+
+                if (gadget.ThumbnailUrl != null)
+                {
+                    existGadget.ThumbnailUrl = gadget.ThumbnailUrl;
+                }
+
+                if (gadget.Url != null)
+                {
+                    existGadget.Url = gadget.Url;
+                }
+
+                if (gadget.Specifications != null)
+                {
+                    existGadget.Specifications = gadget.Specifications;
+                    context.Specifications.AddRange(existGadget.Specifications);
+                }
+                existGadget.UpdatedAt = DateTime.UtcNow;
+            }
+            else
+            {
+                gadget.BrandId = relatedBrand.Id;
+                gadget.CategoryId = relatedCategory.Id;
+                gadget.Status = GadgetStatus.Active;
+                gadget.CreatedAt = DateTime.UtcNow;
+                gadget.UpdatedAt = DateTime.UtcNow;
+
+                await context.Gadgets.AddAsync(gadget);
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+    private static async Task<List<Gadget>> ScrapeGadgetByBrand(string url, string brandName)
     {
         bool isApple;
         if (brandName == "Apple")
         {
             isApple = true;
-        } else
+        }
+        else
         {
             isApple = false;
         }
@@ -118,7 +452,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                     if (isButtonVisible)
                     {
 
-                        await button.ClickAsync();
+                        await button.PressAsync("Enter");
                         await Task.Delay(2000);
                     }
                     else
@@ -137,6 +471,8 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                 moreDataToLoad = false;
             }
         }
+
+        //Scrape Price, ThumbnailUrl, NavigationUrl
         string jsonGadgets = await page.EvaluateExpressionAsync<string>(
             @"
                 (function () {
@@ -183,11 +519,12 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
             await page.GoToAsync(defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
             await Task.Delay(2000);
 
-            Console.WriteLine("gadget detail url: " + defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
+            Console.WriteLine("gadget detail soundUrl: " + defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
             Console.WriteLine("tao gadget: " + (i + 1));
 
-            Gadget gadgetDetail = new Gadget()!;
-            string jsonGadgetDetail = "";
+            //Scrape Specifications, SpecificationKeys, SpecificationValues
+            Gadget gadgetDetail;
+            string jsonGadgetDetail;
             try
             {
                 jsonGadgetDetail = await page.EvaluateExpressionAsync<string>(
@@ -380,11 +717,11 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 } else {
                                     const backgroundUrl = divElement.style.backgroundImage;
                                     // Sử dụng regex để trích xuất URL từ background-image
-                                    const urlMatch = backgroundUrl.match(/url\(\s*['\""]?(.*?)['\""]?\s*\)/);
-                                    return urlMatch ? urlMatch[1] : 'khong match url';
+                                    const urlMatch = backgroundUrl.match(/soundUrl\(\s*['\""]?(.*?)['\""]?\s*\)/);
+                                    return urlMatch ? urlMatch[1] : 'khong match soundUrl';
                                 }
                             }
-                            return 'khong thay url';
+                            return 'khong thay soundUrl';
                         })()
                     ");
                     GadgetDescription gadgetDescription = new GadgetDescription()!;
@@ -469,53 +806,53 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                     {
                         string specificationDetail = await page.EvaluateExpressionAsync<string>(
                         @"
-                        (function () {
-                            const gadget = {
-                                name: '',
-                                specifications: [],
-                            }
-
-                            const liElements = document.querySelectorAll('ul.parameterfull li');
-                            const result = [];
-                            let specification = null;
-
-                            // Duyệt qua từng thẻ li
-                            liElements.forEach(li => {
-                                // Nếu li không có class => là cha
-                                if (li.classList.length === 0) {
-                                    // Tạo đối tượng cha mới và thêm vào danh sách specifications
-                                    specification = {
-                                        name: li.querySelector(""label"").textContent.trim(),   // thẻ li không có class
-                                        specificationKeys: []  // khởi tạo mảng chứa các li con
-                                    };
-                                    gadget.specifications.push(specification);
+                            (function () {
+                                const gadget = {
+                                    name: '',
+                                    specifications: [],
                                 }
-                                // Nếu li có class => là con của li cha trước đó
-                                else if (specification) {
-                                    const keySpan = li.querySelector('span'); // Lấy thẻ <span> đầu tiên
-                                    const div = li.querySelector('div');      // Lấy thẻ <div> kế tiếp
 
-                                    if (keySpan && div) {
-                                        const specificationRow = {
-                                            name: keySpan.innerText.trim(),
-                                            specificationValues: []
-                                        }                                   // Mảng chứa các value
+                                const liElements = document.querySelectorAll('ul.parameterfull li');
+                                const result = [];
+                                let specification = null;
 
-                                        // Kiểm tra nếu trong <div> có các thẻ <a> hoặc <span> thì thêm vào mảng values
-                                        div.querySelectorAll('a, span, p').forEach(element => {
-                                            const specificationValue = {
-                                                name: element.innerText.trim()
-                                            }
-                                            specificationRow.specificationValues.push(specificationValue);
-                                        });
-
-                                        specification.specificationKeys.push(specificationRow); // Thêm thẻ li có class vào danh sách con của cha hiện tại
+                                // Duyệt qua từng thẻ li
+                                liElements.forEach(li => {
+                                    // Nếu li không có class => là cha
+                                    if (li.classList.length === 0) {
+                                        // Tạo đối tượng cha mới và thêm vào danh sách specifications
+                                        specification = {
+                                            name: li.querySelector('label').textContent.trim(),   // thẻ li không có class
+                                            specificationKeys: []  // khởi tạo mảng chứa các li con
+                                        };
+                                        gadget.specifications.push(specification);
                                     }
-                                }
-                            });
-                            return JSON.stringify(gadget);
-                        })()
-                    ");
+                                    // Nếu li có class => là con của li cha trước đó
+                                    else if (specification) {
+                                        const keySpan = li.querySelector('span'); // Lấy thẻ <span> đầu tiên
+                                        const div = li.querySelector('div');      // Lấy thẻ <div> kế tiếp
+
+                                        if (keySpan && div) {
+                                            const specificationRow = {
+                                                name: keySpan.innerText.trim(),
+                                                specificationValues: []
+                                            }                                   // Mảng chứa các value
+
+                                            // Kiểm tra nếu trong <div> có các thẻ <a> hoặc <span> thì thêm vào mảng values
+                                            div.querySelectorAll('a, span, p').forEach(element => {
+                                                const specificationValue = {
+                                                    value: element.innerText.trim()
+                                                }
+                                                specificationRow.specificationValues.push(specificationValue);
+                                            });
+
+                                            specification.specificationKeys.push(specificationRow); // Thêm thẻ li có class vào danh sách con của cha hiện tại
+                                        }
+                                    }
+                                });
+                                return JSON.stringify(gadget);
+                            })()
+                        ");
                         Gadget gadgetSpecificationDetail = JsonConvert.DeserializeObject<Gadget>(specificationDetail)!;
                         specialGadget.Specifications = gadgetSpecificationDetail.Specifications;
                     }
@@ -532,7 +869,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                 for (int k = 0; k < specialGadgetItemJsonResponses.Count; k++)
                 {
                     Gadget specialGadget = new Gadget()!;
-                    specialGadget.Name = "Điện thoại Samsung " + specialGadgetItemJsonResponses[k];
+                    specialGadget.Name = "Điện thoại " + brandName + " " + specialGadgetItemJsonResponses[k];
                     specialGadget.ThumbnailUrl = GadgetItemJsonResponses[i].ThumbnailUrl;
                     specialGadget.Url = page.Url;
 
@@ -595,11 +932,11 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 } else {
                                     const backgroundUrl = divElement.style.backgroundImage;
                                     // Sử dụng regex để trích xuất URL từ background-image
-                                    const urlMatch = backgroundUrl.match(/url\(\s*['\""]?(.*?)['\""]?\s*\)/);
-                                    return urlMatch ? urlMatch[1] : 'khong match url';
+                                    const urlMatch = backgroundUrl.match(/soundUrl\(\s*['\""]?(.*?)['\""]?\s*\)/);
+                                    return urlMatch ? urlMatch[1] : 'khong match soundUrl';
                                 }
                             }
-                            return 'khong thay url';
+                            return 'khong thay soundUrl';
                         })()
                     ");
                     GadgetDescription gadgetDescription = new GadgetDescription()!;
@@ -673,53 +1010,53 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                     {
                         string specificationDetail = await page.EvaluateExpressionAsync<string>(
                         @"
-                        (function () {
-                            const gadget = {
-                                name: '',
-                                specifications: [],
-                            }
-
-                            const liElements = document.querySelectorAll('ul.parameterfull li');
-                            const result = [];
-                            let specification = null;
-
-                            // Duyệt qua từng thẻ li
-                            liElements.forEach(li => {
-                                // Nếu li không có class => là cha
-                                if (li.classList.length === 0) {
-                                    // Tạo đối tượng cha mới và thêm vào danh sách specifications
-                                    specification = {
-                                        name: li.querySelector(""label"").textContent.trim(),   // thẻ li không có class
-                                        specificationKeys: []  // khởi tạo mảng chứa các li con
-                                    };
-                                    gadget.specifications.push(specification);
+                            (function () {
+                                const gadget = {
+                                    name: '',
+                                    specifications: [],
                                 }
-                                // Nếu li có class => là con của li cha trước đó
-                                else if (specification) {
-                                    const keySpan = li.querySelector('span'); // Lấy thẻ <span> đầu tiên
-                                    const div = li.querySelector('div');      // Lấy thẻ <div> kế tiếp
 
-                                    if (keySpan && div) {
-                                        const specificationRow = {
-                                            name: keySpan.innerText.trim(),
-                                            specificationValues: []
-                                        }                                   // Mảng chứa các value
+                                const liElements = document.querySelectorAll('ul.parameterfull li');
+                                const result = [];
+                                let specification = null;
 
-                                        // Kiểm tra nếu trong <div> có các thẻ <a> hoặc <span> thì thêm vào mảng values
-                                        div.querySelectorAll('a, span, p').forEach(element => {
-                                            const specificationValue = {
-                                                name: element.innerText.trim()
-                                            }
-                                            specificationRow.specificationValues.push(specificationValue);
-                                        });
-
-                                        specification.specificationKeys.push(specificationRow); // Thêm thẻ li có class vào danh sách con của cha hiện tại
+                                // Duyệt qua từng thẻ li
+                                liElements.forEach(li => {
+                                    // Nếu li không có class => là cha
+                                    if (li.classList.length === 0) {
+                                        // Tạo đối tượng cha mới và thêm vào danh sách specifications
+                                        specification = {
+                                            name: li.querySelector('label').textContent.trim(),   // thẻ li không có class
+                                            specificationKeys: []  // khởi tạo mảng chứa các li con
+                                        };
+                                        gadget.specifications.push(specification);
                                     }
-                                }
-                            });
-                            return JSON.stringify(gadget);
-                        })()
-                    ");
+                                    // Nếu li có class => là con của li cha trước đó
+                                    else if (specification) {
+                                        const keySpan = li.querySelector('span'); // Lấy thẻ <span> đầu tiên
+                                        const div = li.querySelector('div');      // Lấy thẻ <div> kế tiếp
+
+                                        if (keySpan && div) {
+                                            const specificationRow = {
+                                                name: keySpan.innerText.trim(),
+                                                specificationValues: []
+                                            }                                   // Mảng chứa các value
+
+                                            // Kiểm tra nếu trong <div> có các thẻ <a> hoặc <span> thì thêm vào mảng values
+                                            div.querySelectorAll('a, span, p').forEach(element => {
+                                                const specificationValue = {
+                                                    value: element.innerText.trim()
+                                                }
+                                                specificationRow.specificationValues.push(specificationValue);
+                                            });
+
+                                            specification.specificationKeys.push(specificationRow); // Thêm thẻ li có class vào danh sách con của cha hiện tại
+                                        }
+                                    }
+                                });
+                                return JSON.stringify(gadget);
+                            })()
+                        ");
                         Gadget gadgetSpecificationDetail = JsonConvert.DeserializeObject<Gadget>(specificationDetail)!;
                         specialGadget.Specifications = gadgetSpecificationDetail.Specifications;
                     }
@@ -1005,9 +1342,9 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
         return listGadgets;
     }
 
-    private static string CutUrl(string url)
+    private static string CutUrl(string soundUrl)
     {
-        var uri = new Uri(url);
+        var uri = new Uri(soundUrl);
         return $"{uri.Scheme}://{uri.Host}";
     }
 

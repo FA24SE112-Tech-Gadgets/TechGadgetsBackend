@@ -1,5 +1,4 @@
-﻿using WebApi.Data.Entities;
-using WebApi.Data;
+﻿using WebApi.Data;
 using WebApi.Services.ScrapeData;
 
 namespace WebApi.Services.Background.GadgetScrapeData;
