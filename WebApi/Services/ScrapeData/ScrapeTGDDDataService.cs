@@ -1,15 +1,91 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using PuppeteerSharp;
+using WebApi.Common.Settings;
+using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Background.GadgetScrapeData.Models;
 
 namespace WebApi.Services.ScrapeData;
 
-public class ScrapeTGDDDataService
+public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context)
 {
-    public async Task<string> ScrapeGadgetByBrand(string url, string gadgetCate, string phoneBrand)
+    private readonly ScrapeDataSettings _scrapeDataSettings = scrapeDataSettings.Value;
+    public async Task ScrapeTGDDGadget()
     {
+        List<Category> categories = await context.Categories.ToListAsync();
+        foreach (var category in categories)
+        {
+            var categoriesWithBrands = await context.Categories
+                .Where(c => c.Name == category.Name)
+                .Include(c => c.CategoryBrands)
+                    .ThenInclude(cb => cb.Brand)
+                .ToListAsync();
+            foreach (var cateWithBrands in categoriesWithBrands)
+            {
+                string url = _scrapeDataSettings.TGDD;
+                switch (cateWithBrands.Name)
+                {
+                    case "Điện thoại":
+                        url += "dtdd/";
+                        break;
+                    case "Laptop":
+                        url += "laptop/";
+                        break;
+                    case "Thiết bị âm thanh":
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            Console.WriteLine(brand.Name);
+                            switch (brand.Name)
+                            {
+                                case "JBL":
+                                case "Soul":
+                                case "Havit":
+                                case "Beats":
+                                case "AVA":
+                                case "Rezo":
+                                case "Soundcore":
+                                case "Zadez":
+                                case "Sony":
+                                case "Marshall":
+                                case "Sounarc":
+                                case "HyperX":
+                                case "Oppo":
+                                case "Monster":
+                                case "Shokz":
+                                case "Baseus":
+                                case "Xiaomi":
+                                case "Soundpeats":
+                                case "Asus":
+                                case "Realme":
+                                case "Mozard":
+                                case "Apple":
+                                case "Samsung":
+                                case "Denon":
+                                    url += "tai-nghe";
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    public async Task<List<Gadget>> ScrapeGadgetByBrand(string url, string brandName)
+    {
+        bool isApple;
+        if (brandName == "Apple")
+        {
+            isApple = true;
+        } else
+        {
+            isApple = false;
+        }
         string defaultUrl = CutUrl(url);
         // Tải xuống Chromium nếu chưa có
         await new BrowserFetcher().DownloadAsync();
@@ -28,22 +104,16 @@ public class ScrapeTGDDDataService
 
         bool moreDataToLoad = true;
 
+        //Ấn xem thêm cho đến khi bung hết danh sách gadget
         while (moreDataToLoad)
         {
             try
             {
-                var initialCount = await page.EvaluateFunctionAsync<int>(@"
-                    () => {
-                        const ul = Array.from(document.querySelectorAll('ul.listproduct li.item')).length;
-                        return ul;
-                    }
-                ");
-                Console.WriteLine(initialCount);
                 var button = await page.WaitForSelectorAsync("div.view-more a", new WaitForSelectorOptions { Timeout = 2000 });
 
                 if (button != null)
                 {
-                    Console.WriteLine("button co");
+                    Console.WriteLine("Xem thêm gadget");
                     var isButtonVisible = await button.IsVisibleAsync();
                     if (isButtonVisible)
                     {
@@ -117,12 +187,10 @@ public class ScrapeTGDDDataService
             Console.WriteLine("tao gadget: " + (i + 1));
 
             Gadget gadgetDetail = new Gadget()!;
+            string jsonGadgetDetail = "";
             try
             {
-                string jsonGadgetDetail = "";
-                if (gadgetCate == "Điện thoại" || gadgetCate == "Laptop")
-                {
-                    jsonGadgetDetail = await page.EvaluateExpressionAsync<string>(
+                jsonGadgetDetail = await page.EvaluateExpressionAsync<string>(
                     @"
                         (function () {
                             const gadgetNameElement = document.querySelector('div.product-name h1');
@@ -178,10 +246,12 @@ public class ScrapeTGDDDataService
                             return JSON.stringify(gadget);
                         })()
                     ");
-                }
-                else
-                {
-                    jsonGadgetDetail = await page.EvaluateExpressionAsync<string>(
+                gadgetDetail = JsonConvert.DeserializeObject<Gadget>(jsonGadgetDetail)!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                jsonGadgetDetail = await page.EvaluateExpressionAsync<string>(
                     @"
                         (function () {
                             const gadgetNameElement = document.querySelector('div.product-name h1');
@@ -225,17 +295,12 @@ public class ScrapeTGDDDataService
                             return JSON.stringify(gadget);
                         })()
                     ");
-                }
                 gadgetDetail = JsonConvert.DeserializeObject<Gadget>(jsonGadgetDetail)!;
-                Console.WriteLine("ktra: " + gadgetDetail.Name);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+            Console.WriteLine("ktra: " + gadgetDetail.Name);
 
             //TH các điện thoại có kiểu style đặc biệt cần phải vào lấy rõ hơn
-            if (gadgetDetail.Name == "N/A" && phoneBrand != "iPhone")
+            if (gadgetDetail.Name == "N/A" && !isApple)
             {
                 string specialGadgetNames = await page.EvaluateExpressionAsync<string>(
                 @"
@@ -937,7 +1002,7 @@ public class ScrapeTGDDDataService
         }
         await browser.CloseAsync();
 
-        return JsonConvert.SerializeObject(listGadgets);
+        return listGadgets;
     }
 
     private static string CutUrl(string url)

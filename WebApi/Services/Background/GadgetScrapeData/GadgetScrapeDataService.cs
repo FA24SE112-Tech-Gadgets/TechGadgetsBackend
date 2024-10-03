@@ -16,11 +16,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var scrapeTGDDDataService = scope.ServiceProvider.GetRequiredService<ScrapeTGDDDataService>();
-                Console.WriteLine(await scrapeTGDDDataService.ScrapeGadgetByBrand(
-                    "https://www.thegioididong.com/dtdd#c=42&m=2283&o=13&pi=0",
-                    "Điện thoại",
-                    "Samsung"
-                    ));
+                await scrapeTGDDDataService.ScrapeTGDDGadget();
             }
 
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
