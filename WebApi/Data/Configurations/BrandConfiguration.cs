@@ -105,9 +105,10 @@ namespace WebApi.Data.Configurations
                 new Brand { Id = Guid.Parse("d5ecc812-3dd2-4809-a5f4-11cb3c0d3595"), Name = "Vivo", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Vivo.jpg" },
                 new Brand { Id = Guid.Parse("c5cd02d6-2c9b-41f0-ba81-4c25097833be"), Name = "X-Mini", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/X-Mini.jpg" },
                 new Brand { Id = Guid.Parse("b34a95a5-f4bf-4189-8f1c-feb6bd7caaf7"), Name = "Xiaomi", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Xiaomi.png" },
-                new Brand { Id = Guid.Parse("589165e2-9282-4c48-80b3-1e25fd9102a8"), Name = "Zades", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zades.jpg" },
+                new Brand { Id = Guid.Parse("589165e2-9282-4c48-80b3-1e25fd9102a8"), Name = "Zadez", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zadez.jpg" },
                 new Brand { Id = Guid.Parse("ade6396d-9078-4575-9eb1-90402000f1ce"), Name = "Zidli", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zidli.png" },
-                new Brand { Id = Guid.Parse("f2671cf2-fc2e-4374-945f-e63bed491ad2"), Name = "ZTE", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/ZTE.png" }
+                new Brand { Id = Guid.Parse("f2671cf2-fc2e-4374-945f-e63bed491ad2"), Name = "ZTE", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/ZTE.png" },
+                new Brand { Id = Guid.Parse("a76154d5-bb61-439d-bd99-35df70b8d616"), Name = "Denon", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg" }
             );
         }
     }
