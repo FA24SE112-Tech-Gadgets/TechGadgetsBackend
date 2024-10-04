@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Data;
 
 #nullable disable
 
-namespace WebApi.Migrations
+namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241004025743_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -805,6 +808,60 @@ namespace WebApi.Migrations
                             Id = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
                             LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg",
                             Name = "Denon"
+                        },
+                        new
+                        {
+                            Id = new Guid("5534e6ee-eb0f-4787-b519-a8cfb18682ae"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Klipsch.jpg",
+                            Name = "Klipsch"
+                        },
+                        new
+                        {
+                            Id = new Guid("7537c078-2b87-4286-9b74-be18ad3fc912"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Enkor.jpg",
+                            Name = "Enkor"
+                        },
+                        new
+                        {
+                            Id = new Guid("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Nanomax.jpg",
+                            Name = "Nanomax"
+                        },
+                        new
+                        {
+                            Id = new Guid("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zenbos.jpg",
+                            Name = "Zenbos"
+                        },
+                        new
+                        {
+                            Id = new Guid("14f7fc83-64ff-45c9-8471-1f4a642ef686"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Jammy.jpg",
+                            Name = "Jammy"
+                        },
+                        new
+                        {
+                            Id = new Guid("10fdeaaa-b502-4a8c-b376-49da96397dff"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sumico.jpg",
+                            Name = "Sumico"
+                        },
+                        new
+                        {
+                            Id = new Guid("1c2181c6-cf60-46dc-b973-c34c8fb53478"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Paramax.jpg",
+                            Name = "Paramax"
+                        },
+                        new
+                        {
+                            Id = new Guid("b72baf1d-38e6-48da-8525-d575005f0165"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dalton.jpg",
+                            Name = "Dalton"
+                        },
+                        new
+                        {
+                            Id = new Guid("8968277e-cb34-4f11-aaba-191011f8914a"),
+                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Birici.jpg",
+                            Name = "Birici"
                         });
                 });
 
@@ -1008,6 +1065,11 @@ namespace WebApi.Migrations
                         new
                         {
                             BrandId = new Guid("aaa48259-deb6-4fbb-804a-82b24bf006f2"),
+                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd"),
                             CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
                         },
                         new
@@ -1403,6 +1465,56 @@ namespace WebApi.Migrations
                         new
                         {
                             BrandId = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("5534e6ee-eb0f-4787-b519-a8cfb18682ae"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("7537c078-2b87-4286-9b74-be18ad3fc912"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("14f7fc83-64ff-45c9-8471-1f4a642ef686"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("10fdeaaa-b502-4a8c-b376-49da96397dff"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("1c2181c6-cf60-46dc-b973-c34c8fb53478"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("b72baf1d-38e6-48da-8525-d575005f0165"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("8968277e-cb34-4f11-aaba-191011f8914a"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("cf2b71ae-c67f-43e3-9df9-b42573c09488"),
                             CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
                         });
                 });
