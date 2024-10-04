@@ -519,7 +519,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
             await page.GoToAsync(defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
             await Task.Delay(2000);
 
-            Console.WriteLine("gadget detail soundUrl: " + defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
+            Console.WriteLine("gadget detail url: " + defaultUrl + GadgetItemJsonResponses[i].NavigationUrl);
             Console.WriteLine("tao gadget: " + (i + 1));
 
             //Scrape Specifications, SpecificationKeys, SpecificationValues
@@ -1307,28 +1307,28 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
 
                 //Lấy data mô tả
                 string listGadgetDescriptions = await page.EvaluateExpressionAsync<string>(
-                    @"
-                        (function () {
-                            const content = [];
-                            const elements = document.querySelectorAll('div.text-detail > *'); // Chọn tất cả phần tử con của div.text-detail
+                @"
+                    (function () {
+                        const content = [];
+                        const elements = document.querySelectorAll('div.text-detail > *'); // Chọn tất cả phần tử con của div.text-detail
 
-                            elements.forEach((element, index) => {
-                                if (element.tagName.toLowerCase() === 'h3') {
-                                    // Nếu là thẻ h3, đẩy vào mảng với loại là 'BoldText'
-                                    content.push({ type: 'BoldText', value: element.textContent.trim(), index: index });
-                                } else if (element.tagName.toLowerCase() === 'p') {
-                                    const aElement = element.querySelector('a.preventdefault');
-                                    if (aElement) {
-                                        content.push({ type: 'Image', value: aElement.getAttribute('href'), index: index });
-                                    } else {
-                                     // Nếu là thẻ p, đẩy vào mảng với loại là 'NormalText'
-                                        content.push({ type: 'NormalText', value: element.textContent.trim(), index: index });
-                                    }
+                        elements.forEach((element, index) => {
+                            if (element.tagName.toLowerCase() === 'h3') {
+                                // Nếu là thẻ h3, đẩy vào mảng với loại là 'BoldText'
+                                content.push({ type: 'BoldText', value: element.textContent.trim(), index: index });
+                            } else if (element.tagName.toLowerCase() === 'p') {
+                                const aElement = element.querySelector('a.preventdefault');
+                                if (aElement) {
+                                    content.push({ type: 'Image', value: aElement.getAttribute('href'), index: index });
+                                } else {
+                                    // Nếu là thẻ p, đẩy vào mảng với loại là 'NormalText'
+                                    content.push({ type: 'NormalText', value: element.textContent.trim(), index: index });
                                 }
-                            });
-                            return JSON.stringify(content);
-                        })()
-                    ");
+                            }
+                        });
+                        return JSON.stringify(content);
+                    })()
+                ");
                 List<GadgetDescription> gadgetDescriptions = JsonConvert.DeserializeObject<List<GadgetDescription>>(listGadgetDescriptions)!;
                 gadgetDetail.GadgetDescriptions = gadgetDescriptions;
 
@@ -1342,9 +1342,9 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
         return listGadgets;
     }
 
-    private static string CutUrl(string soundUrl)
+    private static string CutUrl(string url)
     {
-        var uri = new Uri(soundUrl);
+        var uri = new Uri(url);
         return $"{uri.Scheme}://{uri.Host}";
     }
 

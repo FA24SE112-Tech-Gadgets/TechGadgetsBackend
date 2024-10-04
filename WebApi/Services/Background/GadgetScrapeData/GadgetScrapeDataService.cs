@@ -1,4 +1,5 @@
-﻿using WebApi.Data;
+﻿using System.Security.Authentication.ExtendedProtection;
+using WebApi.Data;
 using WebApi.Services.ScrapeData;
 
 namespace WebApi.Services.Background.GadgetScrapeData;
@@ -15,7 +16,9 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var scrapeTGDDDataService = scope.ServiceProvider.GetRequiredService<ScrapeTGDDDataService>();
-                await scrapeTGDDDataService.ScrapeTGDDGadget();
+                var scrapeFPTShopDataService = scope.ServiceProvider.GetRequiredService<ScrapeFPTShopDataService>();
+                //await scrapeTGDDDataService.ScrapeTGDDGadget();
+                await scrapeFPTShopDataService.ScrapeGadgetByBrand("https://fptshop.com.vn/dien-thoai/samsung");
             }
 
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);

@@ -21,5 +21,6 @@ public static class ServicesExtensions
         services.AddScoped<VnPayPaymentService>();
         services.AddScoped<MomoPaymentService>();
         services.AddScoped<ScrapeTGDDDataService>();
+        services.AddScoped<ScrapeFPTShopDataService>();
     }
 }
