@@ -103,7 +103,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
                                 continue;
                             }
-                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop, context);
                         }
                         break;
                     case "Laptop":
@@ -159,7 +159,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
                                 continue;
                             }
-                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop, context);
                         }
                         break;
                     case "Thiết bị âm thanh":
@@ -282,7 +282,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                                     continue;
                                 }
 
-                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop, context);
                                 continue;
                             }
                             List<string> listSoundUrls = new List<string>()!;
@@ -361,7 +361,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                                         continue;
                                     }
 
-                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop, context);
                                 }
                             }
                         }
