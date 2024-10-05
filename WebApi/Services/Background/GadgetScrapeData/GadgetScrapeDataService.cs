@@ -5,7 +5,7 @@ using WebApi.Services.ScrapeData;
 
 namespace WebApi.Services.Background.GadgetScrapeData;
 
-public class GadgetScrapeDataService(IServiceProvider serviceProvider, AppDbContext context) : BackgroundService
+public class GadgetScrapeDataService(IServiceProvider serviceProvider) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
@@ -26,7 +26,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider, AppDbCont
         }
     }
 
-    public async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory, Shop shop)
+    public async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory, Shop shop, AppDbContext context)
     {
         foreach (var gadget in gadgets)
         {
