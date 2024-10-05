@@ -382,7 +382,8 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
         // Khởi tạo trình duyệt
         var browser = await Puppeteer.LaunchAsync(new LaunchOptions
         {
-            Headless = true // Chạy ở chế độ headless để không hiển thị giao diện
+            Headless = true, // Chạy ở chế độ headless để không hiển thị giao diện
+            Args = ["--no-sandbox"]
         });
 
         // Mở một tab mới
