@@ -35,133 +35,133 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
             {
                 switch (cateWithBrands.Name)
                 {
-                    //case "Điện thoại":
-                    //    foreach (var brand in cateWithBrands.Brands)
-                    //    {
-                    //        string phoneUrl = _scrapeDataSettings.FPTShop + "dien-thoai/";
-                    //        switch (brand.Name)
-                    //        {
-                    //            case "Samsung":
-                    //                phoneUrl += "samsung";
-                    //                break;
-                    //            case "Apple":
-                    //                phoneUrl += "apple-iphone";
-                    //                break;
-                    //            case "Oppo":
-                    //                phoneUrl += "oppo";
-                    //                break;
-                    //            case "Xiaomi":
-                    //                phoneUrl += "xiaomi";
-                    //                break;
-                    //            case "Vivo":
-                    //                phoneUrl += "vivo";
-                    //                break;
-                    //            case "Realme":
-                    //                phoneUrl += "realme";
-                    //                break;
-                    //            case "Honor":
-                    //                phoneUrl += "honor";
-                    //                break;
-                    //            case "Tecno":
-                    //                phoneUrl += "tecno";
-                    //                break;
-                    //            case "Nokia":
-                    //                phoneUrl += "nokia";
-                    //                break;
-                    //            case "Masstel":
-                    //                phoneUrl += "masstel";
-                    //                break;
-                    //            case "Mobell":
-                    //                phoneUrl += "mobell";
-                    //                break;
-                    //            case "Itel":
-                    //                phoneUrl += "itel";
-                    //                break;
-                    //            case "Viettel":
-                    //                phoneUrl += "viettel";
-                    //                break;
-                    //            case "Benco":
-                    //                phoneUrl += "benco";
-                    //                break;
-                    //            case "Inoi":
-                    //                phoneUrl += "inoi";
-                    //                break;
-                    //            case "ZTE":
-                    //                phoneUrl += "zte";
-                    //                break;
-                    //            default:
-                    //                continue;
-                    //        }
+                    case "Điện thoại":
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            string phoneUrl = _scrapeDataSettings.FPTShop + "dien-thoai/";
+                            switch (brand.Name)
+                            {
+                                case "Samsung":
+                                    phoneUrl += "samsung";
+                                    break;
+                                case "Apple":
+                                    phoneUrl += "apple-iphone";
+                                    break;
+                                case "Oppo":
+                                    phoneUrl += "oppo";
+                                    break;
+                                case "Xiaomi":
+                                    phoneUrl += "xiaomi";
+                                    break;
+                                case "Vivo":
+                                    phoneUrl += "vivo";
+                                    break;
+                                case "Realme":
+                                    phoneUrl += "realme";
+                                    break;
+                                case "Honor":
+                                    phoneUrl += "honor";
+                                    break;
+                                case "Tecno":
+                                    phoneUrl += "tecno";
+                                    break;
+                                case "Nokia":
+                                    phoneUrl += "nokia";
+                                    break;
+                                case "Masstel":
+                                    phoneUrl += "masstel";
+                                    break;
+                                case "Mobell":
+                                    phoneUrl += "mobell";
+                                    break;
+                                case "Itel":
+                                    phoneUrl += "itel";
+                                    break;
+                                case "Viettel":
+                                    phoneUrl += "viettel";
+                                    break;
+                                case "Benco":
+                                    phoneUrl += "benco";
+                                    break;
+                                case "Inoi":
+                                    phoneUrl += "inoi";
+                                    break;
+                                case "ZTE":
+                                    phoneUrl += "zte";
+                                    break;
+                                default:
+                                    continue;
+                            }
 
-                    //        List<Gadget> listGadgets = new List<Gadget>()!;
-                    //        try
-                    //        {
-                    //            listGadgets = await ScrapeGadgetByBrand(phoneUrl);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
-                    //            continue;
-                    //        }
-                    //        await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
-                    //    }
-                    //    break;
-                    //case "Laptop":
-                    //    foreach (var brand in cateWithBrands.Brands)
-                    //    {
-                    //        string laptopUrl = _scrapeDataSettings.FPTShop + "may-tinh-xach-tay/";
-                    //        switch (brand.Name)
-                    //        {
-                    //            case "Hp":
-                    //                laptopUrl += "hp";
-                    //                break;
-                    //            case "Asus":
-                    //                laptopUrl += "asus";
-                    //                break;
-                    //            case "Acer":
-                    //                laptopUrl += "acer";
-                    //                break;
-                    //            case "Lenovo":
-                    //                laptopUrl += "lenovo";
-                    //                break;
-                    //            case "Dell":
-                    //                laptopUrl += "dell";
-                    //                break;
-                    //            case "MSI":
-                    //                laptopUrl += "msi";
-                    //                break;
-                    //            case "Apple":
-                    //                laptopUrl += "apple-macbook";
-                    //                break;
-                    //            case "Gigabyte":
-                    //                laptopUrl += "gigabyte";
-                    //                break;
-                    //            case "Huawei":
-                    //                laptopUrl += "huawei";
-                    //                break;
-                    //            case "Masstel":
-                    //                laptopUrl += "masstel";
-                    //                break;
-                    //            case "Vaio":
-                    //                laptopUrl += "vaio";
-                    //                break;
-                    //            default:
-                    //                continue;
-                    //        }
+                            List<Gadget> listGadgets = new List<Gadget>()!;
+                            try
+                            {
+                                listGadgets = await ScrapeGadgetByBrand(phoneUrl);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
+                                continue;
+                            }
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                        }
+                        break;
+                    case "Laptop":
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            string laptopUrl = _scrapeDataSettings.FPTShop + "may-tinh-xach-tay/";
+                            switch (brand.Name)
+                            {
+                                case "Hp":
+                                    laptopUrl += "hp";
+                                    break;
+                                case "Asus":
+                                    laptopUrl += "asus";
+                                    break;
+                                case "Acer":
+                                    laptopUrl += "acer";
+                                    break;
+                                case "Lenovo":
+                                    laptopUrl += "lenovo";
+                                    break;
+                                case "Dell":
+                                    laptopUrl += "dell";
+                                    break;
+                                case "MSI":
+                                    laptopUrl += "msi";
+                                    break;
+                                case "Apple":
+                                    laptopUrl += "apple-macbook";
+                                    break;
+                                case "Gigabyte":
+                                    laptopUrl += "gigabyte";
+                                    break;
+                                case "Huawei":
+                                    laptopUrl += "huawei";
+                                    break;
+                                case "Masstel":
+                                    laptopUrl += "masstel";
+                                    break;
+                                case "Vaio":
+                                    laptopUrl += "vaio";
+                                    break;
+                                default:
+                                    continue;
+                            }
 
-                    //        List<Gadget> listGadgets = new List<Gadget>()!;
-                    //        try
-                    //        {
-                    //            listGadgets = await ScrapeGadgetByBrand(laptopUrl);
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
-                    //            continue;
-                    //        }
-                    //        await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
-                    //    }
-                    //    break;
+                            List<Gadget> listGadgets = new List<Gadget>()!;
+                            try
+                            {
+                                listGadgets = await ScrapeGadgetByBrand(laptopUrl);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
+                                continue;
+                            }
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                        }
+                        break;
                     case "Thiết bị âm thanh":
                         foreach (var brand in cateWithBrands.Brands)
                         {
@@ -172,46 +172,97 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                             switch (brand.Name)
                             {
                                 case "Devia":
-                                    soundUrl += "tai-nghe#c=54&m=37540&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=devia";
                                     break;
                                 case "Rock":
-                                    soundUrl += "tai-nghe#c=54&m=36948&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=rock";
                                     break;
                                 case "Sennheiser":
-                                    soundUrl += "tai-nghe#c=54&m=8090&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=sennheiser";
                                     break;
                                 case "Logitech":
-                                    soundUrl += "tai-nghe#c=54&m=38905&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=logitech";
                                     break;
                                 case "Pro One":
-                                    soundUrl += "tai-nghe#c=54&m=37633&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=pro-one";
                                     break;
                                 case "Belkin":
-                                    soundUrl += "tai-nghe#c=54&m=38595&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=belkin";
                                     break;
                                 case "Rapoo":
-                                    soundUrl += "tai-nghe#c=54&m=24552&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=rapoo";
                                     break;
                                 case "Soundcore":
-                                    soundUrl += "tai-nghe#c=54&m=38243&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=soundcore";
                                     break;
                                 case "Zadez":
-                                    soundUrl += "tai-nghe#c=54&m=37013&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=zadez";
+                                    break;
+                                case "Remax":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=remax";
+                                    break;
+                                case "ProLink":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=prolink";
+                                    break;
+                                case "Corsair":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=corsair";
+                                    break;
+                                case "UmeTravel":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=umetravel";
+                                    break;
+                                case "Defunc":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=defunc";
+                                    break;
+                                case "HyperX":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=hyperx";
+                                    break;
+                                case "Oppo":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=oppo";
+                                    break;
+                                case "KZ":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=kz";
+                                    break;
+                                case "F.Power":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=f-power";
+                                    break;
+                                case "Bagitech":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=bagitech";
+                                    break;
+                                case "Aukey":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=aukey";
+                                    break;
+                                case "Steelseries":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=steelseries";
+                                    break;
+                                case "Baseus":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=baseus";
+                                    break;
+                                case "Soundpeats":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=soundpeats";
+                                    break;
+                                case "Klatre":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=klatre";
+                                    break;
+                                case "Apple":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=apple";
+                                    break;
+                                case "Pioneer":
+                                    soundUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=pioneer";
                                     break;
                                 case "Edifier":
-                                    soundUrl += "loa-laptop#c=54&m=24085&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=edifier";
                                     break;
                                 case "Harman Kardon":
-                                    soundUrl += "loa-laptop#c=2162&m=20479&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=harman-kardon";
                                     break;
                                 case "Microlab":
-                                    soundUrl += "loa-laptop#c=2162&m=19768&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=microlab";
                                     break;
                                 case "Divoom":
-                                    soundUrl += "loa-laptop#c=2162&m=38725&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=divoom";
                                     break;
                                 case "Alpha Works":
-                                    soundUrl += "loa-laptop#c=2162&m=2197&o=13&pi=0";
+                                    soundUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=alpha-works";
                                     break;
                                 default:
                                     isCaseNormal = false;
@@ -242,44 +293,52 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                             switch (brand.Name)
                             {
                                 case "JBL":
-                                    earPhoneUrl += "tai-nghe#c=54&m=5392&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=1176&o=13&pi=0";
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=jbl";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=jbl";
                                     break;
-                                case "AVA":
-                                    earPhoneUrl += "tai-nghe#c=54&m=2987&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=1688&o=13&pi=0";
+                                case "Havit":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=havit";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=havit";
                                     break;
-                                case "Rezo":
-                                    earPhoneUrl += "tai-nghe#c=54&m=29872&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=36826&o=13&pi=0";
+                                case "Bose":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=bose";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=bose";
+                                    break;
+                                case "Soundmax":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=soundmax";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=soundmax";
+                                    break;
+                                case "Pack&Go":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=packgo";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=packgo";
+                                    break;
+                                case "IValue":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=ivalue";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=ivalue";
                                     break;
                                 case "Sony":
-                                    earPhoneUrl += "tai-nghe#c=54&m=1842&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=2193&o=13&pi=0";
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=sony";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=sony";
                                     break;
                                 case "Marshall":
-                                    earPhoneUrl += "tai-nghe#c=54&m=14583&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=1454&o=13&pi=0";
-                                    break;
-                                case "Sounarc":
-                                    earPhoneUrl += "tai-nghe#c=54&m=38726&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=38719&o=13&pi=0";
-                                    break;
-                                case "Monster":
-                                    earPhoneUrl += "tai-nghe#c=54&m=36400&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=36396&o=13&pi=0";
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=marshall";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=marshall";
                                     break;
                                 case "Xiaomi":
-                                    earPhoneUrl += "tai-nghe#c=54&m=7710&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=38567&o=13&pi=0";
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=xiaomi";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=xiaomi";
                                     break;
-                                case "Mozard":
-                                    earPhoneUrl += "tai-nghe#c=54&m=8157&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=19762&o=13&pi=0";
+                                case "ICore":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=icore";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=icore";
                                     break;
                                 case "Samsung":
-                                    earPhoneUrl += "tai-nghe#c=54&m=2391&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=2196&o=13&pi=0";
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=samsung";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=samsung";
+                                    break;
+                                case "Anker":
+                                    earPhoneUrl += "am-thanh-hinh-anh/tai-nghe?hang-san-xuat=anker";
+                                    loudspeakerUrl += "am-thanh-hinh-anh/loa?hang-san-xuat=anker";
                                     break;
                                 default:
                                     continue;

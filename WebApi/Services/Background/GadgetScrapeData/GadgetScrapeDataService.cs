@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Security.Authentication.ExtendedProtection;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.ScrapeData;
@@ -19,7 +18,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider, AppDbCont
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var scrapeTGDDDataService = scope.ServiceProvider.GetRequiredService<ScrapeTGDDDataService>();
                 var scrapeFPTShopDataService = scope.ServiceProvider.GetRequiredService<ScrapeFPTShopDataService>();
-                //await scrapeTGDDDataService.ScrapeTGDDGadget();
+                await scrapeTGDDDataService.ScrapeTGDDGadget();
                 await scrapeFPTShopDataService.ScrapeFPTShopGadget();
             }
 
