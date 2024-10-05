@@ -5,15 +5,23 @@ using PuppeteerSharp;
 using WebApi.Common.Settings;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.Background.GadgetScrapeData;
 using WebApi.Services.Background.GadgetScrapeData.Models;
 
 namespace WebApi.Services.ScrapeData;
 
-public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context)
+public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context, GadgetScrapeDataService gadgetScrapeDataService)
 {
     private readonly ScrapeDataSettings _scrapeDataSettings = scrapeDataSettings.Value;
+    private readonly GadgetScrapeDataService _gadgetScrapeDataService = gadgetScrapeDataService;
     public async Task ScrapeTGDDGadget()
     {
+        var tgddShop = await context.Shops
+            .FirstOrDefaultAsync(s => s.Name == "Thế Giới Di Động");
+        if (tgddShop == null)
+        {
+            return;
+        }
         List<Category> categories = await context.Categories.ToListAsync();
         foreach (var category in categories)
         {
@@ -27,9 +35,9 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                 switch (cateWithBrands.Name)
                 {
                     case "Điện thoại":
-                        string phoneUrl = _scrapeDataSettings.TGDD + "dtdd";
                         foreach (var brand in cateWithBrands.Brands)
                         {
+                            string phoneUrl = _scrapeDataSettings.TGDD + "dtdd";
                             switch (brand.Name)
                             {
                                 case "Samsung":
@@ -91,13 +99,13 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
                                 continue;
                             }
-                            await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop);
                         }
                         break;
                     case "Laptop":
-                        string laptopUrl = _scrapeDataSettings.TGDD + "laptop";
                         foreach (var brand in cateWithBrands.Brands)
                         {
+                            string laptopUrl = _scrapeDataSettings.TGDD + "laptop";
                             switch (brand.Name)
                             {
                                 case "Hp":
@@ -138,7 +146,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
                                 continue;
                             }
-                            await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop);
                         }
                         break;
                     case "Thiết bị âm thanh":
@@ -261,7 +269,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                     continue;
                                 }
 
-                                await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop);
                                 continue;
                             }
                             List<string> listSoundUrls = new List<string>()!;
@@ -332,7 +340,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                         continue;
                                     }
 
-                                    await AddGadgetToDB(listGadgets, brand, cateWithBrands);
+                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop);
                                 }
                             }
                         }
@@ -343,73 +351,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
             }
         }
     }
-    private async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory)
-    {
-        foreach (var gadget in gadgets)
-        {
-            var existGadget = await context.Gadgets
-                .Include(g => g.Specifications)
-                .ThenInclude(s => s.SpecificationKeys)
-                .ThenInclude(sk => sk.SpecificationValues)
-                .FirstOrDefaultAsync(g => g.Name == gadget.Name);
-            if (existGadget != null)
-            {
-                // Lặp qua các Specifications của Gadget
-                foreach (var specification in existGadget.Specifications)
-                {
-                    // Lặp qua các SpecificationKeys của mỗi Specification
-                    foreach (var specificationKey in specification.SpecificationKeys)
-                    {
-                        // Xóa tất cả SpecificationValues liên quan đến SpecificationKey
-                        context.SpecificationValues.RemoveRange(specificationKey.SpecificationValues);
-                    }
-
-                    // Xóa tất cả SpecificationKeys liên quan đến Specification
-                    context.SpecificationKeys.RemoveRange(specification.SpecificationKeys);
-                }
-
-                // Xóa tất cả Specifications liên quan đến Gadget
-                context.Specifications.RemoveRange(existGadget.Specifications);
-
-                // Xóa tất cả GadgetDescriptions liên quan đến Gadget
-                context.GadgetDescriptions.RemoveRange(existGadget.GadgetDescriptions);
-
-                // Xóa tất cả GadgetImages liên quan đến Gadget
-                context.GadgetImages.RemoveRange(existGadget.GadgetImages);
-
-                existGadget.Price = gadget.Price;
-
-                if (gadget.ThumbnailUrl != null)
-                {
-                    existGadget.ThumbnailUrl = gadget.ThumbnailUrl;
-                }
-
-                if (gadget.Url != null)
-                {
-                    existGadget.Url = gadget.Url;
-                }
-
-                if (gadget.Specifications != null)
-                {
-                    existGadget.Specifications = gadget.Specifications;
-                    context.Specifications.AddRange(existGadget.Specifications);
-                }
-                existGadget.UpdatedAt = DateTime.UtcNow;
-            }
-            else
-            {
-                gadget.BrandId = relatedBrand.Id;
-                gadget.CategoryId = relatedCategory.Id;
-                gadget.Status = GadgetStatus.Active;
-                gadget.CreatedAt = DateTime.UtcNow;
-                gadget.UpdatedAt = DateTime.UtcNow;
-
-                await context.Gadgets.AddAsync(gadget);
-                await context.SaveChangesAsync();
-            }
-        }
-    }
-    private static async Task<List<Gadget>> ScrapeGadgetByBrand(string url, string brandName)
+    private async Task<List<Gadget>> ScrapeGadgetByBrand(string url, string brandName)
     {
         bool isApple;
         if (brandName == "Apple")
@@ -420,7 +362,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
         {
             isApple = false;
         }
-        string defaultUrl = CutUrl(url);
+        string defaultUrl = _gadgetScrapeDataService.CutUrl(url);
         // Tải xuống Chromium nếu chưa có
         await new BrowserFetcher().DownloadAsync();
 
@@ -671,7 +613,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 return '0đ';
                             })()
                         ");
-                        specialGadget.Price = ConvertPriceToInt(priceWithSpecificationDetail);
+                        specialGadget.Price = _gadgetScrapeDataService.ConvertPriceToInt(priceWithSpecificationDetail);
 
                     }
                     catch (Exception ex)
@@ -886,7 +828,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 return '0đ';
                             })()
                         ");
-                        specialGadget.Price = ConvertPriceToInt(priceWithSpecificationDetail);
+                        specialGadget.Price = _gadgetScrapeDataService.ConvertPriceToInt(priceWithSpecificationDetail);
 
                     }
                     catch (Exception ex)
@@ -1340,27 +1282,5 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
         await browser.CloseAsync();
 
         return listGadgets;
-    }
-
-    private static string CutUrl(string url)
-    {
-        var uri = new Uri(url);
-        return $"{uri.Scheme}://{uri.Host}";
-    }
-
-    private static int ConvertPriceToInt(string priceString)
-    {
-        // Loại bỏ các ký tự không cần thiết như dấu chấm và ký hiệu đồng
-        string cleanedString = priceString.Replace(".", "").Replace("₫", "").Trim();
-
-        // Chuyển đổi chuỗi thành số nguyên
-        if (int.TryParse(cleanedString, out int price))
-        {
-            return price;
-        }
-        else
-        {
-            return 0;
-        }
     }
 }

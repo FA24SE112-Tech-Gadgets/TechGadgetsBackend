@@ -28,6 +28,8 @@ public class GetScrapeGadget : ControllerBase
                     .ThenInclude(sk => sk.SpecificationValues)
                 .Include(g => g.GadgetImages)
                 .Include(g => g.GadgetDescriptions)
+                .Include(g => g.Shop)
+                .Include(g => g.Category)
                 .AsSplitQuery() // Sử dụng SplitQuery để xử lý việc load nhiều collection
                 .ToListAsync(); // Lấy toàn bộ danh sách gadget
 

@@ -1,21 +1,322 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Utilities;
 using PuppeteerSharp;
 using WebApi.Common.Settings;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.Background.GadgetScrapeData;
 using WebApi.Services.Background.GadgetScrapeData.Models;
 
 namespace WebApi.Services.ScrapeData;
 
-public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context)
+public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context, GadgetScrapeDataService gadgetScrapeDataService)
 {
     private readonly ScrapeDataSettings _scrapeDataSettings = scrapeDataSettings.Value;
+    private readonly GadgetScrapeDataService _gadgetScrapeDataService = gadgetScrapeDataService;
+
+    public async Task ScrapeFPTShopGadget()
+    {
+        var fptShop = await context.Shops
+            .FirstOrDefaultAsync(s => s.Name == "FPT Shop");
+        if (fptShop == null)
+        {
+            return;
+        }
+        List<Category> categories = await context.Categories.ToListAsync();
+        foreach (var category in categories)
+        {
+            var categoriesWithBrands = await context.Categories
+                .Where(c => c.Name == category.Name)
+                .Include(c => c.CategoryBrands)
+                    .ThenInclude(cb => cb.Brand)
+                .ToListAsync();
+            foreach (var cateWithBrands in categoriesWithBrands)
+            {
+                switch (cateWithBrands.Name)
+                {
+                    //case "Điện thoại":
+                    //    foreach (var brand in cateWithBrands.Brands)
+                    //    {
+                    //        string phoneUrl = _scrapeDataSettings.FPTShop + "dien-thoai/";
+                    //        switch (brand.Name)
+                    //        {
+                    //            case "Samsung":
+                    //                phoneUrl += "samsung";
+                    //                break;
+                    //            case "Apple":
+                    //                phoneUrl += "apple-iphone";
+                    //                break;
+                    //            case "Oppo":
+                    //                phoneUrl += "oppo";
+                    //                break;
+                    //            case "Xiaomi":
+                    //                phoneUrl += "xiaomi";
+                    //                break;
+                    //            case "Vivo":
+                    //                phoneUrl += "vivo";
+                    //                break;
+                    //            case "Realme":
+                    //                phoneUrl += "realme";
+                    //                break;
+                    //            case "Honor":
+                    //                phoneUrl += "honor";
+                    //                break;
+                    //            case "Tecno":
+                    //                phoneUrl += "tecno";
+                    //                break;
+                    //            case "Nokia":
+                    //                phoneUrl += "nokia";
+                    //                break;
+                    //            case "Masstel":
+                    //                phoneUrl += "masstel";
+                    //                break;
+                    //            case "Mobell":
+                    //                phoneUrl += "mobell";
+                    //                break;
+                    //            case "Itel":
+                    //                phoneUrl += "itel";
+                    //                break;
+                    //            case "Viettel":
+                    //                phoneUrl += "viettel";
+                    //                break;
+                    //            case "Benco":
+                    //                phoneUrl += "benco";
+                    //                break;
+                    //            case "Inoi":
+                    //                phoneUrl += "inoi";
+                    //                break;
+                    //            case "ZTE":
+                    //                phoneUrl += "zte";
+                    //                break;
+                    //            default:
+                    //                continue;
+                    //        }
+
+                    //        List<Gadget> listGadgets = new List<Gadget>()!;
+                    //        try
+                    //        {
+                    //            listGadgets = await ScrapeGadgetByBrand(phoneUrl);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
+                    //            continue;
+                    //        }
+                    //        await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                    //    }
+                    //    break;
+                    //case "Laptop":
+                    //    foreach (var brand in cateWithBrands.Brands)
+                    //    {
+                    //        string laptopUrl = _scrapeDataSettings.FPTShop + "may-tinh-xach-tay/";
+                    //        switch (brand.Name)
+                    //        {
+                    //            case "Hp":
+                    //                laptopUrl += "hp";
+                    //                break;
+                    //            case "Asus":
+                    //                laptopUrl += "asus";
+                    //                break;
+                    //            case "Acer":
+                    //                laptopUrl += "acer";
+                    //                break;
+                    //            case "Lenovo":
+                    //                laptopUrl += "lenovo";
+                    //                break;
+                    //            case "Dell":
+                    //                laptopUrl += "dell";
+                    //                break;
+                    //            case "MSI":
+                    //                laptopUrl += "msi";
+                    //                break;
+                    //            case "Apple":
+                    //                laptopUrl += "apple-macbook";
+                    //                break;
+                    //            case "Gigabyte":
+                    //                laptopUrl += "gigabyte";
+                    //                break;
+                    //            case "Huawei":
+                    //                laptopUrl += "huawei";
+                    //                break;
+                    //            case "Masstel":
+                    //                laptopUrl += "masstel";
+                    //                break;
+                    //            case "Vaio":
+                    //                laptopUrl += "vaio";
+                    //                break;
+                    //            default:
+                    //                continue;
+                    //        }
+
+                    //        List<Gadget> listGadgets = new List<Gadget>()!;
+                    //        try
+                    //        {
+                    //            listGadgets = await ScrapeGadgetByBrand(laptopUrl);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
+                    //            continue;
+                    //        }
+                    //        await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                    //    }
+                    //    break;
+                    case "Thiết bị âm thanh":
+                        foreach (var brand in cateWithBrands.Brands)
+                        {
+                            string soundUrl = _scrapeDataSettings.FPTShop;
+                            bool isCaseNormal = true;
+
+                            //Case brand có tai nghe hoặc loa
+                            switch (brand.Name)
+                            {
+                                case "Devia":
+                                    soundUrl += "tai-nghe#c=54&m=37540&o=13&pi=0";
+                                    break;
+                                case "Rock":
+                                    soundUrl += "tai-nghe#c=54&m=36948&o=13&pi=0";
+                                    break;
+                                case "Sennheiser":
+                                    soundUrl += "tai-nghe#c=54&m=8090&o=13&pi=0";
+                                    break;
+                                case "Logitech":
+                                    soundUrl += "tai-nghe#c=54&m=38905&o=13&pi=0";
+                                    break;
+                                case "Pro One":
+                                    soundUrl += "tai-nghe#c=54&m=37633&o=13&pi=0";
+                                    break;
+                                case "Belkin":
+                                    soundUrl += "tai-nghe#c=54&m=38595&o=13&pi=0";
+                                    break;
+                                case "Rapoo":
+                                    soundUrl += "tai-nghe#c=54&m=24552&o=13&pi=0";
+                                    break;
+                                case "Soundcore":
+                                    soundUrl += "tai-nghe#c=54&m=38243&o=13&pi=0";
+                                    break;
+                                case "Zadez":
+                                    soundUrl += "tai-nghe#c=54&m=37013&o=13&pi=0";
+                                    break;
+                                case "Edifier":
+                                    soundUrl += "loa-laptop#c=54&m=24085&o=13&pi=0";
+                                    break;
+                                case "Harman Kardon":
+                                    soundUrl += "loa-laptop#c=2162&m=20479&o=13&pi=0";
+                                    break;
+                                case "Microlab":
+                                    soundUrl += "loa-laptop#c=2162&m=19768&o=13&pi=0";
+                                    break;
+                                case "Divoom":
+                                    soundUrl += "loa-laptop#c=2162&m=38725&o=13&pi=0";
+                                    break;
+                                case "Alpha Works":
+                                    soundUrl += "loa-laptop#c=2162&m=2197&o=13&pi=0";
+                                    break;
+                                default:
+                                    isCaseNormal = false;
+                                    break;
+
+                            }
+                            if (isCaseNormal)
+                            {
+                                List<Gadget> listGadgets = new List<Gadget>()!;
+                                try
+                                {
+                                    listGadgets = await ScrapeGadgetByBrand(soundUrl);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Thiết bị âm thanh {brand.Name}: {ex}");
+                                    continue;
+                                }
+
+                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                                continue;
+                            }
+                            List<string> listSoundUrls = new List<string>()!;
+                            string earPhoneUrl = soundUrl;
+                            string loudspeakerUrl = soundUrl;
+
+                            //Case brand vừa có tai nghe vừa có loa
+                            switch (brand.Name)
+                            {
+                                case "JBL":
+                                    earPhoneUrl += "tai-nghe#c=54&m=5392&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1176&o=13&pi=0";
+                                    break;
+                                case "AVA":
+                                    earPhoneUrl += "tai-nghe#c=54&m=2987&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1688&o=13&pi=0";
+                                    break;
+                                case "Rezo":
+                                    earPhoneUrl += "tai-nghe#c=54&m=29872&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=36826&o=13&pi=0";
+                                    break;
+                                case "Sony":
+                                    earPhoneUrl += "tai-nghe#c=54&m=1842&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=2193&o=13&pi=0";
+                                    break;
+                                case "Marshall":
+                                    earPhoneUrl += "tai-nghe#c=54&m=14583&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=1454&o=13&pi=0";
+                                    break;
+                                case "Sounarc":
+                                    earPhoneUrl += "tai-nghe#c=54&m=38726&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=38719&o=13&pi=0";
+                                    break;
+                                case "Monster":
+                                    earPhoneUrl += "tai-nghe#c=54&m=36400&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=36396&o=13&pi=0";
+                                    break;
+                                case "Xiaomi":
+                                    earPhoneUrl += "tai-nghe#c=54&m=7710&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=38567&o=13&pi=0";
+                                    break;
+                                case "Mozard":
+                                    earPhoneUrl += "tai-nghe#c=54&m=8157&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=19762&o=13&pi=0";
+                                    break;
+                                case "Samsung":
+                                    earPhoneUrl += "tai-nghe#c=54&m=2391&o=13&pi=0";
+                                    loudspeakerUrl += "loa-laptop#c=2162&m=2196&o=13&pi=0";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            listSoundUrls.Add(earPhoneUrl);
+                            listSoundUrls.Add(loudspeakerUrl);
+                            if (listSoundUrls.Count > 0)
+                            {
+                                foreach (var urlItem in listSoundUrls)
+                                {
+                                    List<Gadget> listGadgets = new List<Gadget>()!;
+                                    try
+                                    {
+                                        listGadgets = await ScrapeGadgetByBrand(urlItem);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Thiết bị âm thanh {brand.Name}: {ex}");
+                                        continue;
+                                    }
+
+                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, fptShop);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
 
     public async Task<List<Gadget>> ScrapeGadgetByBrand(string url)
     {
-        string defaultUrl = CutUrl(url);
+        string defaultUrl = _gadgetScrapeDataService.CutUrl(url);
         // Tải xuống Chromium nếu chưa có
         await new BrowserFetcher().DownloadAsync();
 
@@ -144,7 +445,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                         ");
                         if (!string.IsNullOrEmpty(jsonGadgetPrice))
                         {
-                            gadgetDetail.Price = ConvertPriceToInt(jsonGadgetPrice);
+                            gadgetDetail.Price = _gadgetScrapeDataService.ConvertPriceToInt(jsonGadgetPrice);
                         }
                     }
                     catch (Exception ex)
@@ -426,7 +727,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
                     ");
                     if (!string.IsNullOrEmpty(jsonGadgetPrice))
                     {
-                        gadgetDetail.Price = ConvertPriceToInt(jsonGadgetPrice);
+                        gadgetDetail.Price = _gadgetScrapeDataService.ConvertPriceToInt(jsonGadgetPrice);
                     }
                 }
                 catch (Exception ex)
@@ -778,27 +1079,5 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
         await browser.CloseAsync();
 
         return listGadgets;
-    }
-
-    private static string CutUrl(string url)
-    {
-        var uri = new Uri(url);
-        return $"{uri.Scheme}://{uri.Host}";
-    }
-
-    private static int ConvertPriceToInt(string priceString)
-    {
-        // Loại bỏ các ký tự không cần thiết như dấu chấm và ký hiệu đồng
-        string cleanedString = priceString.Replace(".", "").Replace("₫", "").Trim();
-
-        // Chuyển đổi chuỗi thành số nguyên
-        if (int.TryParse(cleanedString, out int price))
-        {
-            return price;
-        }
-        else
-        {
-            return 0;
-        }
     }
 }

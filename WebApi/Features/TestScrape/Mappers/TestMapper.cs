@@ -16,6 +16,7 @@ public static class TestMapper
                 Price = gadget.Price,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Url = gadget.Url,
+                ShopId = gadget.ShopId,
                 Status = gadget.Status,
                 CreatedAt = gadget.CreatedAt,
                 UpdatedAt = gadget.UpdatedAt,
