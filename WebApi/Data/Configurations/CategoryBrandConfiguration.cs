@@ -40,6 +40,7 @@ public class CategoryBrandConfiguration : IEntityTypeConfiguration<CategoryBrand
             new CategoryBrand { CategoryId = Guid.Parse("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"), BrandId = Guid.Parse("8d453e47-d824-4c81-a0ea-14272c738979") },
             new CategoryBrand { CategoryId = Guid.Parse("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"), BrandId = Guid.Parse("403d5c4e-01ed-460d-8723-f219658b8147") },
             new CategoryBrand { CategoryId = Guid.Parse("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"), BrandId = Guid.Parse("aaa48259-deb6-4fbb-804a-82b24bf006f2") },
+            new CategoryBrand { CategoryId = Guid.Parse("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"), BrandId = Guid.Parse("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("e800ce83-2289-497d-80fe-f5f713890ef6") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("419bccb1-65bf-49b2-a3c1-d380a7be2e68") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("b34a95a5-f4bf-4189-8f1c-feb6bd7caaf7") },
@@ -118,7 +119,18 @@ public class CategoryBrandConfiguration : IEntityTypeConfiguration<CategoryBrand
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("eb8928a3-bfb8-4f87-a24d-2fc2fb7943fc") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("9f112f02-284a-49d9-8e90-b4e1402ec943") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("803f2378-adc8-4bc2-ace0-5d00ce66a22b") },
-            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("a76154d5-bb61-439d-bd99-35df70b8d616") }
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("a76154d5-bb61-439d-bd99-35df70b8d616") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("5534e6ee-eb0f-4787-b519-a8cfb18682ae") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("7537c078-2b87-4286-9b74-be18ad3fc912") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("14f7fc83-64ff-45c9-8471-1f4a642ef686") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("10fdeaaa-b502-4a8c-b376-49da96397dff") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("1c2181c6-cf60-46dc-b973-c34c8fb53478") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("b72baf1d-38e6-48da-8525-d575005f0165") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("8968277e-cb34-4f11-aaba-191011f8914a") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("cf2b71ae-c67f-43e3-9df9-b42573c09488") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("ec2ba326-c452-4a5a-94a2-6a46f0e81282") }
          );
     }
 }

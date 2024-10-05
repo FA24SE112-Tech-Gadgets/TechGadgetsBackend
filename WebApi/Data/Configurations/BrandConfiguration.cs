@@ -108,7 +108,16 @@ namespace WebApi.Data.Configurations
                 new Brand { Id = Guid.Parse("589165e2-9282-4c48-80b3-1e25fd9102a8"), Name = "Zadez", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zadez.jpg" },
                 new Brand { Id = Guid.Parse("ade6396d-9078-4575-9eb1-90402000f1ce"), Name = "Zidli", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zidli.png" },
                 new Brand { Id = Guid.Parse("f2671cf2-fc2e-4374-945f-e63bed491ad2"), Name = "ZTE", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/ZTE.png" },
-                new Brand { Id = Guid.Parse("a76154d5-bb61-439d-bd99-35df70b8d616"), Name = "Denon", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg" }
+                new Brand { Id = Guid.Parse("a76154d5-bb61-439d-bd99-35df70b8d616"), Name = "Denon", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg" },
+                new Brand { Id = Guid.Parse("5534e6ee-eb0f-4787-b519-a8cfb18682ae"), Name = "Klipsch", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Klipsch.jpg" },
+                new Brand { Id = Guid.Parse("7537c078-2b87-4286-9b74-be18ad3fc912"), Name = "Enkor", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Enkor.jpg" },
+                new Brand { Id = Guid.Parse("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c"), Name = "Nanomax", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Nanomax.jpg" },
+                new Brand { Id = Guid.Parse("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28"), Name = "Zenbos", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zenbos.jpg" },
+                new Brand { Id = Guid.Parse("14f7fc83-64ff-45c9-8471-1f4a642ef686"), Name = "Jammy", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Jammy.jpg" },
+                new Brand { Id = Guid.Parse("10fdeaaa-b502-4a8c-b376-49da96397dff"), Name = "Sumico", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sumico.jpg" },
+                new Brand { Id = Guid.Parse("1c2181c6-cf60-46dc-b973-c34c8fb53478"), Name = "Paramax", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Paramax.jpg" },
+                new Brand { Id = Guid.Parse("b72baf1d-38e6-48da-8525-d575005f0165"), Name = "Dalton", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dalton.jpg" },
+                new Brand { Id = Guid.Parse("8968277e-cb34-4f11-aaba-191011f8914a"), Name = "Birici", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Birici.jpg" }
             );
         }
     }
