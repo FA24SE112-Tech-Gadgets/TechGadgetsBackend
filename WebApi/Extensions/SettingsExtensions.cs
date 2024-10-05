@@ -13,5 +13,6 @@ public static class SettingsExtensions
         services.Configure<MailSettings>(configuration.GetSection(MailSettings.Section));
         services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.Section));
         services.Configure<RabbitMQSettings>(configuration.GetSection(RabbitMQSettings.Section));
+        services.Configure<ScrapeDataSettings>(configuration.GetSection(ScrapeDataSettings.Section));
     }
 }
