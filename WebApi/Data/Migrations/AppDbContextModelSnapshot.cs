@@ -3332,7 +3332,6 @@ namespace WebApi.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
