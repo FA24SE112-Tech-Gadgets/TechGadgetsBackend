@@ -1513,6 +1513,11 @@ namespace WebApi.Data.Migrations
                         {
                             BrandId = new Guid("cf2b71ae-c67f-43e3-9df9-b42573c09488"),
                             CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
+                        },
+                        new
+                        {
+                            BrandId = new Guid("ec2ba326-c452-4a5a-94a2-6a46f0e81282"),
+                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
                         });
                 });
 
