@@ -1,6 +1,8 @@
 ﻿using WebApi.Services.Auth;
+using WebApi.Services.Background.GadgetScrapeData;
 using WebApi.Services.Mail;
 using WebApi.Services.Payment;
+using WebApi.Services.ScrapeData;
 using WebApi.Services.Server;
 using WebApi.Services.Storage;
 using WebApi.Services.VerifyCode;
@@ -19,5 +21,8 @@ public static class ServicesExtensions
         services.AddScoped<GoogleStorageService>();
         services.AddScoped<VnPayPaymentService>();
         services.AddScoped<MomoPaymentService>();
+        services.AddScoped<GadgetScrapeDataService>();
+        services.AddScoped<ScrapeTGDDDataService>();
+        services.AddScoped<ScrapeFPTShopDataService>();
     }
 }
