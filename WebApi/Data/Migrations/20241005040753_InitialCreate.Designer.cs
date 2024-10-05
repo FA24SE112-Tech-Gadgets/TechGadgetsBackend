@@ -12,7 +12,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241004025743_InitialCreate")]
+    [Migration("20241005040753_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -3335,7 +3335,6 @@ namespace WebApi.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Role")
