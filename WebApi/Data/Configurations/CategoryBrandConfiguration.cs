@@ -129,7 +129,8 @@ public class CategoryBrandConfiguration : IEntityTypeConfiguration<CategoryBrand
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("1c2181c6-cf60-46dc-b973-c34c8fb53478") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("b72baf1d-38e6-48da-8525-d575005f0165") },
             new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("8968277e-cb34-4f11-aaba-191011f8914a") },
-            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("cf2b71ae-c67f-43e3-9df9-b42573c09488") }
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("cf2b71ae-c67f-43e3-9df9-b42573c09488") },
+            new CategoryBrand { CategoryId = Guid.Parse("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"), BrandId = Guid.Parse("ec2ba326-c452-4a5a-94a2-6a46f0e81282") }
          );
     }
 }
