@@ -49,42 +49,6 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 case "Oppo":
                                     phoneUrl += "#c=42&m=1971&o=13&pi=0";
                                     break;
-                                case "Xiaomi":
-                                    phoneUrl += "#c=42&m=2235&o=13&pi=0";
-                                    break;
-                                case "Vivo":
-                                    phoneUrl += "#c=42&m=2236&o=13&pi=0";
-                                    break;
-                                case "Realme":
-                                    phoneUrl += "#c=42&m=17201&o=13&pi=0";
-                                    break;
-                                case "Honor":
-                                    phoneUrl += "#c=42&m=2283&o=13&pi=0";
-                                    break;
-                                case "TCL":
-                                    phoneUrl += "#c=42&m=1541&o=13&pi=0";
-                                    break;
-                                case "Tecno":
-                                    phoneUrl += "#c=42&m=36747&o=13&pi=0";
-                                    break;
-                                case "Nokia":
-                                    phoneUrl += "#c=42&m=1&o=13&pi=0";
-                                    break;
-                                case "Masstel":
-                                    phoneUrl += "#c=42&m=4832&o=13&pi=0";
-                                    break;
-                                case "Mobell":
-                                    phoneUrl += "#c=42&m=19&o=13&pi=0";
-                                    break;
-                                case "Itel":
-                                    phoneUrl += "#c=42&m=5332&o=13&pi=0";
-                                    break;
-                                case "Viettel":
-                                    phoneUrl += "#c=42&m=1711&o=13&pi=0";
-                                    break;
-                                case "Benco":
-                                    phoneUrl += "#c=42&m=38897&o=13&pi=0";
-                                    break;
                                 default:
                                     continue;
                             }
@@ -111,26 +75,11 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 case "Hp":
                                     laptopUrl += "#c=44&m=122&o=13&pi=0";
                                     break;
-                                case "Asus":
-                                    laptopUrl += "#c=44&m=128&o=13&pi=0";
-                                    break;
-                                case "Acer":
-                                    laptopUrl += "#c=44&m=119&o=13&pi=0";
-                                    break;
                                 case "Lenovo":
                                     laptopUrl += "#c=44&m=120&o=13&pi=0";
                                     break;
                                 case "Dell":
                                     laptopUrl += "#c=44&m=118&o=13&pi=0";
-                                    break;
-                                case "MSI":
-                                    laptopUrl += "#c=44&m=133&o=13&pi=0";
-                                    break;
-                                case "Apple":
-                                    laptopUrl += "#c=44&m=203&o=13&pi=0";
-                                    break;
-                                case "Samsung":
-                                    laptopUrl += "#c=44&m=646&o=13&pi=0";
                                     break;
                                 default:
                                     continue;
@@ -158,98 +107,20 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                             //Case brand có tai nghe hoặc loa
                             switch (brand.Name)
                             {
-                                case "Soul":
-                                    soundUrl += "tai-nghe#c=54&m=37540&o=13&pi=0";
-                                    break;
                                 case "Havit":
                                     soundUrl += "tai-nghe#c=54&m=36948&o=13&pi=0";
-                                    break;
-                                case "Beats":
-                                    soundUrl += "tai-nghe#c=54&m=8090&o=13&pi=0";
-                                    break;
-                                case "Soundcore":
-                                    soundUrl += "tai-nghe#c=54&m=38905&o=13&pi=0";
-                                    break;
-                                case "Zadez":
-                                    soundUrl += "tai-nghe#c=54&m=37633&o=13&pi=0";
                                     break;
                                 case "HyperX":
                                     soundUrl += "tai-nghe#c=54&m=38595&o=13&pi=0";
                                     break;
-                                case "Oppo":
-                                    soundUrl += "tai-nghe#c=54&m=24552&o=13&pi=0";
-                                    break;
-                                case "Shokz":
-                                    soundUrl += "tai-nghe#c=54&m=38243&o=13&pi=0";
-                                    break;
-                                case "Baseus":
-                                    soundUrl += "tai-nghe#c=54&m=37013&o=13&pi=0";
-                                    break;
-                                case "Soundpeats":
-                                    soundUrl += "tai-nghe#c=54&m=24085&o=13&pi=0";
-                                    break;
-                                case "Asus":
-                                    soundUrl += "tai-nghe#c=54&m=9299&o=13&pi=0";
-                                    break;
-                                case "Realme":
-                                    soundUrl += "tai-nghe#c=54&m=20723&o=13&pi=0";
-                                    break;
                                 case "Apple":
                                     soundUrl += "tai-nghe#c=54&m=2660&o=13&pi=0";
-                                    break;
-                                case "Denon":
-                                    soundUrl += "tai-nghe#c=54&m=15238&o=13&pi=0";
-                                    break;
-                                case "Harman Kardon":
-                                    soundUrl += "loa-laptop#c=2162&m=20479&o=13&pi=0";
-                                    break;
-                                case "Microlab":
-                                    soundUrl += "loa-laptop#c=2162&m=19768&o=13&pi=0";
-                                    break;
-                                case "Soundmax":
-                                    soundUrl += "loa-laptop#c=2162&m=38725&o=13&pi=0";
                                     break;
                                 case "LG":
                                     soundUrl += "loa-laptop#c=2162&m=2197&o=13&pi=0";
                                     break;
-                                case "Fenda":
-                                    soundUrl += "loa-laptop#c=2162&m=19758&o=13&pi=0";
-                                    break;
-                                case "Alpha Works":
-                                    soundUrl += "loa-laptop#c=2162&m=38245&o=13&pi=0";
-                                    break;
-                                case "Klipsch":
-                                    soundUrl += "loa-laptop#c=2162&m=24025&o=13&pi=0";
-                                    break;
-                                case "Enkor":
-                                    soundUrl += "loa-laptop#c=2162&m=19759&o=13&pi=0";
-                                    break;
-                                case "Nanomax":
-                                    soundUrl += "loa-laptop#c=2162&m=14901&o=13&pi=0";
-                                    break;
-                                case "Zenbos":
-                                    soundUrl += "loa-laptop#c=2162&m=19070&o=13&pi=0";
-                                    break;
                                 case "Jammy":
                                     soundUrl += "loa-laptop#c=2162&m=19742&o=13&pi=0";
-                                    break;
-                                case "Sumico":
-                                    soundUrl += "loa-laptop#c=2162&m=24319&o=13&pi=0";
-                                    break;
-                                case "Paramax":
-                                    soundUrl += "loa-laptop#c=2162&m=31376&o=13&pi=0";
-                                    break;
-                                case "Dalton":
-                                    soundUrl += "loa-laptop#c=2162&m=11925&o=13&pi=0";
-                                    break;
-                                case "Birici":
-                                    soundUrl += "loa-laptop#c=2162&m=17255&o=13&pi=0";
-                                    break;
-                                case "Mobell":
-                                    soundUrl += "loa-laptop#c=2162&m=16823&o=13&pi=0";
-                                    break;
-                                case "Pasion":
-                                    soundUrl += "loa-laptop#c=2162&m=36790&o=13&pi=0";
                                     break;
                                 default:
                                     isCaseNormal = false;
@@ -279,45 +150,13 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                             //Case brand vừa có tai nghe vừa có loa
                             switch (brand.Name)
                             {
-                                case "JBL":
-                                    earPhoneUrl += "tai-nghe#c=54&m=5392&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=1176&o=13&pi=0";
-                                    break;
-                                case "AVA":
-                                    earPhoneUrl += "tai-nghe#c=54&m=2987&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=1688&o=13&pi=0";
-                                    break;
-                                case "Rezo":
-                                    earPhoneUrl += "tai-nghe#c=54&m=29872&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=36826&o=13&pi=0";
-                                    break;
-                                case "Sony":
-                                    earPhoneUrl += "tai-nghe#c=54&m=1842&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=2193&o=13&pi=0";
-                                    break;
                                 case "Marshall":
                                     earPhoneUrl += "tai-nghe#c=54&m=14583&o=13&pi=0";
                                     loudspeakerUrl += "loa-laptop#c=2162&m=1454&o=13&pi=0";
                                     break;
-                                case "Sounarc":
-                                    earPhoneUrl += "tai-nghe#c=54&m=38726&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=38719&o=13&pi=0";
-                                    break;
-                                case "Monster":
-                                    earPhoneUrl += "tai-nghe#c=54&m=36400&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=36396&o=13&pi=0";
-                                    break;
                                 case "Xiaomi":
                                     earPhoneUrl += "tai-nghe#c=54&m=7710&o=13&pi=0";
                                     loudspeakerUrl += "loa-laptop#c=2162&m=38567&o=13&pi=0";
-                                    break;
-                                case "Mozard":
-                                    earPhoneUrl += "tai-nghe#c=54&m=8157&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=19762&o=13&pi=0";
-                                    break;
-                                case "Samsung":
-                                    earPhoneUrl += "tai-nghe#c=54&m=2391&o=13&pi=0";
-                                    loudspeakerUrl += "loa-laptop#c=2162&m=2196&o=13&pi=0";
                                     break;
                                 default:
                                     continue;
