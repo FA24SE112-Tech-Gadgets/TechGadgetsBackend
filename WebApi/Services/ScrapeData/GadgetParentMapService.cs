@@ -31,6 +31,7 @@ public class GadgetParentMapService(AppDbContext context)
                     {
                         var score = Fuzz.Ratio(gadget.Name, gadgetOther.Name);
                         Console.WriteLine($"Gad 1: {gadget.Name}, Gad 2: {gadgetOther.Name}. Score: {score}");
+                        bool isWithinRange = IsPriceWithinPercentageDifference(gadget.Price, gadgetOther.Price, 0.15);
                         int targetScore = 0;
                         switch (cate.Name)
                         {
@@ -90,7 +91,7 @@ public class GadgetParentMapService(AppDbContext context)
                                 targetScore = 100;
                                 break;
                         }
-                        if (score >= targetScore)
+                        if (score >= targetScore && isWithinRange)
                         {
                             gadgetOther.ParentId = gadget.Id;
                             await context.SaveChangesAsync();
@@ -101,7 +102,7 @@ public class GadgetParentMapService(AppDbContext context)
             }
         }
     }
-    public static string RemoveCommonWords(string input)
+    private static string RemoveCommonWords(string input)
     {
         string[] commonWords = { "Bluetooth", "cao cấp", "không dây", "chính hãng", "Chụp tai", "Nhét tai", "Choàng đầu", "True Wireless", ".", "Có Dây", "Phụ kiện nhập khẩu", "Chủ Động Khử Tiếng Ồn", "Hộp sạc dây", "cổng USB C", "USB-C", "(chống ồn)" };
         foreach (var word in commonWords)
@@ -109,5 +110,21 @@ public class GadgetParentMapService(AppDbContext context)
             input = input.Replace(word, "", StringComparison.OrdinalIgnoreCase).Trim();
         }
         return input;
+    }
+
+    public bool IsPriceWithinPercentageDifference(decimal? price1, decimal? price2, double percentage)
+    {
+        // Check if either of the prices is null
+        if (!price1.HasValue || !price2.HasValue)
+            return false;
+
+        // Calculate the absolute difference between the two prices
+        var priceDifference = Math.Abs(price1.Value - price2.Value);
+
+        // Calculate the maximum allowable difference based on the percentage (in your case 0.1%)
+        var maxAllowedDifference = Math.Max(price1.Value, price2.Value) * (decimal)(percentage / 100);
+
+        // Check if the actual difference is within the allowable range
+        return priceDifference <= maxAllowedDifference;
     }
 }
