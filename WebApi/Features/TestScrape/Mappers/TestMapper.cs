@@ -1,4 +1,5 @@
-﻿using WebApi.Data.Entities;
+﻿using WebApi.Common.Paginations;
+using WebApi.Data.Entities;
 using WebApi.Features.TestScrape.Models;
 
 namespace WebApi.Features.TestScrape.Mappers;
@@ -107,26 +108,6 @@ public static class TestMapper
                         Index = g.Index,
                         Type = g.Type
                     });
-                }
-            }
-
-            return responseList;
-        }
-
-        return null; // Return null if the input list is null or empty
-    }
-
-    public static ICollection<GadgetResponseTest>? ToGadgetListResponse(this ICollection<Gadget>? listG)
-    {
-        if (listG != null && listG.Any()) // Check if the list is not null and not empty
-        {
-            var responseList = new List<GadgetResponseTest>();
-
-            foreach (var gadget in listG)
-            {
-                if (gadget != null)
-                {
-                    responseList.Add(gadget.ToGadgetResponse()!);
                 }
             }
 
