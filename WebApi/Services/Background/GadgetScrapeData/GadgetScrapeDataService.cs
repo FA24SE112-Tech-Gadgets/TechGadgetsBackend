@@ -22,7 +22,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 await scrapeFPTShopDataService.ScrapeFPTShopGadget();
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(150), stoppingToken);
         }
     }
 
