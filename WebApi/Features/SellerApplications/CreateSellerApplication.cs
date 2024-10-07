@@ -7,6 +7,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Mappers;
+using WebApi.Features.Users.Models;
 using WebApi.Services.Auth;
 using WebApi.Services.Storage;
 
@@ -142,6 +143,10 @@ public class CreateSellerApplication : ControllerBase
                             "<br>&nbsp; - Mã số thuế được duplicate(cho đơn giản) và format được quy định trong Business Rules." +
                             "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt và không được để trống."
     )]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromForm] Request request, AppDbContext context, GoogleStorageService storageService, [FromServices] CurrentUserService currentUserService)
     {
         Guid userId = await currentUserService.GetCurrentUserId();
