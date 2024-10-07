@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Runtime.Intrinsics.X86;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Embedding;
@@ -123,7 +122,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                     }
                     if (!keys.IsNullOrEmpty())
                     {
-                        var gadgetVector = await embeddingService.GetEmbedding(keys.Trim());
+                        var gadgetVector = await embeddingService.GetEmbedding(existGadget.Name.Trim().ToLower() + " " + keys.Trim());
                         existGadget.Vector = gadgetVector;
                     }
                 }
@@ -148,7 +147,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                     }
                     if (!keys.IsNullOrEmpty())
                     {
-                        var gadgetVector = await embeddingService.GetEmbedding(keys.Trim());
+                        var gadgetVector = await embeddingService.GetEmbedding(existGadget.Name.Trim().ToLower() + " " + keys.Trim());
                         existGadget.Vector = gadgetVector;
                     }
                 }
@@ -186,7 +185,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                     }
                     if (!keys.IsNullOrEmpty())
                     {
-                        var gadgetVector = await embeddingService.GetEmbedding(keys.Trim());
+                        var gadgetVector = await embeddingService.GetEmbedding(gadget.Name.Trim().ToLower() + " " + keys.Trim());
                         gadget.Vector = gadgetVector;
                     }
                 } else if (gadget.SpecificationKeys != null && gadget.SpecificationKeys.Count > 0)
@@ -210,7 +209,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                     }
                     if (!keys.IsNullOrEmpty())
                     {
-                        var gadgetVector = await embeddingService.GetEmbedding(keys.Trim());
+                        var gadgetVector = await embeddingService.GetEmbedding(gadget.Name.Trim().ToLower() + " " + keys.Trim());
                         gadget.Vector = gadgetVector;
                     }
                 }
