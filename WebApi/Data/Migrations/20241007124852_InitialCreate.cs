@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Pgvector;
 
 #nullable disable
 
@@ -13,6 +14,9 @@ namespace WebApi.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:vector", ",,");
+
             migrationBuilder.CreateTable(
                 name: "BannerConfigurations",
                 columns: table => new
@@ -266,7 +270,6 @@ namespace WebApi.Data.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: true),
                     ShopName = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "text", nullable: false),
                     ShopAddress = table.Column<string>(type: "text", nullable: false),
                     BusinessModel = table.Column<string>(type: "text", nullable: false),
                     BusinessRegistrationCertificateUrl = table.Column<string>(type: "text", nullable: true),
@@ -295,7 +298,6 @@ namespace WebApi.Data.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyName = table.Column<string>(type: "text", nullable: true),
                     ShopName = table.Column<string>(type: "text", nullable: false),
-                    ShippingAddress = table.Column<string>(type: "text", nullable: false),
                     ShopAddress = table.Column<string>(type: "text", nullable: false),
                     BusinessModel = table.Column<string>(type: "text", nullable: false),
                     BusinessRegistrationCertificateUrl = table.Column<string>(type: "text", nullable: true),
@@ -497,8 +499,7 @@ namespace WebApi.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SellerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    BrandId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: true),
                     ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
@@ -507,7 +508,8 @@ namespace WebApi.Data.Migrations
                     ShopId = table.Column<Guid>(type: "uuid", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Vector = table.Column<Vector>(type: "vector(384)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -516,18 +518,14 @@ namespace WebApi.Data.Migrations
                         name: "FK_Gadgets_Brands_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brands",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Gadgets_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Gadgets_Gadgets_ParentId",
-                        column: x => x.ParentId,
-                        principalTable: "Gadgets",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Gadgets_Sellers_SellerId",
                         column: x => x.SellerId,
@@ -1148,11 +1146,11 @@ namespace WebApi.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "Sellers",
-                columns: new[] { "Id", "BusinessModel", "BusinessRegistrationCertificateUrl", "CompanyName", "PhoneNumber", "ShippingAddress", "ShopAddress", "ShopName", "TaxCode", "UserId" },
+                columns: new[] { "Id", "BusinessModel", "BusinessRegistrationCertificateUrl", "CompanyName", "PhoneNumber", "ShopAddress", "ShopName", "TaxCode", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("9488d26a-de33-4bf6-b038-be5d1d641940"), "Personal", null, null, "0877094491", "516 Đ. Lê Văn Sỹ, P. 14, Q3, TP. HCM", "37 Đ. Lê Quý Đôn, P. 7, Q3, TP. HCM", "Cửa hàng Thuỳ Uyên", "1779231738", new Guid("f56cc7e6-725c-4090-83b8-77f5ce6a53c8") },
-                    { new Guid("cd83c20c-dc5c-4115-87b2-a218e6584301"), "Company", "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/BusinessRegistrationUrl/Seller2.jpg", "Công Ty Nhật Hạ", "0362961803", "76 Đ. Hoa Bằng, Q. Cầu Giấy, TP. Hà Nội", "128 Đ. Nguyễn Phong Sắc, Q. Cầu Giấy, TP. Hà Nội", "Cửa hàng Nhật Hạ", "4067001394", new Guid("0a4590ef-a843-4489-94ef-762259b78688") }
+                    { new Guid("9488d26a-de33-4bf6-b038-be5d1d641940"), "Personal", null, null, "0877094491", "37 Đ. Lê Quý Đôn, P. 7, Q3, TP. HCM", "Cửa hàng Thuỳ Uyên", "1779231738", new Guid("f56cc7e6-725c-4090-83b8-77f5ce6a53c8") },
+                    { new Guid("cd83c20c-dc5c-4115-87b2-a218e6584301"), "Company", "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/BusinessRegistrationUrl/Seller2.jpg", "Công Ty Nhật Hạ", "0362961803", "128 Đ. Nguyễn Phong Sắc, Q. Cầu Giấy, TP. Hà Nội", "Cửa hàng Nhật Hạ", "4067001394", new Guid("0a4590ef-a843-4489-94ef-762259b78688") }
                 });
 
             migrationBuilder.InsertData(
@@ -1395,11 +1393,6 @@ namespace WebApi.Data.Migrations
                 name: "IX_Gadgets_CategoryId",
                 table: "Gadgets",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Gadgets_ParentId",
-                table: "Gadgets",
-                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Gadgets_SellerId",

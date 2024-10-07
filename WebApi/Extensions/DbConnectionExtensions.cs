@@ -9,7 +9,7 @@ public static class DbConnectionExtensions
     {
         services.AddDbContext<AppDbContext>(options =>
         {
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"), o => o.UseVector())
                     .EnableSensitiveDataLogging()
                     .EnableDetailedErrors();
         });
