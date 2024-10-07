@@ -13,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241007085551_InitialCreate")]
+    [Migration("20241007124852_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -3000,10 +3000,6 @@ namespace WebApi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("ShopAddress")
                         .IsRequired()
                         .HasColumnType("text");
@@ -3032,7 +3028,6 @@ namespace WebApi.Data.Migrations
                             Id = new Guid("9488d26a-de33-4bf6-b038-be5d1d641940"),
                             BusinessModel = "Personal",
                             PhoneNumber = "0877094491",
-                            ShippingAddress = "516 Đ. Lê Văn Sỹ, P. 14, Q3, TP. HCM",
                             ShopAddress = "37 Đ. Lê Quý Đôn, P. 7, Q3, TP. HCM",
                             ShopName = "Cửa hàng Thuỳ Uyên",
                             TaxCode = "1779231738",
@@ -3045,7 +3040,6 @@ namespace WebApi.Data.Migrations
                             BusinessRegistrationCertificateUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/BusinessRegistrationUrl/Seller2.jpg",
                             CompanyName = "Công Ty Nhật Hạ",
                             PhoneNumber = "0362961803",
-                            ShippingAddress = "76 Đ. Hoa Bằng, Q. Cầu Giấy, TP. Hà Nội",
                             ShopAddress = "128 Đ. Nguyễn Phong Sắc, Q. Cầu Giấy, TP. Hà Nội",
                             ShopName = "Cửa hàng Nhật Hạ",
                             TaxCode = "4067001394",
@@ -3077,10 +3071,6 @@ namespace WebApi.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("RejectReason")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ShopAddress")

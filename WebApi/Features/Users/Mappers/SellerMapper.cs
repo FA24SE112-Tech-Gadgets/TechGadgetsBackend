@@ -16,7 +16,6 @@ public static class SellerMapper
                 BusinessModel = seller.BusinessModel,
                 BusinessRegistrationCertificateUrl = seller.BusinessRegistrationCertificateUrl,
                 CompanyName = seller.CompanyName,
-                ShippingAddress = seller.ShippingAddress,
                 ShopAddress = seller.ShopAddress,
                 ShopName = seller.ShopName,
                 TaxCode = seller.TaxCode,
