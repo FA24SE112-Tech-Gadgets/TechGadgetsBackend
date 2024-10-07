@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Pgvector;
 
 #nullable disable
 
@@ -13,6 +14,9 @@ namespace WebApi.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:vector", ",,");
+
             migrationBuilder.CreateTable(
                 name: "BannerConfigurations",
                 columns: table => new
@@ -497,8 +501,7 @@ namespace WebApi.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SellerId = table.Column<Guid>(type: "uuid", nullable: true),
-                    BrandId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ParentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    BrandId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: true),
                     ThumbnailUrl = table.Column<string>(type: "text", nullable: true),
@@ -507,7 +510,8 @@ namespace WebApi.Data.Migrations
                     ShopId = table.Column<Guid>(type: "uuid", nullable: true),
                     Status = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Vector = table.Column<Vector>(type: "vector(384)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -516,18 +520,14 @@ namespace WebApi.Data.Migrations
                         name: "FK_Gadgets_Brands_BrandId",
                         column: x => x.BrandId,
                         principalTable: "Brands",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Gadgets_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Gadgets_Gadgets_ParentId",
-                        column: x => x.ParentId,
-                        principalTable: "Gadgets",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Gadgets_Sellers_SellerId",
                         column: x => x.SellerId,
@@ -1395,11 +1395,6 @@ namespace WebApi.Data.Migrations
                 name: "IX_Gadgets_CategoryId",
                 table: "Gadgets",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Gadgets_ParentId",
-                table: "Gadgets",
-                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Gadgets_SellerId",

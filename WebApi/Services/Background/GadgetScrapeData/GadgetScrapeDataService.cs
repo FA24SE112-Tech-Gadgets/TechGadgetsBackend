@@ -18,13 +18,11 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var scrapeTGDDDataService = scope.ServiceProvider.GetRequiredService<ScrapeTGDDDataService>();
                 var scrapeFPTShopDataService = scope.ServiceProvider.GetRequiredService<ScrapeFPTShopDataService>();
-                var gadgetParentMapService = scope.ServiceProvider.GetRequiredService<GadgetParentMapService>();
-                //await scrapeTGDDDataService.ScrapeTGDDGadget();
-                //await scrapeFPTShopDataService.ScrapeFPTShopGadget();
-                await gadgetParentMapService.MapGadget();
+                await scrapeTGDDDataService.ScrapeTGDDGadget();
+                await scrapeFPTShopDataService.ScrapeFPTShopGadget();
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(150), stoppingToken);
+            await Task.Delay(TimeSpan.FromHours(150), stoppingToken);
         }
     }
 

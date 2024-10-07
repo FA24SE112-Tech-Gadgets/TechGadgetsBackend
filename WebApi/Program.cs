@@ -12,6 +12,7 @@ builder.Services.AddSwaggerServices();
 builder.Services.AddBackgroundServices();
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 builder.Services.AddConfigureSettings(builder.Configuration);
 builder.Services.AddDbContextConfiguration(builder.Configuration);
 builder.Services.AddServices();

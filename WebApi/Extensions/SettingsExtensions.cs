@@ -14,5 +14,6 @@ public static class SettingsExtensions
         services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.Section));
         services.Configure<RabbitMQSettings>(configuration.GetSection(RabbitMQSettings.Section));
         services.Configure<ScrapeDataSettings>(configuration.GetSection(ScrapeDataSettings.Section));
+        services.Configure<EmbeddingServerSettings>(configuration.GetSection(EmbeddingServerSettings.Section));
     }
 }
