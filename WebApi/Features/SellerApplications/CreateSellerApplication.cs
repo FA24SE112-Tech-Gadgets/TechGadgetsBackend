@@ -13,8 +13,8 @@ using WebApi.Services.Storage;
 namespace WebApi.Features.SellerApplications;
 
 [ApiController]
-//[JwtValidation]
-//[RolesFilter(Role.Customer)]
+[JwtValidation]
+[RolesFilter(Role.Seller)]
 [RequestValidation<Request>]
 public class CreateSellerApplication : ControllerBase
 {
@@ -26,6 +26,7 @@ public class CreateSellerApplication : ControllerBase
         public BusinessModel BusinnessModel { get; set; }
         public IFormFile? BusinessRegistrationCertificate { get; set; }
         public string TaxCode { get; set; } = default!;
+        public string PhoneNumber { get; set; } = default!;
         public ICollection<string> BillingMails { get; set; } = [];
     }
 
@@ -46,6 +47,13 @@ public class CreateSellerApplication : ControllerBase
                 .WithMessage("Mã số thuế không được để trống")
                 .Must(BeValidTaxCode)
                 .WithMessage("Mã số thuế không hợp lệ.");
+            RuleFor(sp => sp.PhoneNumber)
+                .NotEmpty()
+                .WithMessage("Số điện thoại không được để trống")
+                .Length(10, 11)
+                .WithMessage("Số điện thoại phải có độ dài 10 hoặc 11 số")
+                .Matches("^[0-9]*$")
+                .WithMessage("Số điện thoại không được chứa chữ cái hoặc ký tự đặc biệt.");
             RuleFor(sp => sp.ShopName)
                 .NotEmpty()
                 .WithMessage("Tên cửa hàng không được để trống");
@@ -55,6 +63,13 @@ public class CreateSellerApplication : ControllerBase
             RuleForEach(sp => sp.BillingMails)
                 .EmailAddress()
                 .WithMessage("Email {PropertyValue} không hợp lệ.");
+            RuleFor(sp => sp.BillingMails)
+                .Must(HaveUniqueEmails)
+                .WithMessage("Danh sách email không được có phần tử trùng lặp.");
+        }
+        private static bool HaveUniqueEmails(ICollection<string> billingMails)
+        {
+            return billingMails?.Distinct().Count() == billingMails?.Count;
         }
         private static bool RequiresCompanyName(BusinessModel businessModel)
         {
@@ -124,7 +139,8 @@ public class CreateSellerApplication : ControllerBase
         Summary = "Create Seller Application",
         Description = "API is for register seller. Note:" +
                             "<br>&nbsp; - Cá nhân(Personal) thì không cần truyền CompanyName và BusinessRegistrationCertificate." +
-                            "<br>&nbsp; - Mã số thuế được duplicate(cho đơn giản) và format được quy định trong Business Rules."
+                            "<br>&nbsp; - Mã số thuế được duplicate(cho đơn giản) và format được quy định trong Business Rules." +
+                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt và không được để trống."
     )]
     public async Task<IActionResult> Handler([FromForm] Request request, AppDbContext context, GoogleStorageService storageService, [FromServices] CurrentUserService currentUserService)
     {
@@ -164,15 +180,16 @@ public class CreateSellerApplication : ControllerBase
         {
             UserId = userId,
             CompanyName = request.CompanyName,
-            TaxCode = request.TaxCode,
             ShopName = request.ShopName,
             ShopAddress = request.ShopAddress,
-            BillingMailApplications = request.BillingMails.ToBillingMailApplication()!,
-            Status = SellerApplicationStatus.Pending,
             BusinessModel = request.BusinnessModel,
             BusinessRegistrationCertificateUrl = businessRegistrationCertificateUrl,
+            TaxCode = request.TaxCode,
+            PhoneNumber = request.PhoneNumber,
+            Status = SellerApplicationStatus.Pending,
             CreatedAt = DateTime.UtcNow,
-        };
+            BillingMailApplications = request.BillingMails.ToBillingMailApplication()!,
+        }!;
 
         context.SellerApplications.Add(sellerApplication);
         await context.SaveChangesAsync();
