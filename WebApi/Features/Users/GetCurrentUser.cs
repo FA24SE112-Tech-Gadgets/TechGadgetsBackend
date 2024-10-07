@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Features.Users.Mappers;
 using WebApi.Features.Users.Models;
@@ -15,6 +16,9 @@ public class GetCurrentUserController : ControllerBase
     [Tags("Users")]
     [SwaggerOperation(Summary = "Get Current User", Description = "This API is for getting the current authenticated user")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromServices] CurrentUserService currentUserService)
     {
         var user = await currentUserService.GetCurrentUser();

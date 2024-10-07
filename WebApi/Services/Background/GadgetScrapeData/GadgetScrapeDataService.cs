@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.Embedding;
 using WebApi.Services.ScrapeData;
 
 namespace WebApi.Services.Background.GadgetScrapeData;
@@ -28,7 +30,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
         }
     }
 
-    public async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory, Shop shop, AppDbContext context)
+    public async Task AddGadgetToDB(List<Gadget> gadgets, Brand relatedBrand, Category relatedCategory, Shop shop, AppDbContext context, EmbeddingService embeddingService)
     {
         foreach (var gadget in gadgets)
         {
@@ -56,6 +58,16 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 // Xóa tất cả Specifications liên quan đến Gadget
                 context.Specifications.RemoveRange(existGadget.Specifications);
 
+                // Lặp qua các SpecificationKey của Gadget
+                foreach (var specificationKey in existGadget.SpecificationKeys)
+                {
+                    // Xóa tất cả SpecificationValues liên quan đến SpecificationKey
+                    context.SpecificationValues.RemoveRange(specificationKey.SpecificationValues);
+                }
+                
+                // Xóa tất cả SpecificationKeys liên quan đến Gadget
+                context.SpecificationKeys.RemoveRange(existGadget.SpecificationKeys);
+
                 // Xóa tất cả GadgetDescriptions liên quan đến Gadget
                 context.GadgetDescriptions.RemoveRange(existGadget.GadgetDescriptions);
 
@@ -79,7 +91,68 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                     existGadget.Specifications = gadget.Specifications;
                     context.Specifications.AddRange(existGadget.Specifications);
                 }
+
+                if (gadget.SpecificationKeys != null)
+                {
+                    existGadget.SpecificationKeys = gadget.SpecificationKeys;
+                    context.SpecificationKeys.AddRange(existGadget.SpecificationKeys);
+                }
+
                 existGadget.UpdatedAt = DateTime.UtcNow;
+
+                if (existGadget.Specifications != null && existGadget.Specifications.Count > 0)
+                {
+                    string keys = "";
+                    foreach (var spe in existGadget.Specifications)
+                    {
+                        var gadgetSpecificationKeys = spe.SpecificationKeys;
+                        foreach (var key in gadgetSpecificationKeys)
+                        {
+                            string values = "";
+                            foreach (var value in key.SpecificationValues)
+                            {
+                                if (!value.Value.IsNullOrEmpty())
+                                {
+                                    values += (" " + value.Value.Trim().ToLower());
+                                }
+                            }
+                            if (!key.Name.IsNullOrEmpty())
+                            {
+                                keys += (" " + key.Name.Trim().ToLower() + values);
+                            }
+                        }
+                    }
+                    if (!keys.IsNullOrEmpty())
+                    {
+                        var gadgetVector = await embeddingService.GetEmbedding(existGadget.Name.Trim().ToLower() + " " + keys.Trim());
+                        existGadget.Vector = gadgetVector;
+                    }
+                }
+                else if (existGadget.SpecificationKeys != null && existGadget.SpecificationKeys.Count > 0)
+                {
+                    var gadgetSpecificationKeys = existGadget.SpecificationKeys;
+                    string keys = "";
+                    foreach (var key in gadgetSpecificationKeys)
+                    {
+                        string values = "";
+                        foreach (var value in key.SpecificationValues)
+                        {
+                            if (!value.Value.IsNullOrEmpty())
+                            {
+                                values += (" " + value.Value.Trim().ToLower());
+                            }
+                        }
+                        if (!key.Name.IsNullOrEmpty())
+                        {
+                            keys += (" " + key.Name.Trim().ToLower() + values);
+                        }
+                    }
+                    if (!keys.IsNullOrEmpty())
+                    {
+                        var gadgetVector = await embeddingService.GetEmbedding(existGadget.Name.Trim().ToLower() + " " + keys.Trim());
+                        existGadget.Vector = gadgetVector;
+                    }
+                }
             }
             else
             {
@@ -90,9 +163,65 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 gadget.UpdatedAt = DateTime.UtcNow;
                 gadget.ShopId = shop.Id;
 
-                await context.Gadgets.AddAsync(gadget);
+                if (gadget.Specifications != null && gadget.Specifications.Count > 0)
+                {
+                    string keys = "";
+                    foreach (var spe in gadget.Specifications)
+                    {
+                        var gadgetSpecificationKeys = spe.SpecificationKeys;
+                        foreach (var key in gadgetSpecificationKeys)
+                        {
+                            string values = "";
+                            foreach (var value in key.SpecificationValues)
+                            {
+                                if (!value.Value.IsNullOrEmpty())
+                                {
+                                    values += (" " + value.Value.Trim().ToLower());
+                                }
+                            }
+                            if (!key.Name.IsNullOrEmpty())
+                            {
+                                keys += (" " + key.Name.Trim().ToLower() + values); 
+                            }
+                        }
+                    }
+                    if (!keys.IsNullOrEmpty())
+                    {
+                        var gadgetVector = await embeddingService.GetEmbedding(gadget.Name.Trim().ToLower() + " " + keys.Trim());
+                        gadget.Vector = gadgetVector;
+                    }
+                } else if (gadget.SpecificationKeys != null && gadget.SpecificationKeys.Count > 0)
+                {
+                    var gadgetSpecificationKeys = gadget.SpecificationKeys;
+                    string keys = "";
+                    foreach (var key in gadgetSpecificationKeys)
+                    {
+                        string values = "";
+                        foreach (var value in key.SpecificationValues)
+                        {
+                            if (!value.Value.IsNullOrEmpty())
+                            {
+                                values += (" " + value.Value.Trim().ToLower());
+                            }
+                        }
+                        if (!key.Name.IsNullOrEmpty())
+                        {
+                            keys += (" " + key.Name.Trim().ToLower() + values);
+                        }
+                    }
+                    if (!keys.IsNullOrEmpty())
+                    {
+                        var gadgetVector = await embeddingService.GetEmbedding(gadget.Name.Trim().ToLower() + " " + keys.Trim());
+                        gadget.Vector = gadgetVector;
+                    }
+                }
+
+                if (gadget.Vector != null)
+                {
+                    await context.Gadgets.AddAsync(gadget);
+                }
             }
-            
+
             await context.SaveChangesAsync();
         }
     }

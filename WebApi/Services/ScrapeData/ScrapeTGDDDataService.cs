@@ -7,13 +7,15 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Background.GadgetScrapeData;
 using WebApi.Services.Background.GadgetScrapeData.Models;
+using WebApi.Services.Embedding;
 
 namespace WebApi.Services.ScrapeData;
 
-public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context, GadgetScrapeDataService gadgetScrapeDataService)
+public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettings, AppDbContext context, GadgetScrapeDataService gadgetScrapeDataService, EmbeddingService embeddingService)
 {
     private readonly ScrapeDataSettings _scrapeDataSettings = scrapeDataSettings.Value;
     private readonly GadgetScrapeDataService _gadgetScrapeDataService = gadgetScrapeDataService;
+    private readonly EmbeddingService _embeddingService = embeddingService;
     public async Task ScrapeTGDDGadget()
     {
         var tgddShop = await context.Shops
@@ -99,7 +101,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Điện thoại {brand.Name}: {ex}");
                                 continue;
                             }
-                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context, _embeddingService);
                         }
                         break;
                     case "Laptop":
@@ -146,7 +148,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                 Console.WriteLine($"Có lỗi xảy ra trong quá trình scrape Laptop {brand.Name}: {ex}");
                                 continue;
                             }
-                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context);
+                            await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context, _embeddingService);
                         }
                         break;
                     case "Thiết bị âm thanh":
@@ -269,7 +271,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                     continue;
                                 }
 
-                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context);
+                                await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context, _embeddingService);
                                 continue;
                             }
                             List<string> listSoundUrls = new List<string>()!;
@@ -340,7 +342,7 @@ public class ScrapeTGDDDataService(IOptions<ScrapeDataSettings> scrapeDataSettin
                                         continue;
                                     }
 
-                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context);
+                                    await _gadgetScrapeDataService.AddGadgetToDB(listGadgets, brand, cateWithBrands, tgddShop, context, _embeddingService);
                                 }
                             }
                         }
