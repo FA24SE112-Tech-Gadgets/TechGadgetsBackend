@@ -64,6 +64,7 @@ public class RejectSellerApplication : ControllerBase
                 .Build();
         }
 
+        sellerApplication.RejectReason = request.RejectReason;
         sellerApplication.Status = SellerApplicationStatus.Rejected;
 
         await context.SaveChangesAsync();
