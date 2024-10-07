@@ -6,28 +6,41 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.SellerApplications.Mappers;
-using WebApi.Services.Auth;
-using WebApi.Services.Storage;
 
 namespace WebApi.Features.SellerApplications;
 
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Manager)]
-public class ApproveSellerApplication : ControllerBase
+[RequestValidation<Request>]
+public class RejectSellerApplication : ControllerBase
 {
-    [HttpPut("seller-applications/{sellerApplicationId}/approve")]
+    public class Request
+    {
+        public string RejectReason { get; set; } = default!;
+    }
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(sp => sp.RejectReason)
+                .NotEmpty()
+                .WithMessage("Lý do từ chối không được để trống");
+        }
+    }
+
+    [HttpPut("seller-applications/{sellerApplicationId}/reject")]
     [Tags("Seller Applications")]
     [SwaggerOperation(
-        Summary = "Approve Seller Application",
-        Description = "API is for Manager approve seller application."
+        Summary = "Reject Seller Application",
+        Description = "API is for Manager reject seller application."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context)
+    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context, [FromBody] Request request)
     {
         var sellerApplication = await context.SellerApplications.FirstOrDefaultAsync(sa => sa.Id == sellerApplicationId) ?? throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
@@ -51,17 +64,8 @@ public class ApproveSellerApplication : ControllerBase
                 .Build();
         }
 
-        sellerApplication.Status = SellerApplicationStatus.Approved;
+        sellerApplication.Status = SellerApplicationStatus.Rejected;
 
-        Seller seller = sellerApplication.ToSeller()!;
-        if (seller == null)
-        {
-            throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WES_00)
-                .AddReason("sellerApplication", "Có lỗi xảy ra trong quá trình duyệt đơn.")
-                .Build();
-        }
-        await context.Sellers.AddAsync(seller);
         await context.SaveChangesAsync();
 
         return Ok();
