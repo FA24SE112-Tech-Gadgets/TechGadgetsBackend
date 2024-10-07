@@ -15,7 +15,7 @@ namespace WebApi.Features.SellerApplications;
 [RequestValidation<Request>]
 public class RejectSellerApplication : ControllerBase
 {
-    public class Request
+    public new class Request
     {
         public string RejectReason { get; set; } = default!;
     }
