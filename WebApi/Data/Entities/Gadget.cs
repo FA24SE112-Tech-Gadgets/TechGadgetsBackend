@@ -1,11 +1,13 @@
-﻿namespace WebApi.Data.Entities;
+﻿using Pgvector;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebApi.Data.Entities;
 
 public class Gadget
 {
     public Guid Id { get; set; }
     public Guid? SellerId { get; set; }
-    public Guid? BrandId { get; set; }
-    public Guid? ParentId { get; set; }
+    public Guid BrandId { get; set; }
     public string Name { get; set; } = default!;
     public int? Price { get; set; }
     public string? ThumbnailUrl { get; set; }
@@ -16,12 +18,13 @@ public class Gadget
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    [Column(TypeName = "vector(384)")]
+    public Vector Vector { get; set; } = default!;
+
     public Seller? Seller { get; set; }
-    public Gadget? Parent { get; set; }
-    public Brand? Brand { get; set; }
+    public Brand Brand { get; set; } = default!;
     public Shop? Shop { get; set; }
     public Category Category { get; set; } = default!;
-    public ICollection<Gadget> Children { get; set; } = [];
     public ICollection<GadgetDescription> GadgetDescriptions { get; set; } = [];
     public ICollection<Specification> Specifications { get; set; } = [];
     public ICollection<SpecificationKey> SpecificationKeys { get; set; } = [];
