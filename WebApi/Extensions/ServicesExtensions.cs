@@ -1,5 +1,6 @@
 ﻿using WebApi.Services.Auth;
 using WebApi.Services.Background.GadgetScrapeData;
+using WebApi.Services.Embedding;
 using WebApi.Services.Mail;
 using WebApi.Services.Payment;
 using WebApi.Services.ScrapeData;
@@ -25,5 +26,6 @@ public static class ServicesExtensions
         services.AddScoped<ScrapeTGDDDataService>();
         services.AddScoped<ScrapeFPTShopDataService>();
         services.AddScoped<GadgetParentMapService>();
+        services.AddScoped<EmbeddingService>();
     }
 }

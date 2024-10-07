@@ -23,7 +23,7 @@ public class GadgetParentMapService(AppDbContext context)
                 {
                     //Lấy gadget không phải shop hiện tại, chung category, chung brand và chưa có cha
                     var gadgetsInOtherShops = await context.Gadgets
-                        .Where(g => (g.ShopId != shop.Id && g.CategoryId == cate.Id && g.BrandId == gadget.BrandId && g.ParentId == null))
+                        .Where(g => g.ShopId != shop.Id && g.CategoryId == cate.Id && g.BrandId == gadget.BrandId)
                         .Include(g => g.Shop)
                         .Include(g => g.Brand)
                         .ToListAsync();
@@ -93,7 +93,7 @@ public class GadgetParentMapService(AppDbContext context)
                         }
                         if (score >= targetScore && isWithinRange)
                         {
-                            gadgetOther.ParentId = gadget.Id;
+                            //gadgetOther.ParentId = gadget.Id;
                             await context.SaveChangesAsync();
                             Console.WriteLine($"Match!");
                         }

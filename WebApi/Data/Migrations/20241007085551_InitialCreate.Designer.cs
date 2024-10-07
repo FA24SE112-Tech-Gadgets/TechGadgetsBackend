@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Pgvector;
 using WebApi.Data;
 
 #nullable disable
@@ -12,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241005132243_InitialCreate")]
+    [Migration("20241007085551_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,6 +24,7 @@ namespace WebApi.Data.Migrations
                 .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "vector");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("WebApi.Data.Entities.Admin", b =>
@@ -1691,7 +1693,7 @@ namespace WebApi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("BrandId")
+                    b.Property<Guid>("BrandId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CategoryId")
@@ -1703,9 +1705,6 @@ namespace WebApi.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("uuid");
 
                     b.Property<int?>("Price")
                         .HasColumnType("integer");
@@ -1729,13 +1728,15 @@ namespace WebApi.Data.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("text");
 
+                    b.Property<Vector>("Vector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("ParentId");
 
                     b.HasIndex("SellerId");
 
@@ -3589,17 +3590,15 @@ namespace WebApi.Data.Migrations
                 {
                     b.HasOne("WebApi.Data.Entities.Brand", "Brand")
                         .WithMany("Gadgets")
-                        .HasForeignKey("BrandId");
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("WebApi.Data.Entities.Category", "Category")
                         .WithMany("Gadgets")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
 
                     b.HasOne("WebApi.Data.Entities.Seller", "Seller")
                         .WithMany("Gadgets")
@@ -3612,8 +3611,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
-
-                    b.Navigation("Parent");
 
                     b.Navigation("Seller");
 
@@ -3891,8 +3888,6 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.Gadget", b =>
                 {
-                    b.Navigation("Children");
-
                     b.Navigation("FavoriteGadgets");
 
                     b.Navigation("GadgetDescriptions");
