@@ -18,8 +18,10 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 var scrapeTGDDDataService = scope.ServiceProvider.GetRequiredService<ScrapeTGDDDataService>();
                 var scrapeFPTShopDataService = scope.ServiceProvider.GetRequiredService<ScrapeFPTShopDataService>();
-                await scrapeTGDDDataService.ScrapeTGDDGadget();
-                await scrapeFPTShopDataService.ScrapeFPTShopGadget();
+                var scrapePhongVuDataService = scope.ServiceProvider.GetRequiredService<ScrapePhongVuDataService>();
+                //await scrapeTGDDDataService.ScrapeTGDDGadget();
+                //await scrapeFPTShopDataService.ScrapeFPTShopGadget();
+                await scrapePhongVuDataService.ScrapeGadgetByBrand("https://phongvu.vn/c/phone-dien-thoai?brands=samsung");
             }
 
             await Task.Delay(TimeSpan.FromHours(150), stoppingToken);

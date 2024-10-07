@@ -373,7 +373,7 @@ public class ScrapeFPTShopDataService(IOptions<ScrapeDataSettings> scrapeDataSet
         }
     }
 
-    public async Task<List<Gadget>> ScrapeGadgetByBrand(string url)
+    private async Task<List<Gadget>> ScrapeGadgetByBrand(string url)
     {
         string defaultUrl = _gadgetScrapeDataService.CutUrl(url);
         // Tải xuống Chromium nếu chưa có
