@@ -1,6 +1,8 @@
-﻿using Pgvector;
+﻿using Microsoft.Extensions.Options;
+using Pgvector;
 using System.Text;
 using System.Text.Json;
+using WebApi.Common.Settings;
 
 namespace WebApi.Services.Embedding;
 
@@ -9,8 +11,10 @@ public class EmbeddingResponse
     public float[] Embedding { get; set; } = [];
 }
 
-public class EmbeddingService(IHttpClientFactory httpClientFactory)
+public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings)
 {
+    private readonly EmbeddingServerSettings _embeddingServerSettings = embeddingServerSettings.Value;
+
     public async Task<Vector> GetEmbedding(string text)
     {
         var client = httpClientFactory.CreateClient();
@@ -21,7 +25,7 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory)
         try
         {
             // Call the FastAPI embedding service
-            var response = await client.PostAsync("http://localhost:8000/embed", jsonContent);
+            var response = await client.PostAsync($"{_embeddingServerSettings.Url}", jsonContent);
 
             // Check if the request was successful
             if (response.IsSuccessStatusCode)
