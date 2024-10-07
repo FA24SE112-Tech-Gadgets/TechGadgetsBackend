@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -7,8 +6,6 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Mappers;
-using WebApi.Services.Auth;
-using WebApi.Services.Storage;
 
 namespace WebApi.Features.SellerApplications;
 
