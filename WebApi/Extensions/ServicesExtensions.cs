@@ -25,7 +25,6 @@ public static class ServicesExtensions
         services.AddScoped<GadgetScrapeDataService>();
         services.AddScoped<ScrapeTGDDDataService>();
         services.AddScoped<ScrapeFPTShopDataService>();
-        services.AddScoped<GadgetParentMapService>();
         services.AddScoped<EmbeddingService>();
     }
 }
