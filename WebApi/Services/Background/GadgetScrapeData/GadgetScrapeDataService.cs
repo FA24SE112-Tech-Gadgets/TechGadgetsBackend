@@ -26,7 +26,7 @@ public class GadgetScrapeDataService(IServiceProvider serviceProvider) : Backgro
                 await scrapePhongVuDataService.ScrapeGadgetByBrand("https://phongvu.vn/c/phone-dien-thoai?brands=samsung");
             }
 
-            await Task.Delay(TimeSpan.FromHours(150), stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
         }
     }
 
