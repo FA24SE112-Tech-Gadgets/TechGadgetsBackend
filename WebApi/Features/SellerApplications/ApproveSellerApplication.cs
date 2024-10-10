@@ -26,7 +26,9 @@ public class ApproveSellerApplication : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context)
     {
-        var sellerApplication = await context.SellerApplications.FirstOrDefaultAsync(sa => sa.Id == sellerApplicationId) ?? throw TechGadgetException.NewBuilder()
+        var sellerApplication = await context.SellerApplications
+            .Include(sa => sa.BillingMailApplications)
+            .FirstOrDefaultAsync(sa => sa.Id == sellerApplicationId) ?? throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("sellerApplication", "Không tìm thấy đơn này.")
             .Build();
@@ -50,7 +52,7 @@ public class ApproveSellerApplication : ControllerBase
 
         sellerApplication.Status = SellerApplicationStatus.Approved;
 
-        Seller seller = sellerApplication.ToSeller()!;
+        Seller seller = sellerApplication.ToSellerCreate()!;
         if (seller == null)
         {
             throw TechGadgetException.NewBuilder()
