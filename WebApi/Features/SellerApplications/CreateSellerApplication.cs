@@ -161,6 +161,15 @@ public class CreateSellerApplication : ControllerBase
             .Build();
         }
 
+        cannotCreate = await context.SellerApplications.AnyAsync(sa => sa.UserId == userId && sa.Status == SellerApplicationStatus.Approved);
+        if (cannotCreate)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_01)
+            .AddReason("sellerApplication", "Seller này đã được kích hoạt.")
+            .Build();
+        }
+
         string? businessRegistrationCertificateUrl = null;
         try
         {
