@@ -6,6 +6,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Mappers;
+using WebApi.Services.Embedding;
 
 namespace WebApi.Features.SellerApplications;
 
@@ -24,7 +25,7 @@ public class ApproveSellerApplication : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context)
+    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context, [FromServices] EmbeddingService embeddingService)
     {
         var sellerApplication = await context.SellerApplications
             .Include(sa => sa.BillingMailApplications)
@@ -53,6 +54,9 @@ public class ApproveSellerApplication : ControllerBase
         sellerApplication.Status = SellerApplicationStatus.Approved;
 
         Seller seller = sellerApplication.ToSellerCreate()!;
+        var addressVector = await embeddingService.GetEmbedding(seller.ShopAddress.Trim());
+        seller.AddressVector = addressVector;
+
         if (seller == null)
         {
             throw TechGadgetException.NewBuilder()

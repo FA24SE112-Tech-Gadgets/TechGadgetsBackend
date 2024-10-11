@@ -63,6 +63,14 @@ public class LoginGoogleController : ControllerBase
                         .Where(a => a.Email == ggResponse.Email)
                         .FirstOrDefaultAsync();
 
+                    Wallet wallet = new Wallet
+                    {
+                        User = user!,
+                        Amount = 0
+                    };
+                    await context.Wallets.AddAsync(wallet);
+                    await context.SaveChangesAsync();
+
                     var tokenInfo = user.ToTokenRequest();
                     string token = tokenService.CreateToken(tokenInfo!);
                     string rfToken = tokenService.CreateRefreshToken(tokenInfo!);
