@@ -24,7 +24,7 @@ public class CreateSellerApplication : ControllerBase
         public string? CompanyName { get; set; }
         public string ShopName { get; set; } = default!;
         public string ShopAddress { get; set; } = default!;
-        public BusinessModel BusinnessModel { get; set; }
+        public BusinessModel BusinessModel { get; set; }
         public IFormFile? BusinessRegistrationCertificate { get; set; }
         public string TaxCode { get; set; } = default!;
         public string PhoneNumber { get; set; } = default!;
