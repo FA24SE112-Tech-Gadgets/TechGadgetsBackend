@@ -24,7 +24,7 @@ public class CreateSellerApplication : ControllerBase
         public string? CompanyName { get; set; }
         public string ShopName { get; set; } = default!;
         public string ShopAddress { get; set; } = default!;
-        public BusinessModel BusinnessModel { get; set; }
+        public BusinessModel BusinessModel { get; set; }
         public IFormFile? BusinessRegistrationCertificate { get; set; }
         public string TaxCode { get; set; } = default!;
         public string PhoneNumber { get; set; } = default!;
@@ -37,11 +37,11 @@ public class CreateSellerApplication : ControllerBase
         {
             RuleFor(sp => sp.CompanyName)
                 .NotEmpty()
-                .When(sp => RequiresCompanyName(sp.BusinnessModel))
+                .When(sp => RequiresCompanyName(sp.BusinessModel))
                 .WithMessage("Tên công ty không được để trống");
             RuleFor(sp => sp.BusinessRegistrationCertificate)
                 .NotNull()
-                .When(sp => RequiresCertificate(sp.BusinnessModel))
+                .When(sp => RequiresCertificate(sp.BusinessModel))
                 .WithMessage("Giấy phép kinh doanh không được để trống");
             RuleFor(sp => sp.TaxCode)
                 .NotEmpty()
@@ -161,10 +161,19 @@ public class CreateSellerApplication : ControllerBase
             .Build();
         }
 
+        cannotCreate = await context.SellerApplications.AnyAsync(sa => sa.UserId == userId && sa.Status == SellerApplicationStatus.Approved);
+        if (cannotCreate)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_01)
+            .AddReason("sellerApplication", "Seller này đã được kích hoạt.")
+            .Build();
+        }
+
         string? businessRegistrationCertificateUrl = null;
         try
         {
-            if (request.BusinnessModel != BusinessModel.Personal)
+            if (request.BusinessModel != BusinessModel.Personal)
             {
                 businessRegistrationCertificateUrl = await storageService.UploadFileToCloudStorage(request.BusinessRegistrationCertificate!, Guid.NewGuid().ToString());
             }
@@ -187,7 +196,7 @@ public class CreateSellerApplication : ControllerBase
             CompanyName = request.CompanyName,
             ShopName = request.ShopName,
             ShopAddress = request.ShopAddress,
-            BusinessModel = request.BusinnessModel,
+            BusinessModel = request.BusinessModel,
             BusinessRegistrationCertificateUrl = businessRegistrationCertificateUrl,
             TaxCode = request.TaxCode,
             PhoneNumber = request.PhoneNumber,
