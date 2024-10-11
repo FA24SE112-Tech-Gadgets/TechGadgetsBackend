@@ -37,11 +37,11 @@ public class CreateSellerApplication : ControllerBase
         {
             RuleFor(sp => sp.CompanyName)
                 .NotEmpty()
-                .When(sp => RequiresCompanyName(sp.BusinnessModel))
+                .When(sp => RequiresCompanyName(sp.BusinessModel))
                 .WithMessage("Tên công ty không được để trống");
             RuleFor(sp => sp.BusinessRegistrationCertificate)
                 .NotNull()
-                .When(sp => RequiresCertificate(sp.BusinnessModel))
+                .When(sp => RequiresCertificate(sp.BusinessModel))
                 .WithMessage("Giấy phép kinh doanh không được để trống");
             RuleFor(sp => sp.TaxCode)
                 .NotEmpty()
@@ -173,7 +173,7 @@ public class CreateSellerApplication : ControllerBase
         string? businessRegistrationCertificateUrl = null;
         try
         {
-            if (request.BusinnessModel != BusinessModel.Personal)
+            if (request.BusinessModel != BusinessModel.Personal)
             {
                 businessRegistrationCertificateUrl = await storageService.UploadFileToCloudStorage(request.BusinessRegistrationCertificate!, Guid.NewGuid().ToString());
             }
@@ -196,7 +196,7 @@ public class CreateSellerApplication : ControllerBase
             CompanyName = request.CompanyName,
             ShopName = request.ShopName,
             ShopAddress = request.ShopAddress,
-            BusinessModel = request.BusinnessModel,
+            BusinessModel = request.BusinessModel,
             BusinessRegistrationCertificateUrl = businessRegistrationCertificateUrl,
             TaxCode = request.TaxCode,
             PhoneNumber = request.PhoneNumber,
