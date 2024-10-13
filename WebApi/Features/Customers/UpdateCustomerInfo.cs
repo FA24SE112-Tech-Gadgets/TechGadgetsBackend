@@ -49,6 +49,8 @@ public class UpdateCustomerInfo : ControllerBase
                 .WithMessage("CCCD không được để trống")
                 .Length(12)
                 .WithMessage("CCCD phải đủ 12 ký tự")
+                .Matches("^[0-9]*$")
+                .WithMessage("CCCD không được chứa chữ cái hoặc ký tự đặc biệt.")
                 .When(r => r.CCCD != null); // Chỉ validate nếu CCCD được truyền
 
             RuleFor(r => r.Gender)
@@ -86,8 +88,11 @@ public class UpdateCustomerInfo : ControllerBase
     [Tags("Customers")]
     [SwaggerOperation(
         Summary = "Update Customer Info",
-        Description = "This API is for update customer info." +
-                            "<br>&nbsp; - Update which field is provided"
+        Description = "This API is for update customer info. Note:" +
+                            "<br>&nbsp; - Truyền field nào update field đó." +
+                            "<br>&nbsp; - CCCD chỉ yêu cầu đủ 12 kí tự và không chứa chữ cái hay ký tự đặc biệt." +
+                            "<br>&nbsp; - Ngày sinh phải lớn hơn 18 tuổi. Format YYYY-MM-DD." +
+                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt."
     )]
     [ProducesResponseType(typeof(SellerApplicationDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]

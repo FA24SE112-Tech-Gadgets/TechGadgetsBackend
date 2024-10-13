@@ -7,7 +7,6 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Mappers;
-using WebApi.Features.Users.Models;
 using WebApi.Services.Auth;
 using WebApi.Services.Storage;
 
