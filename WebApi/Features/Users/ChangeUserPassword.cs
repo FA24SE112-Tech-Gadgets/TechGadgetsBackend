@@ -45,6 +45,9 @@ public class ChangeUserPassword : ControllerBase
     [Tags("Users")]
     [SwaggerOperation(Summary = "Change User Password", Description = "This API is for change user password")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
