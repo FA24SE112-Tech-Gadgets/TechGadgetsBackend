@@ -31,7 +31,7 @@ public class GetGadgetHistories : ControllerBase
     [Tags("Gadget Histories")]
     [SwaggerOperation(
         Summary = "Get List Of Customer Gadget Histories",
-        Description = "API is for get list of customer gadget histories." +
+        Description = "API is for get list of customer gadget histories. Note:" +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'"
     )]
     [ProducesResponseType(typeof(PagedList<GadgetHistoryResponse>), StatusCodes.Status200OK)]
