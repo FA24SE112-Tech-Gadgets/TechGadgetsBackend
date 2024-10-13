@@ -7,7 +7,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Services.Auth;
 
-namespace WebApi.Features.Auth;
+namespace WebApi.Features.Users;
 
 [ApiController]
 [JwtValidation]
@@ -44,7 +44,7 @@ public class ChangeUserPassword : ControllerBase
     [HttpPut("user/change-password")]
     [Tags("Users")]
     [SwaggerOperation(Summary = "Change User Password", Description = "This API is for change user password")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
