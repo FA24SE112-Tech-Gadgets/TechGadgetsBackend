@@ -32,6 +32,7 @@ public class GetGadgetHistories : ControllerBase
     [SwaggerOperation(
         Summary = "Get List Of Customer Gadget Histories",
         Description = "API is for get list of customer gadget histories. Note:" +
+                            "<br>&nbsp; - Nếu trong 1 arrays trả về mà có gadget bị trùng thì chỉ lấy gadget có ngày xem gần nhất" +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'"
     )]
     [ProducesResponseType(typeof(PagedList<GadgetHistoryResponse>), StatusCodes.Status200OK)]
