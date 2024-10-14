@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="Features\FavoriteGadgets\Mappers\" />
   </ItemGroup>
 
 </Project>
