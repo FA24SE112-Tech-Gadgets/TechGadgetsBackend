@@ -216,6 +216,9 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("GadgetId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("CustomerId", "GadgetId");
 
                     b.HasIndex("GadgetId");
@@ -812,7 +815,7 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("SpecificationKeyId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SpecificationUnitId")
+                    b.Property<Guid?>("SpecificationUnitId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
@@ -1414,9 +1417,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasOne("WebApi.Data.Entities.SpecificationUnit", "SpecificationUnit")
                         .WithMany("SpecificationValues")
-                        .HasForeignKey("SpecificationUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpecificationUnitId");
 
                     b.Navigation("Gadget");
 
