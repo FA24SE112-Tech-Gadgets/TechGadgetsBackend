@@ -77,6 +77,7 @@ public static class GadgetHistoryMapper
                 Status = gadget.Status,
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
+                IsForSale = gadget.IsForSale,
                 Seller = gadget.Seller.ToSellerGadgetHistoryResponse()!,
                 Brand = gadget.Brand.ToBrandGadgetHistoryResponse()!,
                 Category = gadget.Category.ToCategoryGadgetHistoryResponse()!,
