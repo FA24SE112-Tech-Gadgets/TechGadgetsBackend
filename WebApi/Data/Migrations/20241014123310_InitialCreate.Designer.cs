@@ -13,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241014003924_InitialCreate")]
+    [Migration("20241014123310_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -251,6 +251,9 @@ namespace WebApi.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsForSale")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
