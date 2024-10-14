@@ -52,6 +52,8 @@ public class GetGadgetHistories : ControllerBase
                 .ThenInclude(s => s.User)
             .Include(gh => gh.Gadget)
                 .ThenInclude(g => g.Category)
+            .Skip(((request.Page ?? 1) - 1) * (request.PageSize ?? 10))
+            .Take(request.PageSize ?? 10)
             .Where(gh => gh.CustomerId == currentUser!.Customer!.Id)
             .ToListAsync();
 
@@ -71,17 +73,17 @@ public class GetGadgetHistories : ControllerBase
             groupedHistories = groupedHistories.OrderByDescending(gh => gh.CreatedAt);
         }
 
-        // Step 4: Apply manual pagination (skip and take)
-        var pagedHistories = groupedHistories
-            .Skip(((request.Page ?? 1) - 1) * (request.PageSize ?? 10))
-            .Take(request.PageSize ?? 10)
-            .ToList();
+        //// Step 4: Apply manual pagination (skip and take)
+        //var pagedHistories = groupedHistories
+        //    .Skip(((request.Page ?? 1) - 1) * (request.PageSize ?? 10))
+        //    .Take(request.PageSize ?? 10)
+        //    .ToList();
 
         var gadgetHistoryResponseList = new PagedList<GadgetHistoryResponse>(
-            pagedHistories.Select(gh => gh.ToGadgetHistoryResponse()!).ToList(),
+            groupedHistories.Select(gh => gh.ToGadgetHistoryResponse()!).ToList(),
             request.Page ?? 1,
             request.PageSize ?? 10,
-            groupedHistories.Count() // Total count for pagination
+            context.GadgetHistories.Count() // Total count for pagination
         );
 
         return Ok(gadgetHistoryResponseList);
