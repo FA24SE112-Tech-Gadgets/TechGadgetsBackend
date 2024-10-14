@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Features.FavoriteGadgets.Mappers;
+using WebApi.Features.FavoriteGadgets.Models;
 using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 
@@ -40,32 +43,40 @@ public class GetCustomerFavoriteGadget : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var query = context.FavoriteGadgets.AsQueryable();
+        var query = context.FavoriteGadgets
+            .Include(fg => fg.Gadget)
+                .ThenInclude(g => g.Seller)
+                    .ThenInclude(s => s.User)
+            .Include(fg => fg.Gadget)
+                .ThenInclude(g => g.Brand)
+            .Include(fg => fg.Gadget)
+                .ThenInclude(g => g.Category)
+            .AsQueryable();
 
-        if (request.SortByDate == SortByDate.DESC)
-        {
-            // Thêm sắp xếp theo CreatedAt (giảm dần, gần nhất trước)
-            query = query.OrderByDescending(sa => sa.CreatedAt);
-        }
-        else
-        {
-            query = query.OrderBy(sa => sa.CreatedAt);
-        }
+        //if (request.SortByDate == SortByDate.DESC)
+        //{
+        //    // Thêm sắp xếp theo CreatedAt (giảm dần, gần nhất trước)
+        //    query = query.OrderByDescending(sa => sa.CreatedAt);
+        //}
+        //else
+        //{
+        //    query = query.OrderBy(sa => sa.CreatedAt);
+        //}
 
-        var sellerApplications = await query
+        var favoriteGadgets = await query
             .ToPagedListAsync(request)
             ?? throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("sellerApplication", "Không tìm thấy đơn này.")
             .Build();
 
-        var sellerApplicationsResponseList = new PagedList<SellerApplicationItemResponse>(
-            sellerApplications.Items.Select(sa => sa.ToSellerApplicationItemResponse()!).ToList(),
-            sellerApplications.Page,
-            sellerApplications.PageSize,
-            sellerApplications.TotalItems
+        var favoriteGadgetResponseList = new PagedList<FavoriteGadgetResponse>(
+            favoriteGadgets.Items.Select(fg => fg.ToFavoriteGadgetResponse()!).ToList(),
+            favoriteGadgets.Page,
+            favoriteGadgets.PageSize,
+            favoriteGadgets.TotalItems
         );
 
-        return Ok(sellerApplicationsResponseList);
+        return Ok(favoriteGadgetResponseList);
     }
 }
