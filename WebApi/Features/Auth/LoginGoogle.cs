@@ -68,7 +68,7 @@ public class LoginGoogleController : ControllerBase
                     {
                         User = user!,
                         Amount = 0
-                    };
+                    }!;
                     Cart cart = new Cart
                     {
                         Customer = user!.Customer!,
