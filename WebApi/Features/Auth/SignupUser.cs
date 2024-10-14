@@ -65,6 +65,11 @@ public class SignupUserController : ControllerBase
             {
                 FullName = request.FullName!,
             };
+            Cart cart = new Cart
+            {
+                Customer = user!.Customer!,
+            }!;
+            await context.Carts.AddAsync(cart);
         }
 
         if (await context.Users.AnyAsync(us => us.Email == user.Email && us.Status == UserStatus.Pending))
