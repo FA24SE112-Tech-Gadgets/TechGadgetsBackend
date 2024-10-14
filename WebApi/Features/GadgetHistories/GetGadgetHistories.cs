@@ -26,6 +26,13 @@ public class GetGadgetHistories : ControllerBase
     {
         DESC, ASC
     }
+    public class GadgetHistoryDto
+    {
+        public Guid Id { get; set; }
+        public Guid GadgetId { get; set; }
+        public Guid CustomerId { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
 
     [HttpGet("gadget-histories")]
     [Tags("Gadget Histories")]
@@ -43,8 +50,30 @@ public class GetGadgetHistories : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        // Step 1: Fetch all GadgetHistories for the current user
+        string sortBy = request.SortByDate == SortByDate.ASC ? "ASC" : "DESC";
+        var query = $@"
+            WITH RankedHistories AS (
+                SELECT 
+                    gh.*,
+                    ROW_NUMBER() OVER (PARTITION BY gh.""GadgetId"" ORDER BY gh.""CreatedAt"" DESC) AS rank
+                FROM ""GadgetHistories"" gh
+                WHERE gh.""CustomerId"" = '{currentUser!.Customer!.Id}'
+            )
+            SELECT 
+                rh.""Id"", rh. ""GadgetId"", rh.""CustomerId"", rh.""CreatedAt""
+            FROM RankedHistories rh
+            WHERE rh.rank = 1
+            ORDER BY rh.""CreatedAt"" {sortBy}
+            LIMIT {request.PageSize ?? 10} OFFSET {request.PageSize ?? 10} * ({request.Page ?? 1} - 1)
+        ";
+        var totalUniqueGadgets = context.GadgetHistories
+            .Where(gh => gh.CustomerId == currentUser!.Customer!.Id)
+            .Select(gh => gh.GadgetId)
+            .Distinct()
+            .Count();
+
         var gadgetHistories = await context.GadgetHistories
+            .FromSqlRaw(query)
             .Include(gh => gh.Gadget)
                 .ThenInclude(g => g.Brand)
             .Include(gh => gh.Gadget)
@@ -52,40 +81,13 @@ public class GetGadgetHistories : ControllerBase
                 .ThenInclude(s => s.User)
             .Include(gh => gh.Gadget)
                 .ThenInclude(g => g.Category)
-            .Skip(((request.Page ?? 1) - 1) * (request.PageSize ?? 10))
-            .Take(request.PageSize ?? 10)
-            .Where(gh => gh.CustomerId == currentUser!.Customer!.Id)
             .ToListAsync();
-
-        // Step 2: Group by GadgetId and select the most recent record
-        var groupedHistories = gadgetHistories
-            .GroupBy(gh => gh.GadgetId)
-            .Select(g => g.OrderByDescending(gh => gh.CreatedAt).First()) // Get the most recent history per GadgetId
-            .AsQueryable(); // Convert back to IQueryable for pagination
-
-        // Step 3: Sort by CreatedAt based on request SortByDate
-        if (request.SortByDate == SortByDate.ASC)
-        {
-            groupedHistories = groupedHistories.OrderBy(gh => gh.CreatedAt);
-        }
-        else
-        {
-            groupedHistories = groupedHistories.OrderByDescending(gh => gh.CreatedAt);
-        }
-
-        //// Step 4: Apply manual pagination (skip and take)
-        //var pagedHistories = groupedHistories
-        //    .Skip(((request.Page ?? 1) - 1) * (request.PageSize ?? 10))
-        //    .Take(request.PageSize ?? 10)
-        //    .ToList();
-
         var gadgetHistoryResponseList = new PagedList<GadgetHistoryResponse>(
-            groupedHistories.Select(gh => gh.ToGadgetHistoryResponse()!).ToList(),
+            gadgetHistories.Select(gh => gh.ToGadgetHistoryResponse()!).ToList(),
             request.Page ?? 1,
             request.PageSize ?? 10,
-            context.GadgetHistories.Count() // Total count for pagination
+            totalUniqueGadgets // Đếm tổng số bản ghi
         );
-
         return Ok(gadgetHistoryResponseList);
     }
 }
