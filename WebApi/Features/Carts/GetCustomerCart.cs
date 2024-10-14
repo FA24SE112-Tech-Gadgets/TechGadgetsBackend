@@ -32,7 +32,24 @@ public class GetCustomerCart : ControllerBase
         var currentUser = await currentUserService.GetCurrentUser();
         var userCart = await context.Carts
             .Include(c => c.CartGadgets)
+                .ThenInclude(cg => cg.Gadget)
+                    .ThenInclude(g => g.Seller)
+                        .ThenInclude(s => s.User)
+            .Include(c => c.CartGadgets)
+                .ThenInclude(cg => cg.Gadget)
+                    .ThenInclude(g => g.Brand)
+            .Include(c => c.CartGadgets)
+                .ThenInclude(cg => cg.Gadget)
+                    .ThenInclude(g => g.Category)
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
+
+        if (userCart == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("carts", "Không tìm thấy giỏ hàng.")
+            .Build();
+        }
 
         return Ok(userCart!.ToCartResponse());
     }

@@ -134,7 +134,7 @@ public class UpdateCustomerInfo : ControllerBase
                 }
                 throw TechGadgetException.NewBuilder()
                     .WithCode(TechGadgetErrorCode.WES_00)
-                    .AddReason("businessRegistrationCertificate", "Lỗi khi lưu ảnh đại diện")
+                    .AddReason("avatarUrl", "Lỗi khi lưu ảnh đại diện")
                     .Build();
             }
         }
