@@ -66,5 +66,32 @@ public static class ApplyMigrationsExtensions
             }
             await context.SaveChangesAsync();
         }
+
+        if (!await context.SpecificationKeys.AnyAsync())
+        {
+            foreach (var specificationKey in SpecificationKeySeed.Default)
+            {
+                context.SpecificationKeys.Add(specificationKey);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.SpecificationUnits.AnyAsync())
+        {
+            foreach (var specificationUnit in SpecificationUnitSeed.Default)
+            {
+                context.SpecificationUnits.Add(specificationUnit);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        var query = context.GadgetHistories
+                        .GroupBy(gh => gh.GadgetId)                // Group by GadgetId
+                        .Select(g => g.OrderByDescending(gh => gh.CreatedAt).FirstOrDefault()) // Get the latest entry for each group
+                                                                                               //.OrderByDescending(gh => gh!.CreatedAt)     // Order by CreatedAt to get the latest entries
+                        .Take(10).ToList();
+
+        //var response = await query
+        //                    .ToPagedListAsync(new PagedRequest());
     }
 }

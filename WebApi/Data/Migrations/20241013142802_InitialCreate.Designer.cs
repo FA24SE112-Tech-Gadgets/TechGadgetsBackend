@@ -13,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241011105306_InitialCreate")]
+    [Migration("20241013142802_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -815,7 +815,7 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("SpecificationKeyId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SpecificationUnitId")
+                    b.Property<Guid?>("SpecificationUnitId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
@@ -1417,9 +1417,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasOne("WebApi.Data.Entities.SpecificationUnit", "SpecificationUnit")
                         .WithMany("SpecificationValues")
-                        .HasForeignKey("SpecificationUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpecificationUnitId");
 
                     b.Navigation("Gadget");
 

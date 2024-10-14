@@ -695,7 +695,7 @@ namespace WebApi.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SpecificationKeyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SpecificationUnitId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SpecificationUnitId = table.Column<Guid>(type: "uuid", nullable: true),
                     GadgetId = table.Column<Guid>(type: "uuid", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
                     Vector = table.Column<Vector>(type: "vector(384)", nullable: false)
@@ -719,8 +719,7 @@ namespace WebApi.Data.Migrations
                         name: "FK_SpecificationValues_SpecificationUnits_SpecificationUnitId",
                         column: x => x.SpecificationUnitId,
                         principalTable: "SpecificationUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

@@ -43,6 +43,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, IOptio
             .Include(u => u.Admin)
             .Include(u => u.Customer)
             .Include(u => u.Seller)
+            .Include(u => u.Wallet)
             .FirstOrDefaultAsync(x => x.Id == userInfo!.Id);
     }
 
