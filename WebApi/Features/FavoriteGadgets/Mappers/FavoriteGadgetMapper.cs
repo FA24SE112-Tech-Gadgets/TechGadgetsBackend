@@ -11,6 +11,7 @@ public static class FavoriteGadgetMapper
         {
             return new FavoriteGadgetResponse
             {
+                CreatedAt = favoriteGadget.CreatedAt,
                 Gadget = favoriteGadget.Gadget.ToFavoriteGadgetItemResponse()!
             };
         }

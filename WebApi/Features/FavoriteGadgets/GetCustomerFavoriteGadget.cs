@@ -51,17 +51,18 @@ public class GetCustomerFavoriteGadget : ControllerBase
                 .ThenInclude(g => g.Brand)
             .Include(fg => fg.Gadget)
                 .ThenInclude(g => g.Category)
+            .Where(fg => fg.CustomerId == currentUser!.Customer!.Id)
             .AsQueryable();
 
-        //if (request.SortByDate == SortByDate.DESC)
-        //{
-        //    // Thêm sắp xếp theo CreatedAt (giảm dần, gần nhất trước)
-        //    query = query.OrderByDescending(sa => sa.CreatedAt);
-        //}
-        //else
-        //{
-        //    query = query.OrderBy(sa => sa.CreatedAt);
-        //}
+        if (request.SortByDate == SortByDate.DESC)
+        {
+            // Thêm sắp xếp theo CreatedAt (giảm dần, gần nhất trước)
+            query = query.OrderByDescending(sa => sa.CreatedAt);
+        }
+        else
+        {
+            query = query.OrderBy(sa => sa.CreatedAt);
+        }
 
         var favoriteGadgets = await query
             .ToPagedListAsync(request)

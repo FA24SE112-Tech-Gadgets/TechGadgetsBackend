@@ -29,8 +29,18 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
+        var isGadgetExist = await context.Gadgets
+            .AnyAsync(g => g.Id == gadgetId);
+        if (!isGadgetExist)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("sellerApplication", "Không tìm thấy sản phẩm này.")
+            .Build();
+        }
+
         var favoriteGadget = await context.FavoriteGadgets
-            .FirstOrDefaultAsync(fg => fg.GadgetId == gadgetId);
+            .FirstOrDefaultAsync(fg => fg.GadgetId == gadgetId && fg.CustomerId == currentUser!.Customer!.Id);
 
         if (favoriteGadget == null)
         {
@@ -38,6 +48,7 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
             {
                 CustomerId = currentUser!.Customer!.Id,
                 GadgetId = gadgetId,
+                CreatedAt = DateTime.UtcNow,
             }!;
             await context.FavoriteGadgets.AddAsync(fg);
         } else
