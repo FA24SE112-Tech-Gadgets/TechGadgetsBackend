@@ -66,5 +66,23 @@ public static class ApplyMigrationsExtensions
             }
             await context.SaveChangesAsync();
         }
+
+        if (!await context.SpecificationKeys.AnyAsync())
+        {
+            foreach (var specificationKey in SpecificationKeySeed.Default)
+            {
+                context.SpecificationKeys.Add(specificationKey);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.SpecificationUnits.AnyAsync())
+        {
+            foreach (var specificationUnit in SpecificationUnitSeed.Default)
+            {
+                context.SpecificationUnits.Add(specificationUnit);
+            }
+            await context.SaveChangesAsync();
+        }
     }
 }
