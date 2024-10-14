@@ -19,6 +19,7 @@ public static class GadgetMapper
                 Price = gadget.Price,
                 SellerStatus = gadget.Seller.User.Status,
                 ThumbnailUrl = gadget.ThumbnailUrl,
+                IsForSale = gadget.IsForSale,
             };
         }
         return null;
@@ -41,6 +42,7 @@ public static class GadgetMapper
                 UpdatedAt = gadget.UpdatedAt,
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
+                IsForSale = gadget.IsForSale,
                 Category = gadget.Category.ToCategoryResponse()!,
                 SellerStatus = gadget.Seller.User.Status,
                 GadgetImages = gadget.GadgetImages.Select(g => g.ImageUrl).ToArray(),

@@ -18,6 +18,7 @@ public class GadgetDetailResponse
     public DateTime UpdatedAt { get; set; }
     public string Condition { get; set; } = default!;
     public int Quantity { get; set; }
+    public bool IsForSale { get; set; }
     public UserStatus SellerStatus { get; set; }
     public CategoryResponse Category { get; set; } = default!;
     public ICollection<string> GadgetImages { get; set; } = [];

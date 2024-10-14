@@ -291,6 +291,7 @@ public class CreateGadget : ControllerBase
             ConditionVector = await embeddingService.GetEmbedding(request.Condition),
             NameVector = await embeddingService.GetEmbedding(request.Name),
             Quantity = request.Quantity,
+            IsForSale = true,
             GadgetImages = gadgetImages,
             GadgetDescriptions = gadgetDescriptions,
             SpecificationValues = await Task.WhenAll(request.SpecificationValues.Select(async s => new SpecificationValue
