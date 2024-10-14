@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Linq.Expressions;
 using WebApi.Common.Filters;
@@ -35,7 +36,10 @@ public class GetGadgets : ControllerBase
     )]
     public async Task<IActionResult> Handler([FromQuery] Request request, [FromServices] AppDbContext context)
     {
-        var query = context.Gadgets.AsQueryable();
+        var query = context.Gadgets
+                            .Include(c => c.Seller)
+                                .ThenInclude(s => s.User)
+                            .AsQueryable();
 
         query = query.OrderByColumn(GetSortProperty(request), request.SortOrder);
 

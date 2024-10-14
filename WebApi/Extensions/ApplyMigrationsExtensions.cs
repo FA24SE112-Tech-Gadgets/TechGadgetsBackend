@@ -84,14 +84,5 @@ public static class ApplyMigrationsExtensions
             }
             await context.SaveChangesAsync();
         }
-
-        var query = context.GadgetHistories
-                        .GroupBy(gh => gh.GadgetId)                // Group by GadgetId
-                        .Select(g => g.OrderByDescending(gh => gh.CreatedAt).FirstOrDefault()) // Get the latest entry for each group
-                                                                                               //.OrderByDescending(gh => gh!.CreatedAt)     // Order by CreatedAt to get the latest entries
-                        .Take(10).ToList();
-
-        //var response = await query
-        //                    .ToPagedListAsync(new PagedRequest());
     }
 }
