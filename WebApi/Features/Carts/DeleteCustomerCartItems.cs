@@ -1,46 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
-using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Auth;
-using Microsoft.EntityFrameworkCore;
-using WebApi.Features.Carts.Mappers;
-using WebApi.Features.Carts.Models;
 
 namespace WebApi.Features.Carts;
 
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Customer)]
-public class GetCustomerCart : ControllerBase
+public class DeleteCustomerCartItems : ControllerBase
 {
-    [HttpGet("carts")]
+    [HttpDelete("carts/clear")]
     [Tags("Carts")]
     [SwaggerOperation(
-        Summary = "Get Customer Cart",
-        Description = "API is for get customer cart."
+        Summary = "Clear Customer Cart Items",
+        Description = "This API is for clearing all items in the customer's cart."
     )]
-    [ProducesResponseType(typeof(CartResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromQuery] PagedRequest request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler(AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
         var userCart = await context.Carts
-            .Include(c => c.CartGadgets)
-                .ThenInclude(cg => cg.Gadget)
-                    .ThenInclude(g => g.Seller)
-                        .ThenInclude(s => s.User)
-            .Include(c => c.CartGadgets)
-                .ThenInclude(cg => cg.Gadget)
-                    .ThenInclude(g => g.Brand)
-            .Include(c => c.CartGadgets)
-                .ThenInclude(cg => cg.Gadget)
-                    .ThenInclude(g => g.Category)
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
         if (userCart == null)
@@ -51,6 +38,21 @@ public class GetCustomerCart : ControllerBase
             .Build();
         }
 
-        return Ok(userCart!.ToCartResponse());
+        var cartGadgetsToDelete = await context.CartGadgets
+            .Where(cg => cg.CartId == userCart.Id)
+            .ToListAsync();
+
+        if (cartGadgetsToDelete.Count == 0)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("cartGadgets", "Giỏ hàng đã trống.")
+            .Build();
+        }
+
+        context.CartGadgets.RemoveRange(cartGadgetsToDelete);
+        await context.SaveChangesAsync();
+
+        return Ok();
     }
 }

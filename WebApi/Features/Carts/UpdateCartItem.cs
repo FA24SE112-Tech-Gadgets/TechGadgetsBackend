@@ -42,7 +42,7 @@ public class UpdateCartItem : ControllerBase
         Summary = "Update Cart Item",
         Description = "This API is for update customer cart item."
     )]
-    [ProducesResponseType(typeof(CartResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -57,6 +57,16 @@ public class UpdateCartItem : ControllerBase
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("carts", "Không tìm thấy giỏ hàng.")
+            .Build();
+        }
+
+        var isGadgetExist = await context.Gadgets
+            .AnyAsync(g => g.Id == request.GadgetId);
+        if (!isGadgetExist)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", "Không tìm thấy sản phẩm này.")
             .Build();
         }
 
