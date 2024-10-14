@@ -11,5 +11,4 @@ public class SellerCartResponse
     public BusinessModel BusinessModel { get; set; }
     public string PhoneNumber { get; set; } = default!;
     public UserCartResponse User { get; set; } = default!;
-
 }

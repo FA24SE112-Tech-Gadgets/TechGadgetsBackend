@@ -26,13 +26,6 @@ public class GetGadgetHistories : ControllerBase
     {
         DESC, ASC
     }
-    public class GadgetHistoryDto
-    {
-        public Guid Id { get; set; }
-        public Guid GadgetId { get; set; }
-        public Guid CustomerId { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
 
     [HttpGet("gadget-histories")]
     [Tags("Gadget Histories")]
