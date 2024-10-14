@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Features.Auth.Mappers;
 using WebApi.Features.Auth.Models;
 using WebApi.Services.Auth;
@@ -51,6 +52,16 @@ public class VerifyUserController : ControllerBase
         }
 
         await verifyCodeService.VerifyUserAsync(user, request.Code);
+        if (user.Role == Role.Customer || user.Role == Role.Seller)
+        {
+            Wallet wallet = new Wallet
+            {
+                User = user,
+                Amount = 0
+            };
+            await context.Wallets.AddAsync(wallet);
+            await context.SaveChangesAsync();
+        }
 
         var tokenInfo = user.ToTokenRequest();
         string token = tokenService.CreateToken(tokenInfo!);

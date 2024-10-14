@@ -13,7 +13,8 @@ public class User
     public Customer? Customer { get; set; }
     public Manager? Manager { get; set; }
     public Admin? Admin { get; set; }
-    public ICollection<UserVerify> userVerifies { get; set; } = [];
+    public Wallet? Wallet { get; set; }
+    public ICollection<UserVerify> UserVerifies { get; set; } = [];
     public ICollection<SellerApplication> SellerApplications { get; set; } = [];
     public ICollection<Notification> Notifications { get; set; } = [];
 }

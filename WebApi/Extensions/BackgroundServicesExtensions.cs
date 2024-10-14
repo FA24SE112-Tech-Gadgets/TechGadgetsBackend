@@ -1,5 +1,4 @@
-﻿using WebApi.Services.Background.GadgetScrapeData;
-using WebApi.Services.Background.UserVerifies;
+﻿using WebApi.Services.Background.UserVerifies;
 
 namespace WebApi.Extensions;
 
@@ -9,6 +8,5 @@ public static class BackgroundServicesExtensions
     {
         services.AddHostedService<UserVerifyStatusCheckService>();
         services.AddHostedService<UserVerifyCleanupService>();
-        //services.AddHostedService<GadgetScrapeDataService>();
     }
 }
