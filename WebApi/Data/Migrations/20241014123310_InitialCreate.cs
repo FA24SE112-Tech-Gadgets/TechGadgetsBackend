@@ -492,7 +492,8 @@ namespace WebApi.Data.Migrations
                     Condition = table.Column<string>(type: "text", nullable: false),
                     ConditionVector = table.Column<Vector>(type: "vector(384)", nullable: false),
                     NameVector = table.Column<Vector>(type: "vector(384)", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    IsForSale = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
