@@ -30,6 +30,7 @@ public static class FavoriteGadgetMapper
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Status = gadget.Status,
                 Condition = gadget.Condition,
+                Quantity = gadget.Quantity,
                 Seller = gadget.Seller.ToSellerFavoriteGadgetResponse()!,
                 Brand = gadget.Brand.ToBrandFavoriteGadgetResponse()!,
                 Category = gadget.Category.ToCategoryFavoriteGadgetResponse()!,
