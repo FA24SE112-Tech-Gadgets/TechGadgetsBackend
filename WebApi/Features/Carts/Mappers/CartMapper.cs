@@ -47,6 +47,7 @@ public static class CartMapper
                 Status = gadget.Status,
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
+                IsForSale = gadget.IsForSale,
                 Seller = gadget.Seller.ToSellerCartResponse()!,
                 Brand = gadget.Brand.ToBrandcartResponse()!,
                 Category = gadget.Category.ToCategoryCartResponse()!,
