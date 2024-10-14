@@ -7,7 +7,7 @@ public class SpecificationValue
 {
     public Guid Id { get; set; }
     public Guid SpecificationKeyId { get; set; }
-    public Guid? SpecificationUnitId { get; set; }
+    public Guid SpecificationUnitId { get; set; }
     public Guid GadgetId { get; set; }
     public string Value { get; set; } = default!;
 
