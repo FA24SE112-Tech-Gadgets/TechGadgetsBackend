@@ -23,6 +23,7 @@ public class Gadget
     [Column(TypeName = "vector(384)")]
     public Vector NameVector { get; set; } = default!;
     public int Quantity { get; set; }
+    public bool IsForSale { get; set; }
 
     public Seller Seller { get; set; } = default!;
     public Brand Brand { get; set; } = default!;
@@ -35,7 +36,6 @@ public class Gadget
     public ICollection<GadgetImage> GadgetImages { get; set; } = [];
     public ICollection<FavoriteGadget> FavoriteGadgets { get; set; } = [];
     public ICollection<GadgetHistory> GadgetHistories { get; set; } = [];
-    public ICollection<SearchGadgetResponse> SearchGadgetResponses { get; set; } = [];
 }
 
 public enum GadgetStatus
