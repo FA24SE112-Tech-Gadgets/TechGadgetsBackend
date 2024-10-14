@@ -1,6 +1,6 @@
 ﻿using WebApi.Data.Entities;
 
-namespace WebApi.Features.FavoriteGadgets;
+namespace WebApi.Features.FavoriteGadgets.Models;
 
 public class SellerFavoriteGadgetResponse
 {
@@ -10,5 +10,5 @@ public class SellerFavoriteGadgetResponse
     public string ShopAddress { get; set; } = default!;
     public BusinessModel BusinessModel { get; set; }
     public string PhoneNumber { get; set; } = default!;
-    public UserGadgetHistoryResponse User { get; set; } = default!;
+    public UserFavoriteGadgetResponse User { get; set; } = default!;
 }
