@@ -99,4 +99,39 @@ public class VerifyCodeService(MailService mailService, AppDbContext context)
                 .Where(a => a.Id == user.Id)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.Status, UserStatus.Active));
     }
+
+    public async Task VerifyUserChangePasswordAsync(User user, string code)
+    {
+        if (user.Status != UserStatus.Active)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_03)
+                .AddReason("user", "Tài khoản chưa được kích hoạt hoặc tài khoản đã bị khóa.")
+                .Build();
+        }
+
+        var userVerify = await _context.UserVerifies
+                .Where(a => a.VerifyCode == code && a.UserId == user.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .FirstOrDefaultAsync();
+
+        if (userVerify == null)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("verifyCode", "Mã xác thực không hợp lệ")
+                .Build();
+        }
+        var maxTime = userVerify.CreatedAt.AddSeconds(VerificationDuration);
+        if (maxTime < DateTime.UtcNow)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("verifyCode", "Mã xác thực hết hạn")
+                .Build();
+        }
+        await _context.UserVerifies
+                .Where(a => a.Id == userVerify.Id)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.VerifyStatus, VerifyStatus.Verified));
+    }
 }

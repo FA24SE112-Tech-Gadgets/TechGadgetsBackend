@@ -43,122 +43,6 @@ namespace WebApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Admins");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("c3279608-d5f2-4da9-a942-e14573fa41e7"),
-                            FullName = "Liêu Bình An",
-                            UserId = new Guid("69f7c054-00d2-48f3-9e86-21081f095340")
-                        },
-                        new
-                        {
-                            Id = new Guid("ac09dfb9-0216-4b11-81a6-42c959d95ccb"),
-                            FullName = "Thái Hưng Đạo",
-                            UserId = new Guid("4808ef8f-f46f-461f-ba41-962e16aec45b")
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Banner", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("BannerRequestId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BannerRequestId")
-                        .IsUnique();
-
-                    b.ToTable("Banners");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.BannerConfiguration", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("MaxNumberOfBanner")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BannerConfigurations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("13f4ef9b-279e-42ab-9993-daa3ed0602fe"),
-                            MaxNumberOfBanner = 5
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.BannerRequest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BannerRequestPriceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ExpiredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BannerRequestPriceId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("BannerRequests");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.BannerRequestPrice", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BannerRequestPrices");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.BillingMail", b =>
@@ -218,650 +102,41 @@ namespace WebApi.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brands");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("82a8b1ca-fe27-406b-bcb4-22b11548cdfa"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Acer.jpg",
-                            Name = "Acer"
-                        },
-                        new
-                        {
-                            Id = new Guid("ac7694d0-0ea2-455a-b1b4-13b8e6c75721"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Alpha%20Works.jpg",
-                            Name = "Alpha Works"
-                        },
-                        new
-                        {
-                            Id = new Guid("ff25e48b-b326-4a63-9bcf-a5cb2c51886b"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Anker.jpg",
-                            Name = "Anker"
-                        },
-                        new
-                        {
-                            Id = new Guid("e800ce83-2289-497d-80fe-f5f713890ef6"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Apple.jpg",
-                            Name = "Apple"
-                        },
-                        new
-                        {
-                            Id = new Guid("bdbbaea4-fa7d-46b8-bb70-f548322fc3a2"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Asus.png",
-                            Name = "Asus"
-                        },
-                        new
-                        {
-                            Id = new Guid("79a4d1e8-cabc-4b86-9ec5-d259e241d6d4"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Audio-technica.jpg",
-                            Name = "Audio-technica"
-                        },
-                        new
-                        {
-                            Id = new Guid("aed04607-3957-4214-8fb4-c79e1a8dfaf3"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Aukey.jpg",
-                            Name = "Aukey"
-                        },
-                        new
-                        {
-                            Id = new Guid("419bccb1-65bf-49b2-a3c1-d380a7be2e68"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/AVA.jpg",
-                            Name = "AVA"
-                        },
-                        new
-                        {
-                            Id = new Guid("ac8e62e6-17bd-4484-8a03-8087ec593992"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Bagitech.png",
-                            Name = "Bagitech"
-                        },
-                        new
-                        {
-                            Id = new Guid("b33ff055-5c7d-426a-b4fe-7a08290ee78d"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Baseus.png",
-                            Name = "Baseus"
-                        },
-                        new
-                        {
-                            Id = new Guid("20c7edea-efa4-4c66-b351-820be6ab9084"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Beats.jpg",
-                            Name = "Beats"
-                        },
-                        new
-                        {
-                            Id = new Guid("3b154b23-3bd4-44d8-8943-c1c02f1668a0"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Belkin.jpg",
-                            Name = "Belkin"
-                        },
-                        new
-                        {
-                            Id = new Guid("c63835ee-bcce-4d8b-85f8-e14678b530ce"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Benco.png",
-                            Name = "Benco"
-                        },
-                        new
-                        {
-                            Id = new Guid("2301778e-1802-4086-afb8-818746f11db0"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Bose.jpg",
-                            Name = "Bose"
-                        },
-                        new
-                        {
-                            Id = new Guid("65dc012f-c486-4b84-8bc7-10a15b8a4964"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Celebrat.jpeg",
-                            Name = "Celebrat"
-                        },
-                        new
-                        {
-                            Id = new Guid("5a01f7f3-14ed-4ef6-8a15-4a2415cd9fb4"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Cooler%20Master.jpg",
-                            Name = "Cooler Master"
-                        },
-                        new
-                        {
-                            Id = new Guid("78142080-67b6-4be9-886c-6a41a7678f3a"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Corsair.png",
-                            Name = "Corsair"
-                        },
-                        new
-                        {
-                            Id = new Guid("6b3256ea-fb3f-4fd7-adb0-80a6a18b864e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Creative.jpg",
-                            Name = "Creative"
-                        },
-                        new
-                        {
-                            Id = new Guid("1bd9813b-411a-4029-9de3-cf864bf43f51"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dareu.jpg",
-                            Name = "Dareu"
-                        },
-                        new
-                        {
-                            Id = new Guid("81f79d0f-0567-453e-b946-441d81f1b65b"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Defunc.jpg",
-                            Name = "Defunc"
-                        },
-                        new
-                        {
-                            Id = new Guid("2499794c-4804-4364-baad-ae65890d77d7"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dell.jpg",
-                            Name = "Dell"
-                        },
-                        new
-                        {
-                            Id = new Guid("0178b31e-208f-4019-8598-04d6302c5ec3"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Devia.png",
-                            Name = "Devia"
-                        },
-                        new
-                        {
-                            Id = new Guid("ad805cc1-06c9-4080-928f-ac76293d0aab"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Disney.jpg",
-                            Name = "Disney"
-                        },
-                        new
-                        {
-                            Id = new Guid("534611d3-4be3-4127-8839-3b5cf6ad50b9"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Divoom.jpg",
-                            Name = "Divoom"
-                        },
-                        new
-                        {
-                            Id = new Guid("710f0631-bc09-4837-ae35-82d87b34c411"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/E-Dra.jpg",
-                            Name = "E-Dra"
-                        },
-                        new
-                        {
-                            Id = new Guid("00e98472-9171-4111-a63a-925c3610563e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Edifier.jpg",
-                            Name = "Edifier"
-                        },
-                        new
-                        {
-                            Id = new Guid("ed1bdc18-20ce-4707-9e49-eefb7475e702"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Elecom.png",
-                            Name = "Elecom"
-                        },
-                        new
-                        {
-                            Id = new Guid("a953e193-a6f6-4aa0-b804-ed577c39aea1"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/F.Power.png",
-                            Name = "F.Power"
-                        },
-                        new
-                        {
-                            Id = new Guid("aa8a3a33-47be-4e0f-a148-ee3c3c9c82d3"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Fenda.png",
-                            Name = "Fenda"
-                        },
-                        new
-                        {
-                            Id = new Guid("1643db3f-45b8-4df8-860a-d7e95bdf2651"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Gigabyte.png",
-                            Name = "Gigabyte"
-                        },
-                        new
-                        {
-                            Id = new Guid("15f73a3b-8436-4010-b9f1-9ebcb7a710dd"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Harman%20Kardon.png",
-                            Name = "Harman Kardon"
-                        },
-                        new
-                        {
-                            Id = new Guid("1ce7f45e-ec04-4467-9794-574109271fac"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Havit.jpeg",
-                            Name = "Havit"
-                        },
-                        new
-                        {
-                            Id = new Guid("68b782b1-eda2-4f0d-88c6-e9d74a39a397"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Honor.jpg",
-                            Name = "Honor"
-                        },
-                        new
-                        {
-                            Id = new Guid("680f7bd9-82fd-4463-9620-292062bdbc21"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Hp.png",
-                            Name = "Hp"
-                        },
-                        new
-                        {
-                            Id = new Guid("aaa48259-deb6-4fbb-804a-82b24bf006f2"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Huawei.jpg",
-                            Name = "Huawei"
-                        },
-                        new
-                        {
-                            Id = new Guid("82817f1b-be6c-4b9b-9f8f-49839cbf4bf8"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/HyperX.jpg",
-                            Name = "HyperX"
-                        },
-                        new
-                        {
-                            Id = new Guid("eb8928a3-bfb8-4f87-a24d-2fc2fb7943fc"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Icore.jpg",
-                            Name = "ICore"
-                        },
-                        new
-                        {
-                            Id = new Guid("76c2e452-64fb-4c0e-b131-fae9781d901e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Inoi.png",
-                            Name = "Inoi"
-                        },
-                        new
-                        {
-                            Id = new Guid("532ff7b1-71de-46e1-a4c0-d217140cd472"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Itel.jpg",
-                            Name = "Itel"
-                        },
-                        new
-                        {
-                            Id = new Guid("5a90a711-7b72-4fa3-95b3-c7bcd91cc960"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/IValue.jpg",
-                            Name = "IValue"
-                        },
-                        new
-                        {
-                            Id = new Guid("f96ce9ef-0fd1-4549-a853-bc768c0c337e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Jabra.png",
-                            Name = "Jabra"
-                        },
-                        new
-                        {
-                            Id = new Guid("0652a4b5-129c-4188-bee7-71d6985db1f8"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/JBL.jpg",
-                            Name = "JBL"
-                        },
-                        new
-                        {
-                            Id = new Guid("bd300cf8-5d59-46ff-b501-6e9e71bcadca"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Klatre.jpg",
-                            Name = "Klatre"
-                        },
-                        new
-                        {
-                            Id = new Guid("9f112f02-284a-49d9-8e90-b4e1402ec943"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/KZ.png",
-                            Name = "KZ"
-                        },
-                        new
-                        {
-                            Id = new Guid("af97baf7-367d-4887-a7e6-9dbb65c8ed2d"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Lenovo.png",
-                            Name = "Lenovo"
-                        },
-                        new
-                        {
-                            Id = new Guid("3b0410e4-3c29-42ee-b9af-db4d42f37f46"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/LG.jpg",
-                            Name = "LG"
-                        },
-                        new
-                        {
-                            Id = new Guid("1508b3dc-da9c-45c3-899c-7200dc045d2f"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Logitech.jpg",
-                            Name = "Logitech"
-                        },
-                        new
-                        {
-                            Id = new Guid("7decf70d-79ff-4af8-8a7a-00c206b9d123"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Mad%20Catz.jpg",
-                            Name = "Mad Catz"
-                        },
-                        new
-                        {
-                            Id = new Guid("6dc7e374-ece0-4779-81a1-5eb40d6f0608"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Marshall.png",
-                            Name = "Marshall"
-                        },
-                        new
-                        {
-                            Id = new Guid("403d5c4e-01ed-460d-8723-f219658b8147"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Masstel.jpg",
-                            Name = "Masstel"
-                        },
-                        new
-                        {
-                            Id = new Guid("17a5fdab-508b-455a-b024-8fd558c7698c"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Microlab.jpg",
-                            Name = "Microlab"
-                        },
-                        new
-                        {
-                            Id = new Guid("057baa12-e0f6-47f7-80b3-479a6eb3f42d"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Microtek.jpg",
-                            Name = "Microtek"
-                        },
-                        new
-                        {
-                            Id = new Guid("cf2b71ae-c67f-43e3-9df9-b42573c09488"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Mobell.jpg",
-                            Name = "Mobell"
-                        },
-                        new
-                        {
-                            Id = new Guid("904b2351-951b-4efa-877d-d759a0772958"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Monster.jpg",
-                            Name = "Monster"
-                        },
-                        new
-                        {
-                            Id = new Guid("d9e044bb-aa3f-44d4-ae9e-436d80905958"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Mozard.jpg",
-                            Name = "Mozard"
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2ba326-c452-4a5a-94a2-6a46f0e81282"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/MSI.jpg",
-                            Name = "MSI"
-                        },
-                        new
-                        {
-                            Id = new Guid("6158ec00-90e6-4b30-b20c-91aeb980dd26"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Nokia.png",
-                            Name = "Nokia"
-                        },
-                        new
-                        {
-                            Id = new Guid("901a9e9f-5545-475e-b591-b4dd01527a95"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Oppo.png",
-                            Name = "Oppo"
-                        },
-                        new
-                        {
-                            Id = new Guid("4b1424ad-ba91-403f-8093-1a479558e299"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Ovan.jpg",
-                            Name = "Ovan"
-                        },
-                        new
-                        {
-                            Id = new Guid("45e86cf4-0e1f-44cc-bee6-239ea5520397"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Pack%26Go.jpg",
-                            Name = "Pack&Go"
-                        },
-                        new
-                        {
-                            Id = new Guid("f9d44622-20bb-472b-aac9-02b6c52c3f1e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Pioneer.jpg",
-                            Name = "Pioneer"
-                        },
-                        new
-                        {
-                            Id = new Guid("3df4ba15-3155-40a8-98c4-f64aef35f62a"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Pisen.jpg",
-                            Name = "Pisen"
-                        },
-                        new
-                        {
-                            Id = new Guid("d6462b84-45a9-4d69-8e96-a2b4d0454ced"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Plantronics.png",
-                            Name = "Plantronics"
-                        },
-                        new
-                        {
-                            Id = new Guid("39600d1f-9a07-4535-b5d6-6298647788fa"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Pro%20One.png",
-                            Name = "Pro One"
-                        },
-                        new
-                        {
-                            Id = new Guid("73f2c1a2-a6d3-4606-a09d-6c4645c243a9"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Prolink.jpg",
-                            Name = "ProLink"
-                        },
-                        new
-                        {
-                            Id = new Guid("4d86b327-0a41-4eb2-95f1-4dc1c55059db"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Rapoo.png",
-                            Name = "Rapoo"
-                        },
-                        new
-                        {
-                            Id = new Guid("e9d16909-dfe9-49f2-81ca-44e8504fb304"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Razer.jpg",
-                            Name = "Razer"
-                        },
-                        new
-                        {
-                            Id = new Guid("c91d0f29-0944-4534-9430-dc577bccdd3f"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Realme.png",
-                            Name = "Realme"
-                        },
-                        new
-                        {
-                            Id = new Guid("66ef437d-bae6-460c-adfb-0ace2b83b73e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Remax.png",
-                            Name = "Remax"
-                        },
-                        new
-                        {
-                            Id = new Guid("4ab1a520-89b7-42d3-ba98-e3a501abe107"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Rezo.jpg",
-                            Name = "Rezo"
-                        },
-                        new
-                        {
-                            Id = new Guid("01e2ab86-8095-438c-8caf-19d0a9a452a8"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Rock.png",
-                            Name = "Rock"
-                        },
-                        new
-                        {
-                            Id = new Guid("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Samsung.jpg",
-                            Name = "Samsung"
-                        },
-                        new
-                        {
-                            Id = new Guid("5f74107e-ea36-43da-a7a0-4c43e8aef224"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sdrd.png",
-                            Name = "Sdrd"
-                        },
-                        new
-                        {
-                            Id = new Guid("08f2e776-516c-4a40-8e23-9b6aedd2c6de"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sennheiser.jpg",
-                            Name = "Sennheiser"
-                        },
-                        new
-                        {
-                            Id = new Guid("93d79b77-85a3-46d3-bd3a-98844c13f2d6"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Shokz.png",
-                            Name = "Shokz"
-                        },
-                        new
-                        {
-                            Id = new Guid("bb8a59c2-b165-45b3-801b-7592666c224a"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Somic.jpg",
-                            Name = "Somic"
-                        },
-                        new
-                        {
-                            Id = new Guid("60495ab4-ffe4-404c-9ec2-e8e2d48c75c4"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sony.jpg",
-                            Name = "Sony"
-                        },
-                        new
-                        {
-                            Id = new Guid("122cc69b-2045-4c82-8d77-cd6e9245b25d"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Soul.png",
-                            Name = "Soul"
-                        },
-                        new
-                        {
-                            Id = new Guid("7ed8e47c-04d8-4197-aa96-b75b305485d0"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sounarc.jpg",
-                            Name = "Sounarc"
-                        },
-                        new
-                        {
-                            Id = new Guid("52b8e46c-ed0a-40df-bb25-216c07b39098"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Soundcore.png",
-                            Name = "Soundcore"
-                        },
-                        new
-                        {
-                            Id = new Guid("26ee773d-e35e-4f6b-885f-03f732e0096c"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Soundmax.jpg",
-                            Name = "Soundmax"
-                        },
-                        new
-                        {
-                            Id = new Guid("b5a610d7-6592-4be5-a4a7-ce9e945d7328"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Soundpeats.png",
-                            Name = "Soundpeats"
-                        },
-                        new
-                        {
-                            Id = new Guid("b2caff82-b89e-4ca8-8ad2-433c10b9eeda"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Steelseries.jpg",
-                            Name = "Steelseries"
-                        },
-                        new
-                        {
-                            Id = new Guid("eb11099c-8c02-433c-a522-62d6898dd64e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sudio.jpg",
-                            Name = "Sudio"
-                        },
-                        new
-                        {
-                            Id = new Guid("c32d3ba9-95d7-4cd5-a8f7-4dd10e024da0"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Tako.jpg",
-                            Name = "Tako"
-                        },
-                        new
-                        {
-                            Id = new Guid("fc1da7de-b46f-4a61-b3a9-ba1db77a0a44"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/TCL.png",
-                            Name = "TCL"
-                        },
-                        new
-                        {
-                            Id = new Guid("fba38fed-c1b1-4ccb-85e1-f63553a838f7"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Tecno.png",
-                            Name = "Tecno"
-                        },
-                        new
-                        {
-                            Id = new Guid("80d20e0e-31e2-406b-b21b-476fc3eeb34c"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Tplink.png",
-                            Name = "Tplink"
-                        },
-                        new
-                        {
-                            Id = new Guid("803f2378-adc8-4bc2-ace0-5d00ce66a22b"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/UmeTravel.jpg",
-                            Name = "UmeTravel"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d453e47-d824-4c81-a0ea-14272c738979"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Vaio.jpg",
-                            Name = "Vaio"
-                        },
-                        new
-                        {
-                            Id = new Guid("a2eecdba-0c2f-4681-bb6f-b5d2df684d8a"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Viettel.jpg",
-                            Name = "Viettel"
-                        },
-                        new
-                        {
-                            Id = new Guid("d5ecc812-3dd2-4809-a5f4-11cb3c0d3595"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Vivo.jpg",
-                            Name = "Vivo"
-                        },
-                        new
-                        {
-                            Id = new Guid("c5cd02d6-2c9b-41f0-ba81-4c25097833be"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/X-Mini.jpg",
-                            Name = "X-Mini"
-                        },
-                        new
-                        {
-                            Id = new Guid("b34a95a5-f4bf-4189-8f1c-feb6bd7caaf7"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Xiaomi.png",
-                            Name = "Xiaomi"
-                        },
-                        new
-                        {
-                            Id = new Guid("589165e2-9282-4c48-80b3-1e25fd9102a8"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zadez.jpg",
-                            Name = "Zadez"
-                        },
-                        new
-                        {
-                            Id = new Guid("ade6396d-9078-4575-9eb1-90402000f1ce"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zidli.png",
-                            Name = "Zidli"
-                        },
-                        new
-                        {
-                            Id = new Guid("f2671cf2-fc2e-4374-945f-e63bed491ad2"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/ZTE.png",
-                            Name = "ZTE"
-                        },
-                        new
-                        {
-                            Id = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Denon.jpg",
-                            Name = "Denon"
-                        },
-                        new
-                        {
-                            Id = new Guid("5534e6ee-eb0f-4787-b519-a8cfb18682ae"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Klipsch.jpg",
-                            Name = "Klipsch"
-                        },
-                        new
-                        {
-                            Id = new Guid("7537c078-2b87-4286-9b74-be18ad3fc912"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Enkor.jpg",
-                            Name = "Enkor"
-                        },
-                        new
-                        {
-                            Id = new Guid("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Nanomax.jpg",
-                            Name = "Nanomax"
-                        },
-                        new
-                        {
-                            Id = new Guid("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Zenbos.jpg",
-                            Name = "Zenbos"
-                        },
-                        new
-                        {
-                            Id = new Guid("14f7fc83-64ff-45c9-8471-1f4a642ef686"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Jammy.jpg",
-                            Name = "Jammy"
-                        },
-                        new
-                        {
-                            Id = new Guid("10fdeaaa-b502-4a8c-b376-49da96397dff"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sumico.jpg",
-                            Name = "Sumico"
-                        },
-                        new
-                        {
-                            Id = new Guid("1c2181c6-cf60-46dc-b973-c34c8fb53478"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Paramax.jpg",
-                            Name = "Paramax"
-                        },
-                        new
-                        {
-                            Id = new Guid("b72baf1d-38e6-48da-8525-d575005f0165"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dalton.jpg",
-                            Name = "Dalton"
-                        },
-                        new
-                        {
-                            Id = new Guid("8968277e-cb34-4f11-aaba-191011f8914a"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Birici.jpg",
-                            Name = "Birici"
-                        });
+            modelBuilder.Entity("WebApi.Data.Entities.Cart", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.CartGadget", b =>
+                {
+                    b.Property<Guid>("CartId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GadgetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CartId", "GadgetId");
+
+                    b.HasIndex("GadgetId");
+
+                    b.ToTable("CartGadgets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Category", b =>
@@ -877,23 +152,6 @@ namespace WebApi.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Điện thoại"
-                        },
-                        new
-                        {
-                            Id = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Laptop"
-                        },
-                        new
-                        {
-                            Id = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Thiết bị âm thanh"
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.CategoryBrand", b =>
@@ -909,618 +167,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("CategoryBrands");
-
-                    b.HasData(
-                        new
-                        {
-                            BrandId = new Guid("e800ce83-2289-497d-80fe-f5f713890ef6"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("bdbbaea4-fa7d-46b8-bb70-f548322fc3a2"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b34a95a5-f4bf-4189-8f1c-feb6bd7caaf7"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("901a9e9f-5545-475e-b591-b4dd01527a95"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("c91d0f29-0944-4534-9430-dc577bccdd3f"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("68b782b1-eda2-4f0d-88c6-e9d74a39a397"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("fc1da7de-b46f-4a61-b3a9-ba1db77a0a44"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("fba38fed-c1b1-4ccb-85e1-f63553a838f7"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("6158ec00-90e6-4b30-b20c-91aeb980dd26"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("403d5c4e-01ed-460d-8723-f219658b8147"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("cf2b71ae-c67f-43e3-9df9-b42573c09488"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("532ff7b1-71de-46e1-a4c0-d217140cd472"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("a2eecdba-0c2f-4681-bb6f-b5d2df684d8a"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("c63835ee-bcce-4d8b-85f8-e14678b530ce"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("80d20e0e-31e2-406b-b21b-476fc3eeb34c"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("d5ecc812-3dd2-4809-a5f4-11cb3c0d3595"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f2671cf2-fc2e-4374-945f-e63bed491ad2"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("76c2e452-64fb-4c0e-b131-fae9781d901e"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("e800ce83-2289-497d-80fe-f5f713890ef6"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("680f7bd9-82fd-4463-9620-292062bdbc21"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("bdbbaea4-fa7d-46b8-bb70-f548322fc3a2"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("2499794c-4804-4364-baad-ae65890d77d7"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("af97baf7-367d-4887-a7e6-9dbb65c8ed2d"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("82a8b1ca-fe27-406b-bcb4-22b11548cdfa"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ec2ba326-c452-4a5a-94a2-6a46f0e81282"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("3b0410e4-3c29-42ee-b9af-db4d42f37f46"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("1643db3f-45b8-4df8-860a-d7e95bdf2651"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("8d453e47-d824-4c81-a0ea-14272c738979"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("403d5c4e-01ed-460d-8723-f219658b8147"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("aaa48259-deb6-4fbb-804a-82b24bf006f2"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("e800ce83-2289-497d-80fe-f5f713890ef6"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("419bccb1-65bf-49b2-a3c1-d380a7be2e68"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b34a95a5-f4bf-4189-8f1c-feb6bd7caaf7"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("901a9e9f-5545-475e-b591-b4dd01527a95"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("1ce7f45e-ec04-4467-9794-574109271fac"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b33ff055-5c7d-426a-b4fe-7a08290ee78d"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("0652a4b5-129c-4188-bee7-71d6985db1f8"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("c91d0f29-0944-4534-9430-dc577bccdd3f"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("60495ab4-ffe4-404c-9ec2-e8e2d48c75c4"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("6dc7e374-ece0-4779-81a1-5eb40d6f0608"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b5a610d7-6592-4be5-a4a7-ce9e945d7328"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("122cc69b-2045-4c82-8d77-cd6e9245b25d"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("bdbbaea4-fa7d-46b8-bb70-f548322fc3a2"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("82817f1b-be6c-4b9b-9f8f-49839cbf4bf8"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("589165e2-9282-4c48-80b3-1e25fd9102a8"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("93d79b77-85a3-46d3-bd3a-98844c13f2d6"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("904b2351-951b-4efa-877d-d759a0772958"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("7ed8e47c-04d8-4197-aa96-b75b305485d0"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("20c7edea-efa4-4c66-b351-820be6ab9084"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("d9e044bb-aa3f-44d4-ae9e-436d80905958"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("4ab1a520-89b7-42d3-ba98-e3a501abe107"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("52b8e46c-ed0a-40df-bb25-216c07b39098"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("82a8b1ca-fe27-406b-bcb4-22b11548cdfa"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ac7694d0-0ea2-455a-b1b4-13b8e6c75721"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("79a4d1e8-cabc-4b86-9ec5-d259e241d6d4"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("2301778e-1802-4086-afb8-818746f11db0"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("78142080-67b6-4be9-886c-6a41a7678f3a"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("6b3256ea-fb3f-4fd7-adb0-80a6a18b864e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("65dc012f-c486-4b84-8bc7-10a15b8a4964"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("5a01f7f3-14ed-4ef6-8a15-4a2415cd9fb4"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("1bd9813b-411a-4029-9de3-cf864bf43f51"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("2499794c-4804-4364-baad-ae65890d77d7"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ad805cc1-06c9-4080-928f-ac76293d0aab"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("534611d3-4be3-4127-8839-3b5cf6ad50b9"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("710f0631-bc09-4837-ae35-82d87b34c411"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("00e98472-9171-4111-a63a-925c3610563e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ed1bdc18-20ce-4707-9e49-eefb7475e702"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("aa8a3a33-47be-4e0f-a148-ee3c3c9c82d3"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("15f73a3b-8436-4010-b9f1-9ebcb7a710dd"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f96ce9ef-0fd1-4549-a853-bc768c0c337e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("bb8a59c2-b165-45b3-801b-7592666c224a"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("3b0410e4-3c29-42ee-b9af-db4d42f37f46"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("1508b3dc-da9c-45c3-899c-7200dc045d2f"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("17a5fdab-508b-455a-b024-8fd558c7698c"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("7decf70d-79ff-4af8-8a7a-00c206b9d123"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("057baa12-e0f6-47f7-80b3-479a6eb3f42d"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("4b1424ad-ba91-403f-8093-1a479558e299"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("3df4ba15-3155-40a8-98c4-f64aef35f62a"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("d6462b84-45a9-4d69-8e96-a2b4d0454ced"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("4d86b327-0a41-4eb2-95f1-4dc1c55059db"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("e9d16909-dfe9-49f2-81ca-44e8504fb304"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("66ef437d-bae6-460c-adfb-0ace2b83b73e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("5f74107e-ea36-43da-a7a0-4c43e8aef224"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("08f2e776-516c-4a40-8e23-9b6aedd2c6de"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("26ee773d-e35e-4f6b-885f-03f732e0096c"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b2caff82-b89e-4ca8-8ad2-433c10b9eeda"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("eb11099c-8c02-433c-a522-62d6898dd64e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("c32d3ba9-95d7-4cd5-a8f7-4dd10e024da0"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("c5cd02d6-2c9b-41f0-ba81-4c25097833be"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ade6396d-9078-4575-9eb1-90402000f1ce"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("81f79d0f-0567-453e-b946-441d81f1b65b"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("5a90a711-7b72-4fa3-95b3-c7bcd91cc960"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("0178b31e-208f-4019-8598-04d6302c5ec3"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("3b154b23-3bd4-44d8-8943-c1c02f1668a0"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("f9d44622-20bb-472b-aac9-02b6c52c3f1e"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("01e2ab86-8095-438c-8caf-19d0a9a452a8"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("aed04607-3957-4214-8fb4-c79e1a8dfaf3"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("45e86cf4-0e1f-44cc-bee6-239ea5520397"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("bd300cf8-5d59-46ff-b501-6e9e71bcadca"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ff25e48b-b326-4a63-9bcf-a5cb2c51886b"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("a953e193-a6f6-4aa0-b804-ed577c39aea1"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("39600d1f-9a07-4535-b5d6-6298647788fa"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("73f2c1a2-a6d3-4606-a09d-6c4645c243a9"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ac8e62e6-17bd-4484-8a03-8087ec593992"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("eb8928a3-bfb8-4f87-a24d-2fc2fb7943fc"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("9f112f02-284a-49d9-8e90-b4e1402ec943"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("803f2378-adc8-4bc2-ace0-5d00ce66a22b"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("a76154d5-bb61-439d-bd99-35df70b8d616"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("5534e6ee-eb0f-4787-b519-a8cfb18682ae"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("7537c078-2b87-4286-9b74-be18ad3fc912"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("d6c89b99-409b-48ec-8fc0-a2e34c73ee1c"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("d40f2c4c-bbd3-4989-8e2c-43661c8a7b28"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("14f7fc83-64ff-45c9-8471-1f4a642ef686"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("10fdeaaa-b502-4a8c-b376-49da96397dff"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("1c2181c6-cf60-46dc-b973-c34c8fb53478"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("b72baf1d-38e6-48da-8525-d575005f0165"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("8968277e-cb34-4f11-aaba-191011f8914a"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("cf2b71ae-c67f-43e3-9df9-b42573c09488"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        },
-                        new
-                        {
-                            BrandId = new Guid("ec2ba326-c452-4a5a-94a2-6a46f0e81282"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6")
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Customer", b =>
@@ -1560,113 +206,6 @@ namespace WebApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d61a23a0-dbfe-429f-9c1f-5e0b955beff9"),
-                            FullName = "Nguỵ Chi Mai",
-                            UserId = new Guid("5a57223a-6e7d-401b-a19e-bf9282db69fe")
-                        },
-                        new
-                        {
-                            Id = new Guid("f9ff20a7-05b3-4dbc-b260-26ef16db8513"),
-                            FullName = "Lê Thuý Hiền",
-                            UserId = new Guid("8d8707e4-299d-450b-bc5c-f8ab49504fce")
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerSubscription", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CustomerSubscriptions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("53e4a057-7dc4-4c0d-9ef6-d8f6b97fb7d8"),
-                            Description = "Sử dụng tính năng tìm kiếm bằng ngôn ngữ tự nhiên không giới hạn",
-                            Duration = 30,
-                            Name = "Gói Standard",
-                            Price = 29000,
-                            Status = "Active",
-                            Type = "Standard"
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerSubscriptionTracker", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CustomerSubscriptionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("OverdueTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SubscriptionStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidityEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ValidityStart")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("CustomerSubscriptionId");
-
-                    b.ToTable("CustomerSubscriptionTrackers");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
@@ -1676,6 +215,9 @@ namespace WebApi.Data.Migrations
 
                     b.Property<Guid>("GadgetId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("CustomerId", "GadgetId");
 
@@ -1696,20 +238,35 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Condition")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Vector>("ConditionVector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsForSale")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("Price")
+                    b.Property<Vector>("NameVector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
+                    b.Property<int>("Price")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("SellerId")
-                        .HasColumnType("uuid");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
 
-                    b.Property<Guid?>("ShopId")
+                    b.Property<Guid>("SellerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
@@ -1717,17 +274,11 @@ namespace WebApi.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ThumbnailUrl")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Url")
-                        .HasColumnType("text");
-
-                    b.Property<Vector>("Vector")
-                        .IsRequired()
-                        .HasColumnType("vector(384)");
 
                     b.HasKey("Id");
 
@@ -1736,8 +287,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SellerId");
-
-                    b.HasIndex("ShopId");
 
                     b.ToTable("Gadgets");
                 });
@@ -1787,158 +336,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("GadgetFilters");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Giá"
-                        },
-                        new
-                        {
-                            Id = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "RAM"
-                        },
-                        new
-                        {
-                            Id = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Độ phân giải"
-                        },
-                        new
-                        {
-                            Id = new Guid("c12b48ec-306d-4797-bdef-92503483fc18"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Tần sồ quét"
-                        },
-                        new
-                        {
-                            Id = new Guid("bea42814-f615-48e0-9937-ca1916266ff1"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Tính năng đặc biệt"
-                        },
-                        new
-                        {
-                            Id = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Dung lượng lưu trữ"
-                        },
-                        new
-                        {
-                            Id = new Guid("b2a18dba-2e74-4918-a263-b2555fb8faeb"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Tính năng sạc"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d20ec78-aecf-4fb3-8df1-d976f86558fe"),
-                            CategoryId = new Guid("ea4183e8-5a94-401c-865d-e000b5d2b72d"),
-                            Name = "Hệ điều hành"
-                        },
-                        new
-                        {
-                            Id = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Giá"
-                        },
-                        new
-                        {
-                            Id = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Kích cỡ màn hình"
-                        },
-                        new
-                        {
-                            Id = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "RAM"
-                        },
-                        new
-                        {
-                            Id = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Độ phân giải"
-                        },
-                        new
-                        {
-                            Id = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Tần sồ quét"
-                        },
-                        new
-                        {
-                            Id = new Guid("edeb7ed6-d45b-429c-88ae-16ef497b6dcd"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Ổ cứng"
-                        },
-                        new
-                        {
-                            Id = new Guid("af177595-3999-4055-8021-23fe477ac074"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Intel Core Ultra (mới nhất)"
-                        },
-                        new
-                        {
-                            Id = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Incel Core i/Core/Celeron/Pentium"
-                        },
-                        new
-                        {
-                            Id = new Guid("9e64a59d-82fe-417b-a16f-66fae0ad5ac4"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "AMD"
-                        },
-                        new
-                        {
-                            Id = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            CategoryId = new Guid("47827ce7-8c57-4ee8-9d3b-712396e2a4a0"),
-                            Name = "Apple"
-                        },
-                        new
-                        {
-                            Id = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Loại"
-                        },
-                        new
-                        {
-                            Id = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Giá"
-                        },
-                        new
-                        {
-                            Id = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Công suất"
-                        },
-                        new
-                        {
-                            Id = new Guid("dbac6116-25b2-4a4e-adfd-1d09d0f8bff5"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Thời lượng pin"
-                        },
-                        new
-                        {
-                            Id = new Guid("351c7135-5bf6-46b1-a07d-c1e3ffaa2cdb"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Cổng sạc"
-                        },
-                        new
-                        {
-                            Id = new Guid("903f0975-b33f-4e16-9243-94f2530d26dd"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Jack cắm"
-                        },
-                        new
-                        {
-                            Id = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            CategoryId = new Guid("f2e254ee-d0e7-47b2-99d8-779f3d29b7d6"),
-                            Name = "Tiện ích"
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetFilterOption", b =>
@@ -1959,824 +356,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("GadgetFilterId");
 
                     b.ToTable("GadgetFilterOptions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("d1a68594-a93f-4a0f-be24-6458c059a964"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Dưới 2 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("8a395ad3-9138-4d8a-a398-a3c0f0c96f20"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Từ 2 - 4 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("7d1b98bd-bacc-4159-bb88-196ee3ebf3eb"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Từ 4 - 7 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("210c0319-0fc1-4d44-af52-deda8ce8018f"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Từ 7 - 13 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("7b492fc0-59f3-4624-b637-bca6acbbb02c"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Từ 13 - 20 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("945848f1-6c6c-4412-83b0-288f94801350"),
-                            GadgetFilterId = new Guid("79b9494c-b5c1-419d-8f5d-4ae3ed7b5cd0"),
-                            Value = "Trên 20 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("a048df56-f9ee-4c9f-bdaa-79fafa9f2a1f"),
-                            GadgetFilterId = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            Value = "3 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("766d2310-25c7-4f4f-88d6-8046c96a8c3c"),
-                            GadgetFilterId = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            Value = "4 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("566df58d-3684-4159-95d9-5c5b5097bf7d"),
-                            GadgetFilterId = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            Value = "6 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("320cd81f-81cd-4462-bdf1-679117c35bca"),
-                            GadgetFilterId = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            Value = "8 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("b67c51af-d012-47de-adef-a0f3c2a1efea"),
-                            GadgetFilterId = new Guid("6228626e-b8c6-4edf-8b42-9ae0e1526771"),
-                            Value = "12 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("27c9f3a9-137b-4b45-96c1-d238726da6a9"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "QQVGA"
-                        },
-                        new
-                        {
-                            Id = new Guid("4e69bb48-5dc8-4bad-a7bc-fcbdec870bfb"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "QVGA"
-                        },
-                        new
-                        {
-                            Id = new Guid("f8f91ff1-d1ca-4da6-b90c-d2d653e6f5c3"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "HD+"
-                        },
-                        new
-                        {
-                            Id = new Guid("a1f15e84-adb1-4052-afcd-b32f926cfe13"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "Full HD+"
-                        },
-                        new
-                        {
-                            Id = new Guid("bf71797f-89e0-4b16-9b57-b3a5335a1c07"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "1.5K"
-                        },
-                        new
-                        {
-                            Id = new Guid("32348105-592c-45b9-8fb0-43b0934f34b6"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "1.5K+"
-                        },
-                        new
-                        {
-                            Id = new Guid("db53867b-5e54-4eda-a43a-85ebf4730ba8"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "2K+"
-                        },
-                        new
-                        {
-                            Id = new Guid("35c8d5b9-5d0b-4066-84ab-0af695248382"),
-                            GadgetFilterId = new Guid("fc5480ca-1c61-4eb4-a858-dc15a51b2992"),
-                            Value = "Retina (iPhone)"
-                        },
-                        new
-                        {
-                            Id = new Guid("ff43f32e-ee7f-4d22-9511-f9a036b9b8f5"),
-                            GadgetFilterId = new Guid("c12b48ec-306d-4797-bdef-92503483fc18"),
-                            Value = "60 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("2e65afad-61c1-4edb-8d74-ea66d3527ea0"),
-                            GadgetFilterId = new Guid("c12b48ec-306d-4797-bdef-92503483fc18"),
-                            Value = "144 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("7f2df584-d8a6-49a1-b4c6-0ed25511b198"),
-                            GadgetFilterId = new Guid("c12b48ec-306d-4797-bdef-92503483fc18"),
-                            Value = "90 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("9b9c427d-7551-4132-9333-b4d9e884d842"),
-                            GadgetFilterId = new Guid("c12b48ec-306d-4797-bdef-92503483fc18"),
-                            Value = "120 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("6a1dc6f4-dae1-4524-b63d-a50adcb24ced"),
-                            GadgetFilterId = new Guid("bea42814-f615-48e0-9937-ca1916266ff1"),
-                            Value = "Kháng nước, bụi"
-                        },
-                        new
-                        {
-                            Id = new Guid("4645b0bd-9c72-4c50-83a9-c05378dca2ba"),
-                            GadgetFilterId = new Guid("bea42814-f615-48e0-9937-ca1916266ff1"),
-                            Value = "Hỗ trợ 5G"
-                        },
-                        new
-                        {
-                            Id = new Guid("d99d4d1e-dd49-4e4a-a509-875a7bf935fd"),
-                            GadgetFilterId = new Guid("bea42814-f615-48e0-9937-ca1916266ff1"),
-                            Value = "Bảo mật khuôn mặt 3D"
-                        },
-                        new
-                        {
-                            Id = new Guid("08b32383-ad68-4666-be35-00feb1bec3d7"),
-                            GadgetFilterId = new Guid("bea42814-f615-48e0-9937-ca1916266ff1"),
-                            Value = "Công nghệ NFC"
-                        },
-                        new
-                        {
-                            Id = new Guid("c45295de-1fe6-4427-9712-b6ea7b949adb"),
-                            GadgetFilterId = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            Value = "64 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("5c1b14aa-50f7-4914-b42c-cb620251f619"),
-                            GadgetFilterId = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            Value = "128 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("e9db14f6-9105-4d17-99d1-4e8a0cfbb1f4"),
-                            GadgetFilterId = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            Value = "256 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("14588df7-ff2d-4e67-a71f-e484fab0a376"),
-                            GadgetFilterId = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            Value = "512 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("2e3d901f-13b6-47e4-8815-cedad93393a6"),
-                            GadgetFilterId = new Guid("3df19307-ee88-4e19-8e6f-820d432caa94"),
-                            Value = "1TB"
-                        },
-                        new
-                        {
-                            Id = new Guid("ed1cfca8-27e8-46d7-8d6a-e9fb685bee7c"),
-                            GadgetFilterId = new Guid("b2a18dba-2e74-4918-a263-b2555fb8faeb"),
-                            Value = "Sạc nhanh (từ 20W)"
-                        },
-                        new
-                        {
-                            Id = new Guid("a0212238-7541-45b6-8aac-e1b68cb3f824"),
-                            GadgetFilterId = new Guid("b2a18dba-2e74-4918-a263-b2555fb8faeb"),
-                            Value = "Sạc siêu nhanh (từ 60W)"
-                        },
-                        new
-                        {
-                            Id = new Guid("08c506a2-d27a-4f23-834d-f53864001062"),
-                            GadgetFilterId = new Guid("b2a18dba-2e74-4918-a263-b2555fb8faeb"),
-                            Value = "Sạc không dây"
-                        },
-                        new
-                        {
-                            Id = new Guid("ce434348-1d46-460a-90d2-69fb6ae1cd8c"),
-                            GadgetFilterId = new Guid("8d20ec78-aecf-4fb3-8df1-d976f86558fe"),
-                            Value = "iOS"
-                        },
-                        new
-                        {
-                            Id = new Guid("470598e2-1d97-4465-a70a-83a7b5f29165"),
-                            GadgetFilterId = new Guid("8d20ec78-aecf-4fb3-8df1-d976f86558fe"),
-                            Value = "Android"
-                        },
-                        new
-                        {
-                            Id = new Guid("dbbcb1f9-fbcd-4261-afcb-3e9bdffd570d"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Dưới 10 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("71b2beba-a326-42a5-9391-30ccb3aab053"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Từ 10 - 15 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("3cd1bdd1-f7e8-46af-a33d-838cac68ba7f"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Từ 15 - 20 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("772e3e58-b3de-4487-98cd-644059d01736"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Từ 20 - 25 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("f6d9e0c1-3ee3-4c51-b483-980e2293dd83"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Từ 25 - 30 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("9c548fd8-0ad6-4d54-b5c1-86c4819dd87b"),
-                            GadgetFilterId = new Guid("491c0d5b-6101-4780-967c-854bd24f5024"),
-                            Value = "Trên 30 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("7c36a492-87da-486f-a11a-b665049670a5"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "11.6 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("72d245f3-4bee-4237-bb31-924fdcc83e78"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "13.3 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("ffd4babe-fa66-4303-b9f0-426480fb1b98"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "13.4 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("6be9b8a7-eef6-4bf4-b83f-c042ba837072"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "13.6 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("b6b8dece-ad89-4d3a-b002-141393d81e1a"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "14 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("29123eac-0e54-4ff7-b10b-ab5462b5ba4f"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "14.2 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("f590e5f9-4d63-4915-85cf-23a52195c218"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "15.6 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("6575d15b-29b2-4e0a-a362-b4408e064e71"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "16 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("3069802c-126c-4ff1-8944-4f4a25f397d7"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "16.1 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("0afcdda7-44c7-424e-ac0e-82b8ada87b53"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "16.2 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("202da262-bd50-446a-973d-83f71e038344"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "17 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("61cb4f58-9e58-4feb-b05d-b97e8b705560"),
-                            GadgetFilterId = new Guid("4bb160a9-e4e4-49a0-9bc5-44b443d7070e"),
-                            Value = "18 inch"
-                        },
-                        new
-                        {
-                            Id = new Guid("106cd227-51e8-4978-b113-107aa9808af5"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "4 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("068e0212-560d-468a-a920-77adac41ce97"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "8 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("bb11a6ed-7d34-49d6-b27a-207c8d26ce5f"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "16 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("59629a6e-cd79-4a59-88e0-316c2db0082a"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "18 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("ec2aada0-d82a-4e9d-9e8e-fe8f067690d2"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "24 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("7b2270f4-7527-465a-86f0-f9809ec09add"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "32 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("10ffad03-d8de-4cdb-8717-6d195a01b2e8"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "36 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("4b2253e8-a6e3-4bcb-88f6-080465e806c9"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "48 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("5beea968-565d-4ef5-b0d9-eb1aaedaf308"),
-                            GadgetFilterId = new Guid("1d0feb96-608d-46ca-a937-4cd428adbf42"),
-                            Value = "64 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("809d88e8-a293-44ec-b784-28772da2342c"),
-                            GadgetFilterId = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            Value = "4K"
-                        },
-                        new
-                        {
-                            Id = new Guid("69e11515-d9d1-43ff-b3df-0e7444424f2b"),
-                            GadgetFilterId = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            Value = "2K"
-                        },
-                        new
-                        {
-                            Id = new Guid("b8308b69-b24a-4a9f-9c61-2c0bb661983d"),
-                            GadgetFilterId = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            Value = "Retina"
-                        },
-                        new
-                        {
-                            Id = new Guid("37f2f496-2c1f-4b1c-aeb7-9d0f9cead239"),
-                            GadgetFilterId = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            Value = "Full HD"
-                        },
-                        new
-                        {
-                            Id = new Guid("368bb62e-b40e-4745-b87e-0fc9543736fb"),
-                            GadgetFilterId = new Guid("a1d2dcbb-5be5-4fb8-a44e-95815bfdd18f"),
-                            Value = "HD"
-                        },
-                        new
-                        {
-                            Id = new Guid("82d5d8df-7a63-4485-8eb0-581c91c9e8ce"),
-                            GadgetFilterId = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            Value = "90 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("029f909e-94c1-41fe-a6ab-8787fc5a083b"),
-                            GadgetFilterId = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            Value = "120 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("181dc2ef-9bec-4fad-b06a-75c67f27ef12"),
-                            GadgetFilterId = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            Value = "144 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("ceb39c71-d6c1-4c01-9c44-33821766c286"),
-                            GadgetFilterId = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            Value = "165 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("c71cf45b-90ef-42ad-8695-a74ce9d5e1da"),
-                            GadgetFilterId = new Guid("d4925542-1eea-4e2b-b237-ac0249ad9044"),
-                            Value = "240 Hz"
-                        },
-                        new
-                        {
-                            Id = new Guid("addd15ad-d9b9-40fb-b096-c7e92eb922df"),
-                            GadgetFilterId = new Guid("edeb7ed6-d45b-429c-88ae-16ef497b6dcd"),
-                            Value = "SSD 2 TB"
-                        },
-                        new
-                        {
-                            Id = new Guid("8790fec7-6042-4122-9889-a3f160b36a0e"),
-                            GadgetFilterId = new Guid("edeb7ed6-d45b-429c-88ae-16ef497b6dcd"),
-                            Value = "SSD 1 TB"
-                        },
-                        new
-                        {
-                            Id = new Guid("8f1acc4d-74b1-4789-910e-e5273b34c8d8"),
-                            GadgetFilterId = new Guid("edeb7ed6-d45b-429c-88ae-16ef497b6dcd"),
-                            Value = "SSD 512 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("7e5e22e2-9e65-4a24-9661-efe8bcb016e3"),
-                            GadgetFilterId = new Guid("edeb7ed6-d45b-429c-88ae-16ef497b6dcd"),
-                            Value = "SSD 256 GB"
-                        },
-                        new
-                        {
-                            Id = new Guid("09d0883c-1f45-4441-b9fa-0db1b29ae258"),
-                            GadgetFilterId = new Guid("af177595-3999-4055-8021-23fe477ac074"),
-                            Value = "Ultra 9"
-                        },
-                        new
-                        {
-                            Id = new Guid("3f29e574-3ccb-45f2-a392-e79915ca5951"),
-                            GadgetFilterId = new Guid("af177595-3999-4055-8021-23fe477ac074"),
-                            Value = "Ultra 7"
-                        },
-                        new
-                        {
-                            Id = new Guid("61333095-8e95-488c-adc7-d145b95cd1e0"),
-                            GadgetFilterId = new Guid("af177595-3999-4055-8021-23fe477ac074"),
-                            Value = "Ultra 5"
-                        },
-                        new
-                        {
-                            Id = new Guid("8c64ed8a-97dc-4139-93eb-cbf70dc255d2"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core i9"
-                        },
-                        new
-                        {
-                            Id = new Guid("d9c2295b-367a-4a65-b2b8-640dacd81668"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core i7"
-                        },
-                        new
-                        {
-                            Id = new Guid("63a3c408-919c-412e-93bb-8f5494cb5b87"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core i5"
-                        },
-                        new
-                        {
-                            Id = new Guid("eab4caa4-fb76-439b-9b62-d71f837e3f95"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core i3"
-                        },
-                        new
-                        {
-                            Id = new Guid("0d4fbfb3-f1b7-478a-b047-018d9726df64"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core 7"
-                        },
-                        new
-                        {
-                            Id = new Guid("ad6e5bdc-5f39-4677-a089-90aefe0b574d"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Core 5"
-                        },
-                        new
-                        {
-                            Id = new Guid("923a4677-0a7b-4884-8603-0d1bfef720d0"),
-                            GadgetFilterId = new Guid("aa34ffb4-077a-480f-b681-970f6144cef4"),
-                            Value = "Celebron/Pentium"
-                        },
-                        new
-                        {
-                            Id = new Guid("78d883b3-a3e7-43f1-8033-e23ee5140bfa"),
-                            GadgetFilterId = new Guid("9e64a59d-82fe-417b-a16f-66fae0ad5ac4"),
-                            Value = "Ryzen 9"
-                        },
-                        new
-                        {
-                            Id = new Guid("579f7ae2-73d9-4b99-a85f-9e0e40b83808"),
-                            GadgetFilterId = new Guid("9e64a59d-82fe-417b-a16f-66fae0ad5ac4"),
-                            Value = "Ryzen 7"
-                        },
-                        new
-                        {
-                            Id = new Guid("2b603398-f28f-4707-bd02-f766776e0691"),
-                            GadgetFilterId = new Guid("9e64a59d-82fe-417b-a16f-66fae0ad5ac4"),
-                            Value = "Ryzen 4"
-                        },
-                        new
-                        {
-                            Id = new Guid("d6cb799e-477d-4baf-9b1a-8c434a9bbeb2"),
-                            GadgetFilterId = new Guid("9e64a59d-82fe-417b-a16f-66fae0ad5ac4"),
-                            Value = "AMD Ryzen AI 9 300 series"
-                        },
-                        new
-                        {
-                            Id = new Guid("10a6f572-916a-40b1-b53f-d74f3ec8c836"),
-                            GadgetFilterId = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            Value = "Apple M1"
-                        },
-                        new
-                        {
-                            Id = new Guid("e1b1a228-b28a-46f7-8bb7-6bd7b623bc3b"),
-                            GadgetFilterId = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            Value = "Apple M2"
-                        },
-                        new
-                        {
-                            Id = new Guid("6d9d5111-ce2c-4d3a-8e8a-d0333cb24b6b"),
-                            GadgetFilterId = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            Value = "Apple M3"
-                        },
-                        new
-                        {
-                            Id = new Guid("58d42732-d950-48a2-9836-370bc0e4595e"),
-                            GadgetFilterId = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            Value = "Apple M3 Pro"
-                        },
-                        new
-                        {
-                            Id = new Guid("5fbfd5d4-679a-486f-b1e6-e50daea79620"),
-                            GadgetFilterId = new Guid("2b3cdf91-68aa-491a-8541-8154990f30cc"),
-                            Value = "Apple M3 Max"
-                        },
-                        new
-                        {
-                            Id = new Guid("a304ef96-8212-4ee0-a583-ff5a9c7f3ced"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Bluetooth"
-                        },
-                        new
-                        {
-                            Id = new Guid("cad7e715-e630-4692-81b8-5aa20218acbd"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "True Wireless"
-                        },
-                        new
-                        {
-                            Id = new Guid("4fcbfbd4-70b9-4090-bfd7-39141301d389"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Chụp tai"
-                        },
-                        new
-                        {
-                            Id = new Guid("da084a90-47ad-49c8-bf2c-018774fd0730"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Gaming"
-                        },
-                        new
-                        {
-                            Id = new Guid("cb6a450e-5bca-4984-aefc-dcc7d64435fd"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Có dây"
-                        },
-                        new
-                        {
-                            Id = new Guid("ba47ebb4-65a0-4441-9a89-688186841cd6"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Loa bluetooth"
-                        },
-                        new
-                        {
-                            Id = new Guid("44aa2cee-a6ea-4924-9432-ed64c16f3144"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Loa kéo"
-                        },
-                        new
-                        {
-                            Id = new Guid("a2161226-ddff-45d5-9aae-2a9bfde4bc66"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Loa karaoke"
-                        },
-                        new
-                        {
-                            Id = new Guid("f9b34928-45a7-415e-8963-958e62f1b448"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Loa vi tính"
-                        },
-                        new
-                        {
-                            Id = new Guid("5accff40-716c-4781-ac44-2cce671a4b2e"),
-                            GadgetFilterId = new Guid("24e56e95-f6ad-49f3-96be-7ee5c1556980"),
-                            Value = "Loa thanh, soundbar"
-                        },
-                        new
-                        {
-                            Id = new Guid("df63181e-76e4-4e2b-b285-8590b57cf174"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Dưới 200.000đ"
-                        },
-                        new
-                        {
-                            Id = new Guid("85978333-2087-402c-aea9-f8cee1d08d54"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 200.000 - 500.000đ"
-                        },
-                        new
-                        {
-                            Id = new Guid("1bb4507a-8d94-4bc6-ba27-e1cc8e50de97"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 500.000đ - 1 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("df7b8b9e-af36-4bb7-8f83-d72155d97f14"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 1 - 2 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("b4e08f8b-137e-442d-a028-5d28d923ad43"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 2 - 4 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("6432220b-50f9-4008-a9d7-50895959cb3f"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 4 - 7 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("a0b1881e-506f-464d-b038-436dc880f0cc"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Từ 7 - 10 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("6d97d84d-b1b3-4dbb-af75-b21f160b3463"),
-                            GadgetFilterId = new Guid("485a61b8-c010-4f7b-b994-d4ee14d0fc87"),
-                            Value = "Trên 10 triệu"
-                        },
-                        new
-                        {
-                            Id = new Guid("0c5ba122-46e0-491d-9bb5-384e5897d6c1"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "Từ 10W trở xuống"
-                        },
-                        new
-                        {
-                            Id = new Guid("762077ac-5eda-4080-8b0d-90e64c8ca9bd"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "10W - 40W"
-                        },
-                        new
-                        {
-                            Id = new Guid("25899e6c-b7db-44a3-bc08-ac73404281ea"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "40W - 100W"
-                        },
-                        new
-                        {
-                            Id = new Guid("2d74f71e-2ffd-48c2-a456-c90ccc3bc1b8"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "100W - 500W"
-                        },
-                        new
-                        {
-                            Id = new Guid("2824fd1b-77dd-46a5-867f-159bfba9e4a9"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "500W - 1000W"
-                        },
-                        new
-                        {
-                            Id = new Guid("cdd998fc-5087-49d9-9376-9c2ce05ed669"),
-                            GadgetFilterId = new Guid("021a23f0-fd04-4bb6-89e8-991c2e879a85"),
-                            Value = "1000W trở lên"
-                        },
-                        new
-                        {
-                            Id = new Guid("cdadb24a-a954-493e-965d-e19d011fde8d"),
-                            GadgetFilterId = new Guid("dbac6116-25b2-4a4e-adfd-1d09d0f8bff5"),
-                            Value = "Dưới 4 tiếng"
-                        },
-                        new
-                        {
-                            Id = new Guid("69d68f1e-0c3f-43b6-a10c-59a324245152"),
-                            GadgetFilterId = new Guid("dbac6116-25b2-4a4e-adfd-1d09d0f8bff5"),
-                            Value = "4 - 6 tiếng"
-                        },
-                        new
-                        {
-                            Id = new Guid("5b69c6ac-81e6-489f-b3d8-1591abac8315"),
-                            GadgetFilterId = new Guid("dbac6116-25b2-4a4e-adfd-1d09d0f8bff5"),
-                            Value = "6 - 8 tiếng"
-                        },
-                        new
-                        {
-                            Id = new Guid("ebae64b2-6561-4089-8b7d-e2fdb35baa54"),
-                            GadgetFilterId = new Guid("dbac6116-25b2-4a4e-adfd-1d09d0f8bff5"),
-                            Value = "8 tiếng trở lên"
-                        },
-                        new
-                        {
-                            Id = new Guid("c50f06dd-0491-4e34-ab74-938f80d9061d"),
-                            GadgetFilterId = new Guid("351c7135-5bf6-46b1-a07d-c1e3ffaa2cdb"),
-                            Value = "Type-C"
-                        },
-                        new
-                        {
-                            Id = new Guid("cb801046-31b0-4ac3-8450-65f55daeb61b"),
-                            GadgetFilterId = new Guid("351c7135-5bf6-46b1-a07d-c1e3ffaa2cdb"),
-                            Value = "Lightning"
-                        },
-                        new
-                        {
-                            Id = new Guid("60ed57b9-c305-4435-b061-00e149456393"),
-                            GadgetFilterId = new Guid("351c7135-5bf6-46b1-a07d-c1e3ffaa2cdb"),
-                            Value = "Micro USB"
-                        },
-                        new
-                        {
-                            Id = new Guid("68e68a4c-72a7-4e5b-bfd1-e5f43a1faf2f"),
-                            GadgetFilterId = new Guid("903f0975-b33f-4e16-9243-94f2530d26dd"),
-                            Value = "3.5 mm"
-                        },
-                        new
-                        {
-                            Id = new Guid("2cbe7bdf-a1f1-444f-bb95-d0a31437f70d"),
-                            GadgetFilterId = new Guid("903f0975-b33f-4e16-9243-94f2530d26dd"),
-                            Value = "Type-C"
-                        },
-                        new
-                        {
-                            Id = new Guid("da698064-fcae-4232-9942-30926d49fb85"),
-                            GadgetFilterId = new Guid("903f0975-b33f-4e16-9243-94f2530d26dd"),
-                            Value = "Lightning"
-                        },
-                        new
-                        {
-                            Id = new Guid("bc7f1428-1071-4121-95fa-c1ef84e690b9"),
-                            GadgetFilterId = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            Value = "Sạc không dây"
-                        },
-                        new
-                        {
-                            Id = new Guid("6f6c9fbd-3d2d-40c2-b49c-7b3a4d9331b3"),
-                            GadgetFilterId = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            Value = "Chống nước"
-                        },
-                        new
-                        {
-                            Id = new Guid("7f94026b-cf8c-4c4a-9f92-b89dba5a9f95"),
-                            GadgetFilterId = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            Value = "Chống ồn"
-                        },
-                        new
-                        {
-                            Id = new Guid("38593320-d491-4dff-b7d7-5bcaed43fa9b"),
-                            GadgetFilterId = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            Value = "Có mic đàm thoại"
-                        },
-                        new
-                        {
-                            Id = new Guid("73046e00-9602-4ecf-bec8-ae9e33c6a19d"),
-                            GadgetFilterId = new Guid("d152b425-8b7e-4fea-902a-0c2227a7e0c3"),
-                            Value = "Nhỏ gọn"
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetHistory", b =>
@@ -2823,6 +402,37 @@ namespace WebApi.Data.Migrations
                     b.ToTable("GadgetImages");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.GadgetInformation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GadgetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("GadgetName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("GadgetPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GadgetQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("OrderDetailId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GadgetId");
+
+                    b.HasIndex("OrderDetailId");
+
+                    b.ToTable("GadgetInformation");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.KeywordHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2862,20 +472,6 @@ namespace WebApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Managers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("0ca3bd29-b37e-49f2-8fb6-7c44efca1745"),
-                            FullName = "Hình Trọng Hùng",
-                            UserId = new Guid("638eadf4-a17f-4f16-a9dd-6d12a5b5a80a")
-                        },
-                        new
-                        {
-                            Id = new Guid("2723dacf-59e1-4d66-bf90-5813432c79a8"),
-                            FullName = "Mã Duy Hình",
-                            UserId = new Guid("27a15668-0d9e-4276-a0df-791b7dfeed9e")
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Notification", b =>
@@ -2911,32 +507,59 @@ namespace WebApi.Data.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchGadgetResponse", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SearchHistoryResponseId")
+                    b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GadgetId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("SearchHistoryResponseId");
-
-                    b.ToTable("SearchGadgetResponses");
+                    b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -2944,7 +567,16 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Message")
+                    b.Property<Guid>("GadgetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsPositive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -2952,29 +584,54 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("SearchHistories");
+                    b.HasIndex("GadgetId");
+
+                    b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAI", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("CanAddMore")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Message")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("SearchHistoryId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SearchHistoryId");
+                    b.ToTable("SearchAIs");
+                });
 
-                    b.ToTable("SearchHistoryResponses");
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAIVector", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SearchAIId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Vector>("Vector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SearchAIId");
+
+                    b.ToTable("SearchAIVectors");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
@@ -2982,6 +639,10 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<Vector>("AddressVector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
 
                     b.Property<string>("BusinessModel")
                         .IsRequired()
@@ -3018,30 +679,6 @@ namespace WebApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Sellers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("9488d26a-de33-4bf6-b038-be5d1d641940"),
-                            BusinessModel = "Personal",
-                            PhoneNumber = "0877094491",
-                            ShopAddress = "37 Đ. Lê Quý Đôn, P. 7, Q3, TP. HCM",
-                            ShopName = "Cửa hàng Thuỳ Uyên",
-                            TaxCode = "1779231738",
-                            UserId = new Guid("f56cc7e6-725c-4090-83b8-77f5ce6a53c8")
-                        },
-                        new
-                        {
-                            Id = new Guid("cd83c20c-dc5c-4115-87b2-a218e6584301"),
-                            BusinessModel = "Company",
-                            BusinessRegistrationCertificateUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/BusinessRegistrationUrl/Seller2.jpg",
-                            CompanyName = "Công Ty Nhật Hạ",
-                            PhoneNumber = "0362961803",
-                            ShopAddress = "128 Đ. Nguyễn Phong Sắc, Q. Cầu Giấy, TP. Hà Nội",
-                            ShopName = "Cửa hàng Nhật Hạ",
-                            TaxCode = "4067001394",
-                            UserId = new Guid("0a4590ef-a843-4489-94ef-762259b78688")
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerApplication", b =>
@@ -3096,176 +733,37 @@ namespace WebApi.Data.Migrations
                     b.ToTable("SellerApplications");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SellerSubscription", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("ReviewId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
-                    b.ToTable("SellerSubscriptions");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("689bf59d-1dbf-41f7-8d21-93f8bb92b999"),
-                            Description = "Gửi 10 mail/ngày",
-                            Duration = 30,
-                            Name = "Gói Standard",
-                            Price = 29000,
-                            Status = "Active",
-                            Type = "Standard"
-                        },
-                        new
-                        {
-                            Id = new Guid("76636ac8-444a-478b-8973-ef3da2925c53"),
-                            Description = "Gửi 25 mail/ngày",
-                            Duration = 30,
-                            Name = "Gói Premium",
-                            Price = 49000,
-                            Status = "Active",
-                            Type = "Standard"
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SellerSubscriptionTracker", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("NumberOfMailLeft")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("OverdueTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PaymentStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SellerSubscriptionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("SubscriptionStatus")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ValidityEnd")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("ValidityStart")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
+                    b.HasIndex("ReviewId")
+                        .IsUnique();
 
                     b.HasIndex("SellerId");
 
-                    b.HasIndex("SellerSubscriptionId");
-
-                    b.ToTable("SellerSubscriptionTrackers");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Shop", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("LogoUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("WebsiteUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Shops");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("1f3c2205-1e9c-4efa-9c6b-57819c114793"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Shops/Thegioididong.jpg",
-                            Name = "Thế Giới Di Động",
-                            WebsiteUrl = "https://www.thegioididong.com"
-                        },
-                        new
-                        {
-                            Id = new Guid("e5233830-7d0b-45d2-953e-0fe3bb3cc09e"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Shops/Fptshop.jpg",
-                            Name = "FPT Shop",
-                            WebsiteUrl = "https://fptshop.com.vn"
-                        },
-                        new
-                        {
-                            Id = new Guid("bafc41ac-9b92-4af3-a8da-84cac529be43"),
-                            LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Shops/Phongvu.jpg",
-                            Name = "Phong Vũ",
-                            WebsiteUrl = "https://phongvu.vn"
-                        });
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Specification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GadgetId");
-
-                    b.ToTable("Specifications");
+                    b.ToTable("SellerReplies");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationKey", b =>
@@ -3274,23 +772,38 @@ namespace WebApi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("GadgetId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("SpecificationId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("SpecificationKeys");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SpecificationUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SpecificationKeyId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GadgetId");
+                    b.HasIndex("SpecificationKeyId");
 
-                    b.HasIndex("SpecificationId");
-
-                    b.ToTable("SpecificationKeys");
+                    b.ToTable("SpecificationUnits");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationValue", b =>
@@ -3299,18 +812,88 @@ namespace WebApi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("GadgetId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("SpecificationKeyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SpecificationUnitId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Vector>("Vector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GadgetId");
 
                     b.HasIndex("SpecificationKeyId");
 
+                    b.HasIndex("SpecificationUnitId");
+
                     b.ToTable("SpecificationValues");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SystemOrderDetailTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("FromUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderDetailId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("SystemWalletId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ToUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FromUserId");
+
+                    b.HasIndex("OrderDetailId")
+                        .IsUnique();
+
+                    b.HasIndex("SystemWalletId");
+
+                    b.HasIndex("ToUserId");
+
+                    b.ToTable("SystemOrderDetailTrackings");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SystemWallet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemWallets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.User", b =>
@@ -3341,80 +924,6 @@ namespace WebApi.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("69f7c054-00d2-48f3-9e86-21081f095340"),
-                            Email = "admin1@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Admin",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("4808ef8f-f46f-461f-ba41-962e16aec45b"),
-                            Email = "admin2@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Admin",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("27a15668-0d9e-4276-a0df-791b7dfeed9e"),
-                            Email = "manager1@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Manager",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("638eadf4-a17f-4f16-a9dd-6d12a5b5a80a"),
-                            Email = "manager2@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Manager",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("5a57223a-6e7d-401b-a19e-bf9282db69fe"),
-                            Email = "customer1@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Customer",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("8d8707e4-299d-450b-bc5c-f8ab49504fce"),
-                            Email = "customer2@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Customer",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("f56cc7e6-725c-4090-83b8-77f5ce6a53c8"),
-                            Email = "seller1@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Seller",
-                            Status = "Active"
-                        },
-                        new
-                        {
-                            Id = new Guid("0a4590ef-a843-4489-94ef-762259b78688"),
-                            Email = "seller2@gmail.com",
-                            LoginMethod = "Default",
-                            Password = "5wJ0xMM/o1DPaTby8haqjIeEx0hqnJfyw4SmivYCGT17khWSPTXkR+56laWZr3/U",
-                            Role = "Seller",
-                            Status = "Active"
-                        });
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.UserVerify", b =>
@@ -3444,6 +953,80 @@ namespace WebApi.Data.Migrations
                     b.ToTable("UserVerifies");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.Wallet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Wallets");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.WalletTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DepositedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("OrderDetailId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RefundedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("WalletId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderDetailId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("WalletTrackings");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.Admin", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.User", "User")
@@ -3453,34 +1036,6 @@ namespace WebApi.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Banner", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.BannerRequest", "BannerRequest")
-                        .WithOne("Banner")
-                        .HasForeignKey("WebApi.Data.Entities.Banner", "BannerRequestId");
-
-                    b.Navigation("BannerRequest");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.BannerRequest", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.BannerRequestPrice", "BannerRequestPrice")
-                        .WithMany("BannerRequests")
-                        .HasForeignKey("BannerRequestPriceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.Seller", "Seller")
-                        .WithMany("BannerRequests")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BannerRequestPrice");
-
-                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.BillingMail", b =>
@@ -3503,6 +1058,36 @@ namespace WebApi.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("SellerApplication");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.Cart", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Customer", "Customer")
+                        .WithOne("Cart")
+                        .HasForeignKey("WebApi.Data.Entities.Cart", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.CartGadget", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Cart", "Cart")
+                        .WithMany("CartGadgets")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                        .WithMany("CartGadgets")
+                        .HasForeignKey("GadgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Gadget");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.CategoryBrand", b =>
@@ -3535,29 +1120,10 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerSubscriptionTracker", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Customer", "Customer")
-                        .WithMany("CustomerSubscriptionTrackers")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.CustomerSubscription", "CustomerSubscription")
-                        .WithMany("CustomerSubscriptionTrackers")
-                        .HasForeignKey("CustomerSubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("CustomerSubscription");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("FavoriteGadgets")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3589,19 +1155,15 @@ namespace WebApi.Data.Migrations
 
                     b.HasOne("WebApi.Data.Entities.Seller", "Seller")
                         .WithMany("Gadgets")
-                        .HasForeignKey("SellerId");
-
-                    b.HasOne("WebApi.Data.Entities.Shop", "Shop")
-                        .WithMany("Gadgets")
-                        .HasForeignKey("ShopId");
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
 
                     b.Navigation("Seller");
-
-                    b.Navigation("Shop");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetDescription", b =>
@@ -3667,6 +1229,25 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Gadget");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.GadgetInformation", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                        .WithMany("GadgetInformation")
+                        .HasForeignKey("GadgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("GadgetInformation")
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gadget");
+
+                    b.Navigation("OrderDetail");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.KeywordHistory", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
@@ -3700,29 +1281,10 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchGadgetResponse", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("SearchGadgetResponses")
-                        .HasForeignKey("GadgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.SearchHistoryResponse", "SearchHistoryResponse")
-                        .WithMany("SearchGadgetResponses")
-                        .HasForeignKey("SearchHistoryResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gadget");
-
-                    b.Navigation("SearchHistoryResponse");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
-                        .WithMany("SearchHistories")
+                        .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3730,15 +1292,53 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
                 {
-                    b.HasOne("WebApi.Data.Entities.SearchHistory", "SearchHistory")
-                        .WithMany("SearchHistoryResponses")
-                        .HasForeignKey("SearchHistoryId")
+                    b.HasOne("WebApi.Data.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("SearchHistory");
+                    b.HasOne("WebApi.Data.Entities.Seller", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                        .WithMany("Reviews")
+                        .HasForeignKey("GadgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Gadget");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAIVector", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.SearchAI", "SearchAI")
+                        .WithMany("SearchAIVectors")
+                        .HasForeignKey("SearchAIId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SearchAI");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
@@ -3763,55 +1363,40 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SellerSubscriptionTracker", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
                 {
+                    b.HasOne("WebApi.Data.Entities.Review", "Review")
+                        .WithOne("SellerReply")
+                        .HasForeignKey("WebApi.Data.Entities.SellerReply", "ReviewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WebApi.Data.Entities.Seller", "Seller")
-                        .WithMany("SellerSubscriptionTrackers")
+                        .WithMany("SellerReplies")
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Data.Entities.SellerSubscription", "SellerSubscription")
-                        .WithMany("SellerSubscriptionTrackers")
-                        .HasForeignKey("SellerSubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Review");
 
                     b.Navigation("Seller");
-
-                    b.Navigation("SellerSubscription");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Specification", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("Specifications")
-                        .HasForeignKey("GadgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gadget");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationKey", b =>
                 {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                    b.HasOne("WebApi.Data.Entities.Category", "Category")
                         .WithMany("SpecificationKeys")
-                        .HasForeignKey("GadgetId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WebApi.Data.Entities.Specification", "Specification")
-                        .WithMany("SpecificationKeys")
-                        .HasForeignKey("SpecificationId");
-
-                    b.Navigation("Gadget");
-
-                    b.Navigation("Specification");
+                    b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SpecificationValue", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SpecificationUnit", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.SpecificationKey", "SpecificationKey")
-                        .WithMany("SpecificationValues")
+                        .WithMany("SpecificationUnits")
                         .HasForeignKey("SpecificationKeyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3819,10 +1404,70 @@ namespace WebApi.Data.Migrations
                     b.Navigation("SpecificationKey");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.SpecificationValue", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                        .WithMany("SpecificationValues")
+                        .HasForeignKey("GadgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.SpecificationKey", "SpecificationKey")
+                        .WithMany("SpecificationValues")
+                        .HasForeignKey("SpecificationKeyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.SpecificationUnit", "SpecificationUnit")
+                        .WithMany("SpecificationValues")
+                        .HasForeignKey("SpecificationUnitId");
+
+                    b.Navigation("Gadget");
+
+                    b.Navigation("SpecificationKey");
+
+                    b.Navigation("SpecificationUnit");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SystemOrderDetailTracking", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.User", "FromUser")
+                        .WithMany()
+                        .HasForeignKey("FromUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
+                        .WithOne("SystemOrderDetailTracking")
+                        .HasForeignKey("WebApi.Data.Entities.SystemOrderDetailTracking", "OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.SystemWallet", "SystemWallet")
+                        .WithMany("SystemOrderDetailTrackings")
+                        .HasForeignKey("SystemWalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.User", "ToUser")
+                        .WithMany()
+                        .HasForeignKey("ToUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FromUser");
+
+                    b.Navigation("OrderDetail");
+
+                    b.Navigation("SystemWallet");
+
+                    b.Navigation("ToUser");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.UserVerify", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.User", "User")
-                        .WithMany("userVerifies")
+                        .WithMany("UserVerifies")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3830,15 +1475,38 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.BannerRequest", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.Wallet", b =>
                 {
-                    b.Navigation("Banner")
+                    b.HasOne("WebApi.Data.Entities.User", "User")
+                        .WithOne("Wallet")
+                        .HasForeignKey("WebApi.Data.Entities.Wallet", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.BannerRequestPrice", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.WalletTracking", b =>
                 {
-                    b.Navigation("BannerRequests");
+                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
+                        .WithOne("WalletTracking")
+                        .HasForeignKey("WebApi.Data.Entities.WalletTracking", "OrderDetailId");
+
+                    b.HasOne("WebApi.Data.Entities.Order", "Order")
+                        .WithOne("WalletTracking")
+                        .HasForeignKey("WebApi.Data.Entities.WalletTracking", "OrderId");
+
+                    b.HasOne("WebApi.Data.Entities.Wallet", "Wallet")
+                        .WithMany("WalletTrackings")
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("OrderDetail");
+
+                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Brand", b =>
@@ -3848,6 +1516,11 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Gadgets");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.Cart", b =>
+                {
+                    b.Navigation("CartGadgets");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.Category", b =>
                 {
                     b.Navigation("CategoryBrands");
@@ -3855,26 +1528,28 @@ namespace WebApi.Data.Migrations
                     b.Navigation("GadgetFilters");
 
                     b.Navigation("Gadgets");
+
+                    b.Navigation("SpecificationKeys");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Customer", b =>
                 {
-                    b.Navigation("CustomerSubscriptionTrackers");
+                    b.Navigation("Cart")
+                        .IsRequired();
+
+                    b.Navigation("FavoriteGadgets");
 
                     b.Navigation("GadgetHistories");
 
                     b.Navigation("KeywordHistories");
 
-                    b.Navigation("SearchHistories");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerSubscription", b =>
-                {
-                    b.Navigation("CustomerSubscriptionTrackers");
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Gadget", b =>
                 {
+                    b.Navigation("CartGadgets");
+
                     b.Navigation("FavoriteGadgets");
 
                     b.Navigation("GadgetDescriptions");
@@ -3883,11 +1558,11 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("GadgetImages");
 
-                    b.Navigation("SearchGadgetResponses");
+                    b.Navigation("GadgetInformation");
 
-                    b.Navigation("SpecificationKeys");
+                    b.Navigation("Reviews");
 
-                    b.Navigation("Specifications");
+                    b.Navigation("SpecificationValues");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetFilter", b =>
@@ -3895,25 +1570,41 @@ namespace WebApi.Data.Migrations
                     b.Navigation("GadgetFilterOptions");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
                 {
-                    b.Navigation("SearchHistoryResponses");
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("WalletTracking")
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
                 {
-                    b.Navigation("SearchGadgetResponses");
+                    b.Navigation("GadgetInformation");
+
+                    b.Navigation("SystemOrderDetailTracking")
+                        .IsRequired();
+
+                    b.Navigation("WalletTracking");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
+                {
+                    b.Navigation("SellerReply");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAI", b =>
+                {
+                    b.Navigation("SearchAIVectors");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
                 {
-                    b.Navigation("BannerRequests");
-
                     b.Navigation("BillingMails");
 
                     b.Navigation("Gadgets");
 
-                    b.Navigation("SellerSubscriptionTrackers");
+                    b.Navigation("SellerReplies");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerApplication", b =>
@@ -3921,24 +1612,21 @@ namespace WebApi.Data.Migrations
                     b.Navigation("BillingMailApplications");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SellerSubscription", b =>
-                {
-                    b.Navigation("SellerSubscriptionTrackers");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Shop", b =>
-                {
-                    b.Navigation("Gadgets");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.Specification", b =>
-                {
-                    b.Navigation("SpecificationKeys");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationKey", b =>
                 {
+                    b.Navigation("SpecificationUnits");
+
                     b.Navigation("SpecificationValues");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SpecificationUnit", b =>
+                {
+                    b.Navigation("SpecificationValues");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SystemWallet", b =>
+                {
+                    b.Navigation("SystemOrderDetailTrackings");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.User", b =>
@@ -3955,7 +1643,14 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("SellerApplications");
 
-                    b.Navigation("userVerifies");
+                    b.Navigation("UserVerifies");
+
+                    b.Navigation("Wallet");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.Wallet", b =>
+                {
+                    b.Navigation("WalletTrackings");
                 });
 #pragma warning restore 612, 618
         }

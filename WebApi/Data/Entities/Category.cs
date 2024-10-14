@@ -9,4 +9,5 @@ public class Category
     public ICollection<Brand> Brands { get; set; } = [];
     public ICollection<Gadget> Gadgets { get; set; } = [];
     public ICollection<GadgetFilter> GadgetFilters { get; set; } = [];
+    public ICollection<SpecificationKey> SpecificationKeys { get; set; } = [];
 }
