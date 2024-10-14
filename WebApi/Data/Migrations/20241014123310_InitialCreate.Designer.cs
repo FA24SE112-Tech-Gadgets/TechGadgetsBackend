@@ -13,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241011074553_InitialCreate")]
+    [Migration("20241014123310_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -219,6 +219,9 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("GadgetId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("CustomerId", "GadgetId");
 
                     b.HasIndex("GadgetId");
@@ -248,6 +251,9 @@ namespace WebApi.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsForSale")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -631,72 +637,6 @@ namespace WebApi.Data.Migrations
                     b.ToTable("SearchAIVectors");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchGadgetResponse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SearchHistoryResponseId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GadgetId");
-
-                    b.HasIndex("SearchHistoryResponseId");
-
-                    b.ToTable("SearchGadgetResponses");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("SearchHistories");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SearchHistoryId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SearchHistoryId");
-
-                    b.ToTable("SearchHistoryResponses");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
                 {
                     b.Property<Guid>("Id")
@@ -881,7 +821,7 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("SpecificationKeyId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SpecificationUnitId")
+                    b.Property<Guid?>("SpecificationUnitId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Value")
@@ -1404,47 +1344,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("SearchAI");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SearchGadgetResponse", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("SearchGadgetResponses")
-                        .HasForeignKey("GadgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.SearchHistoryResponse", "SearchHistoryResponse")
-                        .WithMany("SearchGadgetResponses")
-                        .HasForeignKey("SearchHistoryResponseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gadget");
-
-                    b.Navigation("SearchHistoryResponse");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Customer", "Customer")
-                        .WithMany("SearchHistories")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.SearchHistory", "SearchHistory")
-                        .WithMany("SearchHistoryResponses")
-                        .HasForeignKey("SearchHistoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SearchHistory");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.User", "User")
@@ -1524,9 +1423,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasOne("WebApi.Data.Entities.SpecificationUnit", "SpecificationUnit")
                         .WithMany("SpecificationValues")
-                        .HasForeignKey("SpecificationUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SpecificationUnitId");
 
                     b.Navigation("Gadget");
 
@@ -1640,7 +1537,8 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.Customer", b =>
                 {
-                    b.Navigation("Cart");
+                    b.Navigation("Cart")
+                        .IsRequired();
 
                     b.Navigation("FavoriteGadgets");
 
@@ -1649,8 +1547,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("KeywordHistories");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("SearchHistories");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Gadget", b =>
@@ -1668,8 +1564,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("GadgetInformation");
 
                     b.Navigation("Reviews");
-
-                    b.Navigation("SearchGadgetResponses");
 
                     b.Navigation("SpecificationValues");
                 });
@@ -1705,16 +1599,6 @@ namespace WebApi.Data.Migrations
             modelBuilder.Entity("WebApi.Data.Entities.SearchAI", b =>
                 {
                     b.Navigation("SearchAIVectors");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistory", b =>
-                {
-                    b.Navigation("SearchHistoryResponses");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SearchHistoryResponse", b =>
-                {
-                    b.Navigation("SearchGadgetResponses");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
