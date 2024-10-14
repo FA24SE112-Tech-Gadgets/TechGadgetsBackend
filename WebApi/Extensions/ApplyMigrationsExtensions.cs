@@ -48,5 +48,23 @@ public static class ApplyMigrationsExtensions
             }
             await context.SaveChangesAsync();
         }
+
+        if (!await context.CategoryBrands.AnyAsync())
+        {
+            foreach (var categoryBrand in CategoryBrandSeed.Default)
+            {
+                context.CategoryBrands.Add(categoryBrand);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.SystemWallets.AnyAsync())
+        {
+            foreach (var systemWallet in SystemWalletSeed.Default)
+            {
+                context.SystemWallets.Add(systemWallet);
+            }
+            await context.SaveChangesAsync();
+        }
     }
 }

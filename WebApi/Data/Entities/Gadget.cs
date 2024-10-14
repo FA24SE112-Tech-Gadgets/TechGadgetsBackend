@@ -35,7 +35,6 @@ public class Gadget
     public ICollection<GadgetImage> GadgetImages { get; set; } = [];
     public ICollection<FavoriteGadget> FavoriteGadgets { get; set; } = [];
     public ICollection<GadgetHistory> GadgetHistories { get; set; } = [];
-    public ICollection<SearchGadgetResponse> SearchGadgetResponses { get; set; } = [];
 }
 
 public enum GadgetStatus
