@@ -73,8 +73,17 @@ public static class UserSeed
             {
                 Id = Guid.Parse("d61a23a0-dbfe-429f-9c1f-5e0b955beff9"),
                 UserId = Guid.Parse("5a57223a-6e7d-401b-a19e-bf9282db69fe"),
-                FullName = "Nguỵ Chi Mai"
+                FullName = "Nguỵ Chi Mai",
+                Cart = new Cart
+                {
+                    Id = Guid.Parse("46975434-37e8-4585-b7b5-2d7448a24517")
+                }
             },
+            Wallet = new Wallet
+            {
+                Id = Guid.Parse("62fa1037-79b4-48e2-ac49-9bbf69d41420"),
+                Amount = 0,
+            }
         },
         new User {
             Id = Guid.Parse("8d8707e4-299d-450b-bc5c-f8ab49504fce"),
@@ -87,7 +96,16 @@ public static class UserSeed
             {
                 Id = Guid.Parse("f9ff20a7-05b3-4dbc-b260-26ef16db8513"),
                 UserId = Guid.Parse("8d8707e4-299d-450b-bc5c-f8ab49504fce"),
-                FullName = "Lê Thuý Hiền"
+                FullName = "Lê Thuý Hiền",
+                Cart = new Cart
+                {
+                    Id = Guid.Parse("f05bb2a5-d5e9-417d-a793-5c8333e41669")
+                }
+            },
+            Wallet = new Wallet
+            {
+                Id = Guid.Parse("43e2028e-e7a7-46cb-94bd-fcbc28d66a48"),
+                Amount = 0,
             }
         },
         new User {
@@ -109,6 +127,11 @@ public static class UserSeed
                 TaxCode = "1779231738",
                 PhoneNumber = "0877094491"
             },
+            Wallet = new Wallet
+            {
+                Id = Guid.Parse("3da483f7-1dd7-4bb3-8c9e-f400b0ca6fb0"),
+                Amount = 0,
+            }
         },
         new User {
             Id = Guid.Parse("0a4590ef-a843-4489-94ef-762259b78688"),
@@ -128,6 +151,11 @@ public static class UserSeed
                 BusinessRegistrationCertificateUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/BusinessRegistrationUrl/Seller2.jpg",
                 TaxCode = "4067001394",
                 PhoneNumber = "0362961803",
+            },
+            Wallet = new Wallet
+            {
+                Id = Guid.Parse("28a4b070-e904-4b38-8e58-21a7a7bed48c"),
+                Amount = 0,
             }
         },
     ];
