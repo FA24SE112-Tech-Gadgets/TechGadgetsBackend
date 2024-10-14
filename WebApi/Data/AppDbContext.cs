@@ -31,9 +31,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Review> Reviews { get; set; }
     public DbSet<SearchAI> SearchAIs { get; set; }
     public DbSet<SearchAIVector> SearchAIVectors { get; set; }
-    public DbSet<SearchGadgetResponse> SearchGadgetResponses { get; set; }
-    public DbSet<SearchHistory> SearchHistories { get; set; }
-    public DbSet<SearchHistoryResponse> SearchHistoryResponses { get; set; }
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<SellerApplication> SellerApplications { get; set; }
     public DbSet<SellerReply> SellerReplies { get; set; }

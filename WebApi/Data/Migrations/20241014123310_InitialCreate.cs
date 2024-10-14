@@ -438,26 +438,6 @@ namespace WebApi.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SearchHistories",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SearchHistories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SearchHistories_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BillingMailApplications",
                 columns: table => new
                 {
@@ -512,7 +492,8 @@ namespace WebApi.Data.Migrations
                     Condition = table.Column<string>(type: "text", nullable: false),
                     ConditionVector = table.Column<Vector>(type: "vector(384)", nullable: false),
                     NameVector = table.Column<Vector>(type: "vector(384)", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false)
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    IsForSale = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -565,26 +546,6 @@ namespace WebApi.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SearchHistoryResponses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SearchHistoryId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Message = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SearchHistoryResponses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SearchHistoryResponses_SearchHistories_SearchHistoryId",
-                        column: x => x.SearchHistoryId,
-                        principalTable: "SearchHistories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CartGadgets",
                 columns: table => new
                 {
@@ -614,7 +575,8 @@ namespace WebApi.Data.Migrations
                 columns: table => new
                 {
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GadgetId = table.Column<Guid>(type: "uuid", nullable: false)
+                    GadgetId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -735,7 +697,7 @@ namespace WebApi.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     SpecificationKeyId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SpecificationUnitId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SpecificationUnitId = table.Column<Guid>(type: "uuid", nullable: true),
                     GadgetId = table.Column<Guid>(type: "uuid", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false),
                     Vector = table.Column<Vector>(type: "vector(384)", nullable: false)
@@ -759,8 +721,7 @@ namespace WebApi.Data.Migrations
                         name: "FK_SpecificationValues_SpecificationUnits_SpecificationUnitId",
                         column: x => x.SpecificationUnitId,
                         principalTable: "SpecificationUnits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -867,31 +828,6 @@ namespace WebApi.Data.Migrations
                         name: "FK_WalletTrackings_Wallets_WalletId",
                         column: x => x.WalletId,
                         principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SearchGadgetResponses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    SearchHistoryResponseId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GadgetId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SearchGadgetResponses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SearchGadgetResponses_Gadgets_GadgetId",
-                        column: x => x.GadgetId,
-                        principalTable: "Gadgets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SearchGadgetResponses_SearchHistoryResponses_SearchHistoryR~",
-                        column: x => x.SearchHistoryResponseId,
-                        principalTable: "SearchHistoryResponses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1069,26 +1005,6 @@ namespace WebApi.Data.Migrations
                 column: "SearchAIId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SearchGadgetResponses_GadgetId",
-                table: "SearchGadgetResponses",
-                column: "GadgetId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SearchGadgetResponses_SearchHistoryResponseId",
-                table: "SearchGadgetResponses",
-                column: "SearchHistoryResponseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SearchHistories_CustomerId",
-                table: "SearchHistories",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SearchHistoryResponses_SearchHistoryId",
-                table: "SearchHistoryResponses",
-                column: "SearchHistoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SellerApplications_UserId",
                 table: "SellerApplications",
                 column: "UserId");
@@ -1234,9 +1150,6 @@ namespace WebApi.Data.Migrations
                 name: "SearchAIVectors");
 
             migrationBuilder.DropTable(
-                name: "SearchGadgetResponses");
-
-            migrationBuilder.DropTable(
                 name: "SellerReplies");
 
             migrationBuilder.DropTable(
@@ -1264,9 +1177,6 @@ namespace WebApi.Data.Migrations
                 name: "SearchAIs");
 
             migrationBuilder.DropTable(
-                name: "SearchHistoryResponses");
-
-            migrationBuilder.DropTable(
                 name: "Reviews");
 
             migrationBuilder.DropTable(
@@ -1280,9 +1190,6 @@ namespace WebApi.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Wallets");
-
-            migrationBuilder.DropTable(
-                name: "SearchHistories");
 
             migrationBuilder.DropTable(
                 name: "Gadgets");

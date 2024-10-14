@@ -60,6 +60,7 @@ public class LoginGoogleController : ControllerBase
                     await context.SaveChangesAsync();
 
                     user = await context.Users
+                        .Include(u => u.Customer)
                         .Where(a => a.Email == ggResponse.Email)
                         .FirstOrDefaultAsync();
 
@@ -67,8 +68,13 @@ public class LoginGoogleController : ControllerBase
                     {
                         User = user!,
                         Amount = 0
-                    };
+                    }!;
+                    Cart cart = new Cart
+                    {
+                        Customer = user!.Customer!,
+                    }!;
                     await context.Wallets.AddAsync(wallet);
+                    await context.Carts.AddAsync(cart);
                     await context.SaveChangesAsync();
 
                     var tokenInfo = user.ToTokenRequest();
