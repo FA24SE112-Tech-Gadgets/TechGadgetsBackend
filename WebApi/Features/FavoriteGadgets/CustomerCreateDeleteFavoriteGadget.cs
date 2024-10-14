@@ -35,7 +35,7 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("sellerApplication", "Không tìm thấy sản phẩm này.")
+            .AddReason("gadget", "Không tìm thấy sản phẩm này.")
             .Build();
         }
 

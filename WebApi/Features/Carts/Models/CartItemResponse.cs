@@ -12,7 +12,6 @@ public class CartItemResponse
     public string Condition { get; set; } = default!;
     public int Quantity { get; set; }
     public bool IsForSale { get; set; }
-    public SellerCartResponse Seller { get; set; } = default!;
     public BrandCartResponse Brand { get; set; } = default!;
     public CategoryCartResponse Category { get; set; } = default!;
 
