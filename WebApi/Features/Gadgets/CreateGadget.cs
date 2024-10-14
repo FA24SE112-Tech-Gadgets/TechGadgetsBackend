@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
@@ -22,7 +23,6 @@ public class CreateGadget : ControllerBase
         public IFormFile? Image { get; set; }
         public string? Text { get; set; }
         public GadgetDescriptionType Type { get; set; }
-        public int Index { get; set; }
     }
 
     public class SpecificationValueRequest
@@ -71,7 +71,7 @@ public class CreateGadget : ControllerBase
 
             RuleFor(r => r.Quantity)
                 .GreaterThanOrEqualTo(0).WithMessage("Số lượng phải lớn hơn hoặc bằng 0")
-                .LessThanOrEqualTo(100_000_000).WithMessage("Số lượng phải nhỏ hơn 1000");
+                .LessThanOrEqualTo(1000).WithMessage("Số lượng phải nhỏ hơn 1000");
 
             RuleFor(r => r.GadgetImages)
                 .NotEmpty().WithMessage("GadgetImages không được để trống");
@@ -81,9 +81,6 @@ public class CreateGadget : ControllerBase
 
             RuleForEach(r => r.GadgetDescriptions).ChildRules(g =>
             {
-                g.RuleFor(x => x.Index)
-                    .GreaterThanOrEqualTo(0).WithMessage("Index phải lớn hơn hoặc bằng 0");
-
                 g.RuleFor(x => x.Image)
                     .NotNull()
                     .When(x => x.Type == GadgetDescriptionType.Image)
@@ -114,8 +111,21 @@ public class CreateGadget : ControllerBase
 
     [HttpPost("gadgets")]
     [Tags("Gadgets")]
-    //[ProducesResponseType(typeof(GadgetResponse), StatusCodes.Status201Created)]
-    [SwaggerOperation(Summary = "Create Gadget", Description = "This API is for creating a gadget")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [SwaggerOperation(Summary = "Create Gadget",
+        Description = """
+        This API is for creating a gadget
+
+        ### API này không sử dụng được trên swagger, hãy test trên postman
+
+        - GadgetDescriptions:
+            - **image** và **text** có thể null
+            - **type** có thể là: image, normalText, boldText
+            - nếu **type** là image thì field **image** phải chứa file hình ảnh
+            - nếu **type** không phải là image thì field **text** phải chứa text tương ứng
+            - thứ tự của array sẽ được dùng để tạo index tương ứng, hãy lưu ý
+        """
+    )]
     public async Task<IActionResult> Handler([FromForm] Request request,
         AppDbContext context, GoogleStorageService storageService, CurrentUserService currentUserService, EmbeddingService embeddingService)
     {
@@ -135,6 +145,48 @@ public class CreateGadget : ControllerBase
                 .WithCode(TechGadgetErrorCode.WEB_03)
                 .AddReason("seller", "Tài khoản Seller đã bị khoá")
                 .Build();
+        }
+
+        if (!await context.Brands.AnyAsync(b => b.Id == request.BrandId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("brand", "Thương hiệu không tồn tại")
+                        .Build();
+        }
+
+        if (!await context.Categories.AnyAsync(c => c.Id == request.CategoryId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("category", "Thể loại không tồn tại")
+                        .Build();
+        }
+
+        foreach (var specValue in request.SpecificationValues)
+        {
+            var specKeyValid = await context.SpecificationKeys
+                                    .AnyAsync(s => s.Id == specValue.SpecificationKeyId && s.CategoryId == request.CategoryId);
+            if (!specKeyValid)
+            {
+                throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("specificationKey", $"specificationKey {specValue.SpecificationKeyId} không tồn tại hoặc không hợp lệ với category {request.CategoryId}")
+                        .Build();
+            }
+
+            if (specValue.SpecificationUnitId.HasValue)
+            {
+                var specUnitValid = await context.SpecificationUnits
+                                    .AnyAsync(u => u.Id == specValue.SpecificationUnitId && u.SpecificationKeyId == specValue.SpecificationKeyId);
+                if (!specUnitValid)
+                {
+                    throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("specificationUnit", $"specificationUnit {specValue.SpecificationUnitId} không tồn tại hoặc không hợp lệ với specificationKey {specValue.SpecificationKeyId}")
+                        .Build();
+                }
+            }
         }
 
         //up hinh de cuoi cung
@@ -183,6 +235,8 @@ public class CreateGadget : ControllerBase
         }
 
         List<GadgetDescription> gadgetDescriptions = [];
+        int index = 0;
+
         foreach (var gadgetDescriptionRequest in request.GadgetDescriptions)
         {
             if (gadgetDescriptionRequest.Type == GadgetDescriptionType.Image)
@@ -203,9 +257,10 @@ public class CreateGadget : ControllerBase
                         .AddReason("gadgetDescription", "Lỗi khi lưu hình ảnh trong mô tả thiết bị")
                         .Build();
                 }
+
                 gadgetDescriptions.Add(new GadgetDescription
                 {
-                    Index = gadgetDescriptionRequest.Index,
+                    Index = index++,
                     Type = gadgetDescriptionRequest.Type,
                     Value = url
                 });
@@ -214,7 +269,7 @@ public class CreateGadget : ControllerBase
             {
                 gadgetDescriptions.Add(new GadgetDescription
                 {
-                    Index = gadgetDescriptionRequest.Index,
+                    Index = index++,
                     Type = gadgetDescriptionRequest.Type,
                     Value = gadgetDescriptionRequest.Text!
                 });

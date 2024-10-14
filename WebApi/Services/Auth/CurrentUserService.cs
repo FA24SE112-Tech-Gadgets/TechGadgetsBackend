@@ -32,6 +32,11 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, IOptio
             ClockSkew = TimeSpan.Zero
         };
 
+        if (token == "")
+        {
+            return null;
+        }
+
         var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
 
         var userInfoJson = principal.Claims.FirstOrDefault(c => c.Type == "UserInfo")?.Value;
