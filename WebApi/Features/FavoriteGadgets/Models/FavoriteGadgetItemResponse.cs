@@ -11,6 +11,7 @@ public class FavoriteGadgetItemResponse
     public GadgetStatus Status { get; set; }
     public string Condition { get; set; } = default!;
     public int Quantity { get; set; }
+    public bool IsForSale { get; set; }
     public SellerFavoriteGadgetResponse Seller { get; set; } = default!;
     public BrandFavoriteGadgetResponse Brand { get; set; } = default!;
     public CategoryFavoriteGadgetResponse Category { get; set; } = default!;

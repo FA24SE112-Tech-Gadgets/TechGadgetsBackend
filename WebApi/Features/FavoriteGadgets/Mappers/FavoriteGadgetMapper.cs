@@ -31,6 +31,7 @@ public static class FavoriteGadgetMapper
                 Status = gadget.Status,
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
+                IsForSale = gadget.IsForSale,
                 Seller = gadget.Seller.ToSellerFavoriteGadgetResponse()!,
                 Brand = gadget.Brand.ToBrandFavoriteGadgetResponse()!,
                 Category = gadget.Category.ToCategoryFavoriteGadgetResponse()!,
