@@ -5,14 +5,13 @@ namespace WebApi.Features.Carts.Mappers;
 
 public static class CartMapper
 {
-    private static ICollection<CartGadgetItemResponse>? ToCartListResponse(this ICollection<CartGadget> cartList)
+    private static List<CartGadgetItemResponse>? ToCartListResponse(this ICollection<CartGadget> cartList)
     {
         if (cartList != null)
         {
             return cartList
             .Select(gadgetItem => new CartGadgetItemResponse
             {
-                CartId = gadgetItem.CartId,
                 Quantity = gadgetItem.Quantity,
                 Gadget = gadgetItem.Gadget.ToCartItemResponse()!,
             })
@@ -21,14 +20,14 @@ public static class CartMapper
         return null;
     }
 
-    public static CartResponse? ToCartResponse(this Cart cart)
+    public static CartGadgetItemResponse? ToCartGadgetItemResponse(this CartGadget cartGadget)
     {
-        if (cart != null)
+        if (cartGadget != null)
         {
-            return new CartResponse
+            return new CartGadgetItemResponse
             {
-                Id = cart.Id,
-                CartGadgets = cart.CartGadgets.ToCartListResponse()!,
+                Quantity = cartGadget.Quantity,
+                Gadget = cartGadget.Gadget.ToCartItemResponse()!,
             };
         }
         return null;
@@ -48,7 +47,6 @@ public static class CartMapper
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
                 IsForSale = gadget.IsForSale,
-                Seller = gadget.Seller.ToSellerCartResponse()!,
                 Brand = gadget.Brand.ToBrandcartResponse()!,
                 Category = gadget.Category.ToCategoryCartResponse()!,
             };
@@ -56,7 +54,7 @@ public static class CartMapper
         return null;
     }
 
-    private static SellerCartResponse? ToSellerCartResponse(this Seller seller)
+    public static SellerCartResponse? ToSellerCartResponse(this Seller seller)
     {
         if (seller != null)
         {
