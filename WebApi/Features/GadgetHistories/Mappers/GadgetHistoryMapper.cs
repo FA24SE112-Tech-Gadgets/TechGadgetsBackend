@@ -76,6 +76,7 @@ public static class GadgetHistoryMapper
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Status = gadget.Status,
                 Condition = gadget.Condition,
+                Quantity = gadget.Quantity,
                 Seller = gadget.Seller.ToSellerGadgetHistoryResponse()!,
                 Brand = gadget.Brand.ToBrandGadgetHistoryResponse()!,
                 Category = gadget.Category.ToCategoryGadgetHistoryResponse()!,
