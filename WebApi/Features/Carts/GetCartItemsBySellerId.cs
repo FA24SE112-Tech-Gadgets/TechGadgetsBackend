@@ -21,7 +21,12 @@ public class GetCartItemsBySellerId : ControllerBase
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Get Customer Cart Items By SellerId",
-        Description = "This API is for get customer cart items by sellerId."
+        Description = "This API is for get customer cart items by sellerId. Note:" +
+                            "<br>&nbsp; - Status: Active | Inactive. Cho Manaager khóa sản phẩm nếu bán hàng cấm này kia." +
+                            "<br>&nbsp; - IsForSale: True | Galse. False => Sản phẩm ngừng doanh. Dùng để hiện watermark 'Sản phẩm ngừng kinh doanh' nếu false." +
+                            "<br>&nbsp; - Quantity: Nếu quantity = 0 thì hiện sản phẩm hết hàng." +
+                            "<br>&nbsp; - Seller không được cập nhật Status của Gadget." +
+                            "<br>&nbsp; - Nếu sản phẩm Status bị Inactive thì Seller không được Update IsForSale."
     )]
     [ProducesResponseType(typeof(PagedList<CartGadgetItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
