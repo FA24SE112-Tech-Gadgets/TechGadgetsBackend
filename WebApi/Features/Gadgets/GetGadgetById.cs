@@ -42,7 +42,7 @@ public class GetGadgetById : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_00)
-                        .AddReason("gadget", "Thiết bị không tồn tại")
+                        .AddReason("gadget", "Sản phẩm không tồn tại")
                         .Build();
         }
 
