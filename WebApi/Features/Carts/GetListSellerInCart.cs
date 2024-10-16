@@ -8,8 +8,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Carts.Mappers;
 using WebApi.Features.Carts.Models;
-using WebApi.Features.GadgetHistories.Models;
-using WebApi.Features.Users.Mappers;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Carts;
