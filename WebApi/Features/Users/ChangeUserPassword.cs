@@ -58,7 +58,14 @@ public class ChangeUserPassword : ControllerBase
                 .AddReason("password", "Mật khẩu không chính xác")
                 .Build();
         }
-
+        bool isOldPassword = request.OldPassword == request.NewPassword;
+        if (isOldPassword)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("password", "Mật khẩu đã từng được sử dụng")
+                .Build();
+        }
         currentUser.Password = HashPassword(request.NewPassword);
         await context.SaveChangesAsync();
 
