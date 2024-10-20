@@ -6,8 +6,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Wallets.Models;
 using WebApi.Services.Auth;
-using WebApi.Services.Payment.Models;
-using WebApi.Services.Payment;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Features.Wallets;
@@ -17,7 +15,7 @@ namespace WebApi.Features.Wallets;
 [RolesFilter(Role.Customer)]
 public class CancelTransaction : ControllerBase
 {
-    [HttpPost("wallet-trackings/{walletTrackingId}/cancel")]
+    [HttpPut("wallet-trackings/{walletTrackingId}/cancel")]
     [Tags("Wallet Trackings")]
     [SwaggerOperation(
         Summary = "Create Wallet Deposit",
@@ -25,19 +23,17 @@ public class CancelTransaction : ControllerBase
                             "<br>&nbsp; - PaymentMethod: VnPay, Momo, PayOS." +
                             "<br>&nbsp; - Amount phải tối thiểu là 2,000 và tối đa 50,000,000." +
                             "<br>&nbsp; - Return Url là web của FE." +
-                            "<br>&nbsp; - Nếu đang có 1 giao dịch Pending thì cần phải Cancel hoặc Success giao dịch đó trước khi tiến hành tạo giao dịch mới"
+                            "<br>&nbsp; - Nếu đang có 1 giao dịch Pending thì cần phải Cancel hoặc Success giao dịch đó trước khi tiến hành tạo giao dịch mới" +
+                            "<br>&nbsp; - Giao dịch không thể hủy có thể là do đã Success hoặc Expired hoặc Canceled hoặc Failed hoặc khác WalletTrackingType"
     )]
-    [ProducesResponseType(typeof(DepositResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler(
         [FromRoute] Guid walletTrackingId,
         AppDbContext context,
-        [FromServices] CurrentUserService currentUserService,
-        [FromServices] MomoPaymentService momoPaymentService,
-        [FromServices] VnPayPaymentService vnPayPaymentService,
-        [FromServices] PayOSPaymentSerivce payOSPaymentSerivce)
+        [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
@@ -62,8 +58,25 @@ public class CancelTransaction : ControllerBase
             .Build();
         }
 
-        //if (walletTrackingDetail.Status)
-        
+        if (walletTrackingDetail.Type != WalletTrackingType.Deposit)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("walletTrackings", "Không thể hủy giao dịch khác Type Deposit.")
+            .Build();
+        }
+
+        if (walletTrackingDetail.Status != WalletTrackingStatus.Pending)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("walletTrackings", "Không thể hủy giao dịch đã bị hủy.")
+            .Build();
+        }
+
+        walletTrackingDetail.Status = WalletTrackingStatus.Cancelled;
+        await context.SaveChangesAsync();
+
         return Ok();
     }
 }

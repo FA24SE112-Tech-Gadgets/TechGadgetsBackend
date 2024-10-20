@@ -50,6 +50,7 @@ public class CreateWalletDeposit : ControllerBase
     [SwaggerOperation(
         Summary = "Create Wallet Deposit",
         Description = "This API is for create wallet deposit. Note: " +
+                            "<br>&nbsp; - Dùng API này để nạp tiền vào ví." +
                             "<br>&nbsp; - PaymentMethod: VnPay, Momo, PayOS." +
                             "<br>&nbsp; - Amount phải tối thiểu là 2,000 và tối đa 50,000,000." +
                             "<br>&nbsp; - Return Url là web của FE." +
