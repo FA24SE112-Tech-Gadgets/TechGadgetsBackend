@@ -32,9 +32,9 @@ public class CreateWalletDeposit : ControllerBase
         public Validator()
         {
             RuleFor(sp => sp.Amount)
-                .GreaterThan(2000)
+                .GreaterThanOrEqualTo(2000)
                 .WithMessage("Số tiền phải lớn hơn 2,000.")
-                .LessThan(50000000)
+                .LessThanOrEqualTo(50000000)
                 .WithMessage("Số tiền phải nhỏ hơn 50,000,000.");
             RuleFor(sp => sp.PaymentMethod)
                 .IsInEnum()
@@ -138,6 +138,14 @@ public class CreateWalletDeposit : ControllerBase
                 break;
             case PaymentMethod.PayOS:
                 long payOSPaymentCode = GenerateDailyRandomLong();
+                bool isCodeExist = true;
+                int maxNumber = 999999;
+                int tryCode = 1;
+                do
+                {
+                    isCodeExist = await context.WalletTrackings.AnyAsync(wt => wt.PaymentCode == payOSPaymentCode.ToString());
+                    tryCode++;
+                } while (isCodeExist && tryCode <= maxNumber);
                 walletTracking.PaymentCode = payOSPaymentCode.ToString();
                 PayOSPayment payOSPayment = new PayOSPayment()
                 {
@@ -176,7 +184,13 @@ public class CreateWalletDeposit : ControllerBase
         int seed = today.Year * 10000 + today.Month * 100 + today.Day;
 
         // Sử dụng seed để tạo Random (mỗi ngày sẽ có seed khác nhau)
-        Random random = new Random(seed);
+        Random dayRandom = new Random(seed);
+
+        // Lấy một số ngẫu nhiên từ seed theo ngày để tạo thành seed cho Random mới
+        int randomSeed = dayRandom.Next();
+
+        // Sử dụng DateTime.Now.Ticks để kết hợp thêm tính ngẫu nhiên
+        Random random = new Random(randomSeed + (int)(DateTime.Now.Ticks % int.MaxValue));
 
         // Tạo số ngẫu nhiên từ 100000 đến 999999
         long randomLong = random.Next(100000, 1000000);
