@@ -122,7 +122,6 @@ public static class ApplyMigrationsExtensions
                 context.GadgetDescriptions.Add(gadgetDescription);
             }
 
-
             var values = SpecificationValueSeed.Default.Select(s => s.Value).ToList();
             var valueVectors = await embeddingService.GetEmbeddings(values);
 
