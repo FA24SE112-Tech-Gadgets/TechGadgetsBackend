@@ -94,6 +94,7 @@ public class CreateOrder : ControllerBase
             {
                 SellerId = seller.Id,
                 Status = OrderDetailStatus.Pending,
+                CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             }!;
             List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;

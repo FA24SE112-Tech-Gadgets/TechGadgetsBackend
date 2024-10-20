@@ -70,20 +70,16 @@ public class GetListOrderDetails : ControllerBase
             query = query.OrderBy(od => od.CreatedAt);
         }
 
-        var sellerApplications = await query
-            .ToPagedListAsync(request)
-            ?? throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("sellerApplication", "Không tìm thấy đơn này.")
-            .Build();
+        var orderDetails = await query
+            .ToPagedListAsync(request);
 
-        var sellerApplicationsResponseList = new PagedList<SellerApplicationItemResponse>(
-            sellerApplications.Items.Select(od => od.ToSellerApplicationItemResponse()!).ToList(),
-            sellerApplications.Page,
-            sellerApplications.PageSize,
-            sellerApplications.TotalItems
-        );
+        //var sellerApplicationsResponseList = new PagedList<SellerApplicationItemResponse>(
+        //    sellerApplications.Items.Select(od => od.ToSellerApplicationItemResponse()!).ToList(),
+        //    sellerApplications.Page,
+        //    sellerApplications.PageSize,
+        //    sellerApplications.TotalItems
+        //);
 
-        return Ok(sellerApplicationsResponseList);
+        return Ok();
     }
 }
