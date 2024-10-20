@@ -20,6 +20,7 @@ public static class ServicesExtensions
         services.AddScoped<GoogleStorageService>();
         services.AddScoped<VnPayPaymentService>();
         services.AddScoped<MomoPaymentService>();
+        services.AddScoped<PayOSPaymentSerivce>();
         services.AddScoped<EmbeddingService>();
     }
 }
