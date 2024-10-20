@@ -94,9 +94,11 @@ public class CreateOrder : ControllerBase
             {
                 SellerId = seller.Id,
                 Status = OrderDetailStatus.Pending,
+                CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             }!;
             List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;
+            int orderDetailAmount = 0;
             foreach (var cartGadget in listCartGadgets)
             {
                 if (cartGadget.Gadget.SellerId == seller.Id)
@@ -105,13 +107,17 @@ public class CreateOrder : ControllerBase
                     gadgetInformation.GadgetQuantity = cartGadget.Quantity;
                     gadgetInformations.Add(gadgetInformation);
 
-                    //Tính tổng giá tiền
+                    //Tính tổng giá tiền orderDetail
+                    orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+
+                    //Tính tổng giá tiền order
                     totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
 
                     //Xóa gadget ra khỏi cart
                     context.CartGadgets.Remove(cartGadget);
                 }
             }
+            orderDetail.Amount = orderDetailAmount;
             orderDetail.GadgetInformation = gadgetInformations;
             orderDetails.Add(orderDetail);
 
