@@ -6,6 +6,8 @@ using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Features.OrderDetails.Mappers;
+using WebApi.Features.OrderDetails.Models;
 using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 
@@ -37,7 +39,7 @@ public class GetListOrderDetails : ControllerBase
                             "<br>&nbsp; - Customer dùng API này để lấy ra danh sách orderDetail của mình." +
                             "<br>&nbsp; - Seller dùng API này để lấy ra những orderDetail liên quan đến mình."
     )]
-    [ProducesResponseType(typeof(SellerApplicationDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedList<CustomerOrderDetailItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -73,13 +75,24 @@ public class GetListOrderDetails : ControllerBase
         var orderDetails = await query
             .ToPagedListAsync(request);
 
-        //var sellerApplicationsResponseList = new PagedList<SellerApplicationItemResponse>(
-        //    sellerApplications.Items.Select(od => od.ToSellerApplicationItemResponse()!).ToList(),
-        //    sellerApplications.Page,
-        //    sellerApplications.PageSize,
-        //    sellerApplications.TotalItems
-        //);
-
-        return Ok();
+        if (currentUser!.Role == Role.Seller)
+        {
+            var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
+                orderDetails.Items.Select(od => od.ToCustomerOrderDetailItemResponse()!).ToList(),
+                orderDetails.Page,
+                orderDetails.PageSize,
+                orderDetails.TotalItems
+            );
+            return Ok(orderDetailsResponseList);
+        } else
+        {
+            var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
+                orderDetails.Items.Select(od => od.ToCustomerOrderDetailItemResponse()!).ToList(),
+                orderDetails.Page,
+                orderDetails.PageSize,
+                orderDetails.TotalItems
+            );
+            return Ok(orderDetailsResponseList);
+        }
     }
 }
