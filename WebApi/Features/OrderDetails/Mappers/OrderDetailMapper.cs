@@ -13,6 +13,7 @@ public static class OrderDetailMapper
             {
                 Id = gadgetInformation.Id,
                 OrderDetailId = gadgetInformation.OrderDetailId,
+                GadgetThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
                 GadgetName = gadgetInformation.GadgetName,
                 GadgetPrice = gadgetInformation.GadgetPrice,
                 GadgetQuantity = gadgetInformation.GadgetQuantity,
@@ -38,7 +39,7 @@ public static class OrderDetailMapper
         return null;
     }
 
-    private static ICollection<GadgetInformationOrderDetailResponse>? ToListGadgetInformations(this ICollection<GadgetInformation> gadgetInformations)
+    private static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformations(this ICollection<GadgetInformation> gadgetInformations)
     {
         // Kiểm tra nếu gadgetInformations không null và có ít nhất một phần tử
         if (gadgetInformations.Count() > 0)
@@ -62,9 +63,25 @@ public static class OrderDetailMapper
             {
                 Id = orderDetail.Id,
                 OrderId = orderDetail.OrderId,
+                Amount = orderDetail.Amount,
                 Seller = orderDetail.Seller.ToSellerOrderDetailResponse()!,
                 Status = orderDetail.Status,
                 GadgetInformation = orderDetail.GadgetInformation.ToListGadgetInformations()!,
+                CreatedAt = orderDetail.CreatedAt,
+            };
+        }
+        return null;
+    }
+
+    public static SellerOrderDetailItemResponse? ToSellerOrderDetailItemResponse(this OrderDetail orderDetail)
+    {
+        if (orderDetail != null)
+        {
+            return new SellerOrderDetailItemResponse
+            {
+                Id = orderDetail.Id,
+                Amount = orderDetail.Amount,
+                Status = orderDetail.Status,
                 CreatedAt = orderDetail.CreatedAt,
             };
         }

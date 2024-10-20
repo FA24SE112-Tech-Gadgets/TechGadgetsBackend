@@ -37,9 +37,10 @@ public class GetListOrderDetails : ControllerBase
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'" +
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
                             "<br>&nbsp; - Customer dùng API này để lấy ra danh sách orderDetail của mình." +
-                            "<br>&nbsp; - Seller dùng API này để lấy ra những orderDetail liên quan đến mình."
+                            "<br>&nbsp; - Seller dùng API này để lấy ra những orderDetail liên quan đến mình." +
+                            "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết."
     )]
-    [ProducesResponseType(typeof(PagedList<CustomerOrderDetailItemResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -54,7 +55,11 @@ public class GetListOrderDetails : ControllerBase
             query = query.Where(od => od.SellerId == currentUser.Seller!.Id);
         } else
         {
-            query = query.Include(od => od.Order).Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
+            query = query
+                .Include(od => od.Order)
+                .Include(od => od.Seller)
+                .Include(od => od.GadgetInformation)
+                .Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
         }
 
         if (request.Status != null)
@@ -77,8 +82,8 @@ public class GetListOrderDetails : ControllerBase
 
         if (currentUser!.Role == Role.Seller)
         {
-            var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
-                orderDetails.Items.Select(od => od.ToCustomerOrderDetailItemResponse()!).ToList(),
+            var orderDetailsResponseList = new PagedList<SellerOrderDetailItemResponse>(
+                orderDetails.Items.Select(od => od.ToSellerOrderDetailItemResponse()!).ToList(),
                 orderDetails.Page,
                 orderDetails.PageSize,
                 orderDetails.TotalItems
