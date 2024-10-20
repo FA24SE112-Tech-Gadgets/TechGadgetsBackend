@@ -6,7 +6,6 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.Carts.Models;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Carts;
