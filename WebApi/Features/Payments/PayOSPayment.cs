@@ -10,6 +10,7 @@ namespace WebApi.Features.Payments;
 public class PayOSPayment : ControllerBase
 {
     [HttpPost("webhook/payos")]
+    [Tags("Webhook")]
     [SwaggerOperation(
             Summary = "Payment Transfer Handler - Webhook API - DO NOT USE!!!",
             Description = "API for PayOS transfer data to Project Server" +
