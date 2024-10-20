@@ -65,6 +65,7 @@ public static class BrandSeed
         new Brand { Id = Guid.Parse("10fdeaaa-b502-4a8c-b376-49da96397dff"), Name = "Sumico", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Sumico.jpg" },
         new Brand { Id = Guid.Parse("1c2181c6-cf60-46dc-b973-c34c8fb53478"), Name = "Paramax", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Paramax.jpg" },
         new Brand { Id = Guid.Parse("b72baf1d-38e6-48da-8525-d575005f0165"), Name = "Dalton", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Dalton.jpg" },
-        new Brand { Id = Guid.Parse("8968277e-cb34-4f11-aaba-191011f8914a"), Name = "Birici", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Birici.jpg" }
+        new Brand { Id = Guid.Parse("8968277e-cb34-4f11-aaba-191011f8914a"), Name = "Birici", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Birici.jpg" },
+        new Brand { Id = Guid.Parse("ed7fb243-4316-42b5-ab4a-330ca50d444d"), Name = "Pasion", LogoUrl = "https://storage.googleapis.com/fbdemo-f9d5f.appspot.com/Brands/Pasion.jpg" }
     ];
 }

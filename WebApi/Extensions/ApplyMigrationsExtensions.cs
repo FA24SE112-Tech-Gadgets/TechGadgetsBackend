@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Data.Seeds;
 using WebApi.Services.Embedding;
 
@@ -82,6 +83,58 @@ public static class ApplyMigrationsExtensions
             {
                 context.SpecificationUnits.Add(specificationUnit);
             }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.Gadgets.AnyAsync())
+        {
+            // Create lists to hold the names and conditions
+            var names = GadgetSeed.Default.Select(gadget => gadget.Name).ToList();
+            var conditions = GadgetSeed.Default.Select(gadget => gadget.Condition).ToList();
+
+            // Get embeddings for names and conditions in a batch
+            var nameVectors = await embeddingService.GetEmbeddings(names);
+            var conditionVectors = await embeddingService.GetEmbeddings(conditions);
+
+            int index = 0;
+            foreach (var gadget in GadgetSeed.Default)
+            {
+                gadget.NameVector = nameVectors[index];
+                gadget.ConditionVector = conditionVectors[index];
+                gadget.Status = GadgetStatus.Active;
+                gadget.IsForSale = true;
+                gadget.CreatedAt = DateTime.UtcNow;
+                gadget.UpdatedAt = DateTime.UtcNow;
+                gadget.Quantity = 0;
+
+                context.Gadgets.Add(gadget);
+                index++;
+            }
+
+
+            foreach (var gadgetImage in GadgetImageSeed.Default)
+            {
+                context.GadgetImages.Add(gadgetImage);
+            }
+
+            foreach (var gadgetDescription in GadgetDescriptionSeed.Default)
+            {
+                context.GadgetDescriptions.Add(gadgetDescription);
+            }
+
+
+            var values = SpecificationValueSeed.Default.Select(s => s.Value).ToList();
+            var valueVectors = await embeddingService.GetEmbeddings(values);
+
+            index = 0;
+            foreach (var specificationValue in SpecificationValueSeed.Default)
+            {
+                specificationValue.Vector = valueVectors[index];
+
+                context.SpecificationValues.Add(specificationValue);
+                index++;
+            }
+
             await context.SaveChangesAsync();
         }
     }
