@@ -16,7 +16,7 @@ public class PayOSPaymentSerivce(IOptions<PayOSSettings> payOSSettings, CurrentS
     public async Task<string> CreatePaymentAsync(PayOSPayment payment)
     {
         //Create list item for payment link
-        List<ItemData> items = new List<ItemData>();
+        List<ItemData> items = new List<ItemData>()!;
         items.Add(new ItemData("Thanh toán ví điện tử TechGadget", 1, payment.Amount));
 
         var request = new PayOSPaymentRequest

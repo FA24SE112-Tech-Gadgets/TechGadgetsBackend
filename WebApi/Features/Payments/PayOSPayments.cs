@@ -35,6 +35,7 @@ public class PayOSPayments : ControllerBase
                 {
                     userWallet.Amount += walletTrackingDetail.Amount;
                     walletTrackingDetail.Status = Data.Entities.WalletTrackingStatus.Success;
+                    walletTrackingDetail.DepositedAt = DateTime.UtcNow;
                     await context.SaveChangesAsync();
                 }
             }
