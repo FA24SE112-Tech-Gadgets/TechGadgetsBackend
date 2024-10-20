@@ -5,7 +5,7 @@ namespace WebApi.Features.Carts.Models;
 public class SellerCartResponse
 {
     public Guid Id { get; set; }
-    public string? CompanyName { get; set; }
+    public string? CompanyName { get; set; } = default!;
     public string ShopName { get; set; } = default!;
     public string ShopAddress { get; set; } = default!;
     public BusinessModel BusinessModel { get; set; }

@@ -45,14 +45,15 @@ public class CreateWalletDeposit : ControllerBase
         }
     }
 
-    [HttpPost("wallet/deposit")]
-    [Tags("Wallets")]
+    [HttpPost("wallet-trackings/deposit")]
+    [Tags("Wallet Trackings")]
     [SwaggerOperation(
         Summary = "Create Wallet Deposit",
         Description = "This API is for create wallet deposit. Note: " +
                             "<br>&nbsp; - PaymentMethod: VnPay, Momo, PayOS." +
                             "<br>&nbsp; - Amount phải tối thiểu là 2,000 và tối đa 50,000,000." +
-                            "<br>&nbsp; - Return Url là web của FE."
+                            "<br>&nbsp; - Return Url là web của FE." +
+                            "<br>&nbsp; - Nếu đang có 1 giao dịch Pending thì cần phải Cancel hoặc Success giao dịch đó trước khi tiến hành tạo giao dịch mới"
     )]
     [ProducesResponseType(typeof(DepositResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -75,6 +76,15 @@ public class CreateWalletDeposit : ControllerBase
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("wallets", "Không tìm thấy ví người dùng.")
+            .Build();
+        }
+
+        bool isExist = await context.WalletTrackings.AnyAsync(wt => wt.WalletId == userWallet!.Id && WalletTrackingStatus.Pending == wt.Status);
+        if (isExist)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_01)
+            .AddReason("walletTrackings", "Bạn đang có 1 giao dịch đang chờ thanh toán trước đó.")
             .Build();
         }
 
