@@ -6,6 +6,7 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Features.Orders.Mappers;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Orders;
@@ -36,8 +37,11 @@ public class CreateOrder : ControllerBase
     [HttpPost("order")]
     [Tags("Orders")]
     [SwaggerOperation(
-        Summary = "Update Cart Item",
-        Description = "This API is for update customer cart item."
+        Summary = "Create Order",
+        Description = "This API is for customer create order. Note: " +
+                            "<br>&nbsp; - Dùng API này để thanh toán đơn hàng(trừ tiền có sẵn trong ví)." +
+                            "<br>&nbsp; - Sau khi gọi API này thì những gadget thanh toán, sẽ không còn nằm trong cart nữa." +
+                            "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví"
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -57,7 +61,105 @@ public class CreateOrder : ControllerBase
             .Build();
         }
 
-        
+        // Truy vấn để lấy seller từ giỏ hàng của user
+        var sellers = await context.Carts
+            .Where(c => c.CustomerId == currentUser!.Customer!.Id)   // Lọc theo giỏ hàng của user
+            .SelectMany(c => c.CartGadgets.Select(cg => cg.Gadget.Seller)) // Lấy seller từ các sản phẩm trong giỏ hàng
+            .Distinct()  // Loại bỏ seller trùng lặp
+            .OrderBy(s => s.Id) // Sắp xếp để có thể phân trang
+            .ToListAsync();
+
+        // Lấy list cartGadget của user
+        var listCartGadgets = await context.CartGadgets
+            .Include(cg => cg.Gadget)
+            .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
+            .ToListAsync();
+
+        var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
+        var systemWallet = await context.SystemWallets.SingleOrDefaultAsync();
+
+        int totalAmount = 0;
+
+        Order order = new Order()
+        {
+            CustomerId = currentUser!.Customer!.Id,
+        }!;
+
+        List<OrderDetail> orderDetails = new List<OrderDetail>()!;
+
+        //Chia order theo từng seller
+        foreach (var seller in sellers)
+        {
+            OrderDetail orderDetail = new OrderDetail()
+            {
+                SellerId = seller.Id,
+                Status = OrderDetailStatus.Pending,
+                UpdatedAt = DateTime.UtcNow,
+            }!;
+            List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;
+            foreach (var cartGadget in listCartGadgets)
+            {
+                if (cartGadget.Gadget.SellerId == seller.Id)
+                {
+                    GadgetInformation gadgetInformation = cartGadget.Gadget.ToGadgetInformation()!;
+                    gadgetInformation.GadgetQuantity = cartGadget.Quantity;
+                    gadgetInformations.Add(gadgetInformation);
+
+                    //Tính tổng giá tiền
+                    totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+
+                    //Xóa gadget ra khỏi cart
+                    context.CartGadgets.Remove(cartGadget);
+                }
+            }
+            orderDetail.GadgetInformation = gadgetInformations;
+            orderDetails.Add(orderDetail);
+
+            // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
+            SystemOrderDetailTracking systemOrderDetailTracking = new SystemOrderDetailTracking()
+            {
+                SystemWalletId = systemWallet!.Id,
+                OrderDetail = orderDetail,
+                FromUserId = currentUser.Id,
+                ToUserId = seller.UserId,
+                Status = SystemOrderDetailTrackingStatus.Pending,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            }!;
+            await context.SystemOrderDetailTrackings.AddAsync(systemOrderDetailTracking);
+        }
+        order.OrderDetails = orderDetails;
+
+        //Check số dư ví coi đủ để thanh toán không
+        if (userWallet!.Amount == 0 || totalAmount > userWallet!.Amount)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("wallets", "Số dư trong ví không đủ.")
+            .Build();
+        }
+
+        //Thanh toán, trừ tiền userWallet
+        userWallet.Amount -= totalAmount;
+
+        //Cộng tiền đó vô systemWallet
+        systemWallet!.Amount += totalAmount;
+
+        //Tạo lịch sử WalletTracking cho việc trừ tiền đó
+        WalletTracking walletTracking = new WalletTracking()
+        {
+            WalletId = userWallet!.Id,
+            Order = order,
+            Amount = totalAmount,
+            Type = WalletTrackingType.Payment,
+            Status = WalletTrackingStatus.Success,
+            CreatedAt = DateTime.UtcNow,
+        }!;
+
+        await context.WalletTrackings.AddAsync(walletTracking);
+
+        //Save tất cả mọi thứ vô DB
+        await context.SaveChangesAsync();
 
         return Ok();
     }
