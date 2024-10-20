@@ -6,6 +6,7 @@ public class OrderDetail
     public Guid OrderId { get; set; }
     public Guid SellerId { get; set; }
     public OrderDetailStatus Status { get; set; }
+    public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public WalletTracking? WalletTracking { get; set; }
