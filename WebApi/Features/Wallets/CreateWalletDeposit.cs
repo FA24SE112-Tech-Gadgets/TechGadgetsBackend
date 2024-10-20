@@ -138,6 +138,14 @@ public class CreateWalletDeposit : ControllerBase
                 break;
             case PaymentMethod.PayOS:
                 long payOSPaymentCode = GenerateDailyRandomLong();
+                bool isCodeExist = true;
+                int maxNumber = 999999;
+                int tryCode = 1;
+                do
+                {
+                    isCodeExist = await context.WalletTrackings.AnyAsync(wt => wt.PaymentCode == payOSPaymentCode.ToString());
+                    tryCode++;
+                } while (isCodeExist && tryCode <= maxNumber);
                 walletTracking.PaymentCode = payOSPaymentCode.ToString();
                 PayOSPayment payOSPayment = new PayOSPayment()
                 {
