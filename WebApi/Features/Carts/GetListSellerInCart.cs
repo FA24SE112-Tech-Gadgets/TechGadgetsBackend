@@ -23,7 +23,12 @@ public class GetListSellerInCart : ControllerBase
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Get List Sellers In Customer Cart",
-        Description = "This API is for get list seller in customer cart."
+        Description = "This API is for get list seller in customer cart. Note:" +
+                            "<br>&nbsp; - Dùng API này để lấy thông Seller và SellerId và kết hợp với API GetCartItemsBySellerId để lấy được Gadget theo từng Seller." +
+                            "<br>&nbsp; - Dùng để show thông tin của Seller như ShopName." +
+                            "<br>&nbsp; - Trạng thái tài khoản của Seller (user.status)." +
+                            "<br>&nbsp; - Nếu Seller bị khóa thì không được thanh toán đơn đó (Đơn của Seller đó thôi)." +
+                            "<br>&nbsp; - Có thể show số điện thoại vs companyName (Tùy FE style ntn)."
     )]
     [ProducesResponseType(typeof(PagedList<SellerCartResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]

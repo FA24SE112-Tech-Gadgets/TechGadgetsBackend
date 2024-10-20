@@ -11,6 +11,7 @@ public class WalletTracking
     public WalletTrackingType Type { get; set; }
     public WalletTrackingStatus Status { get; set; }
     public string? Reason { get; set; }
+    public string? PaymentCode { get; set; }
     public DateTime? RefundedAt { get; set; }
     public DateTime? DepositedAt { get; set; }
     public DateTime CreatedAt { get; set; }
