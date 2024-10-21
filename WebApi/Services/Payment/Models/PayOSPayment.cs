@@ -2,7 +2,7 @@
 
 public class PayOSPayment
 {
-    public string PaymentReferenceId { get; set; } = default!;
+    public long PaymentReferenceId { get; set; } = default!;
 
     public int Amount { get; set; }
 

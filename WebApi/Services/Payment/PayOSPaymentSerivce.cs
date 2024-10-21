@@ -16,12 +16,12 @@ public class PayOSPaymentSerivce(IOptions<PayOSSettings> payOSSettings, CurrentS
     public async Task<string> CreatePaymentAsync(PayOSPayment payment)
     {
         //Create list item for payment link
-        List<ItemData> items = new List<ItemData>();
+        List<ItemData> items = new List<ItemData>()!;
         items.Add(new ItemData("Thanh toán ví điện tử TechGadget", 1, payment.Amount));
 
         var request = new PayOSPaymentRequest
         {
-            OrderCode = GenerateDailyRandomLong(),
+            OrderCode = payment.PaymentReferenceId,
             Amount = payment.Amount,
             Description = payment.Info ?? DefaultOrderInfo,
             Items = items,
@@ -49,29 +49,5 @@ public class PayOSPaymentSerivce(IOptions<PayOSSettings> payOSSettings, CurrentS
         // Chuyển đổi thời gian hết hạn thành Unix Timestamp
         int unixTimestamp = (int)(expirationTime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
         return unixTimestamp;
-    }
-
-    private long GenerateDailyRandomLong()
-    {
-        // Lấy ngày hiện tại (chỉ lấy phần ngày)
-        DateTime today = DateTime.Today;
-
-        // Tạo một seed từ ngày hôm nay bằng cách sử dụng tổng các thành phần ngày
-        int seed = today.Year * 10000 + today.Month * 100 + today.Day;
-
-        // Sử dụng seed để tạo Random (mỗi ngày sẽ có seed khác nhau)
-        Random random = new Random(seed);
-
-        // Tạo số long ngẫu nhiên từ Random
-        byte[] buffer = new byte[8];
-        random.NextBytes(buffer);
-
-        // Chuyển đổi thành long
-        long randomLong = BitConverter.ToInt64(buffer, 0);
-
-        // Đảm bảo giá trị dương (nếu cần)
-        randomLong = Math.Abs(randomLong);
-
-        return randomLong;
     }
 }
