@@ -111,7 +111,7 @@ public class CreateWalletDeposit : ControllerBase
                     PaymentReferenceId = vnPayPaymentCode,
                     Amount = request.Amount,
                     Info = request.Info,
-                    returnUrl = request.ReturnUrl,
+                    ReturnUrl = request.ReturnUrl,
                 }!;
                 try
                 {
@@ -133,7 +133,7 @@ public class CreateWalletDeposit : ControllerBase
                     PaymentReferenceId = momoPaymentCode,
                     Amount = request.Amount,
                     Info = request.Info,
-                    returnUrl = request.ReturnUrl,
+                    ReturnUrl = request.ReturnUrl,
                 }!;
                 try
                 {

@@ -17,13 +17,13 @@ public class MomoPaymentService(
 
     public async Task<string> CreatePaymentAsync(MomoPayment payment)
     {
-        var requestType = "payWithATM";
+        var requestType = "payWithCC";
         var request = new MomoPaymentRequest
         {
             OrderInfo = payment.Info ?? DefaultOrderInfo,
             PartnerCode = _momoSettings.PartnerCode,
             IpnUrl = _momoSettings.IpnUrl,
-            RedirectUrl = $"{currentServerService.ServerUrl}/{_momoSettings.RedirectUrl}?returnUrl={payment.returnUrl}",
+            RedirectUrl = $"{currentServerService.ServerUrl}/{_momoSettings.RedirectUrl}?returnUrl={payment.ReturnUrl}",
 
             Amount = payment.Amount,
             OrderId = payment.PaymentReferenceId,

@@ -8,5 +8,5 @@ public class MomoPayment
 
     public string? Info { get; set; }
 
-    public string returnUrl { get; set; } = default!;
+    public string ReturnUrl { get; set; } = default!;
 }
