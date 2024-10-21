@@ -122,11 +122,44 @@ public static class ApplyMigrationsExtensions
                 context.GadgetDescriptions.Add(gadgetDescription);
             }
 
-            var values = SpecificationValueSeed.Default.Select(s => s.Value).ToList();
-            var valueVectors = await embeddingService.GetEmbeddings(values);
 
+            var values = SpecificationValueLaptopSeed.Default.Select(s => s.Value).ToList();
+            var valueVectors = await embeddingService.GetEmbeddings(values);
             index = 0;
-            foreach (var specificationValue in SpecificationValueSeed.Default)
+            foreach (var specificationValue in SpecificationValueLaptopSeed.Default)
+            {
+                specificationValue.Vector = valueVectors[index];
+
+                context.SpecificationValues.Add(specificationValue);
+                index++;
+            }
+
+            values = SpecificationValueDienThoaiSeed.Default.Select(s => s.Value).ToList();
+            valueVectors = await embeddingService.GetEmbeddings(values);
+            index = 0;
+            foreach (var specificationValue in SpecificationValueDienThoaiSeed.Default)
+            {
+                specificationValue.Vector = valueVectors[index];
+
+                context.SpecificationValues.Add(specificationValue);
+                index++;
+            }
+
+            values = SpecificationValueTaiNgheSeed.Default.Select(s => s.Value).ToList();
+            valueVectors = await embeddingService.GetEmbeddings(values);
+            index = 0;
+            foreach (var specificationValue in SpecificationValueTaiNgheSeed.Default)
+            {
+                specificationValue.Vector = valueVectors[index];
+
+                context.SpecificationValues.Add(specificationValue);
+                index++;
+            }
+
+            values = SpecificationValueLoaSeed.Default.Select(s => s.Value).ToList();
+            valueVectors = await embeddingService.GetEmbeddings(values);
+            index = 0;
+            foreach (var specificationValue in SpecificationValueLoaSeed.Default)
             {
                 specificationValue.Vector = valueVectors[index];
 
