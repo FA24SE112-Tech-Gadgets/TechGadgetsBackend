@@ -87,6 +87,7 @@ public static class CategoryBrandSeed
         new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("f1f72e2b-ef64-4583-8907-5f9c9df5b9fd") },
         new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("aa8a3a33-47be-4e0f-a148-ee3c3c9c82d3") },
         new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("cf2b71ae-c67f-43e3-9df9-b42573c09488") },
-        new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("3b0410e4-3c29-42ee-b9af-db4d42f37f46") }
+        new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("3b0410e4-3c29-42ee-b9af-db4d42f37f46") },
+        new CategoryBrand { CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa"), BrandId = Guid.Parse("ed7fb243-4316-42b5-ab4a-330ca50d444d") }
     ];
 }

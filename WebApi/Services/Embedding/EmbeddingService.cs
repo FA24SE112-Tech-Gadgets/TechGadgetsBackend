@@ -11,6 +11,11 @@ public class EmbeddingResponse
     public float[] Embedding { get; set; } = [];
 }
 
+public class EmbeddingBatchResponse
+{
+    public float[][] Embeddings { get; set; } = [];
+}
+
 public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings)
 {
     private readonly EmbeddingServerSettings _embeddingServerSettings = embeddingServerSettings.Value;
@@ -43,6 +48,45 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<Emb
                 else
                 {
                     throw new NullReferenceException("Embedding Response is null");
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Error calling the embedding service. Status code: " + response.StatusCode);
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new Exception("Error calling the embedding service.", ex);
+        }
+    }
+
+    public async Task<List<Vector>> GetEmbeddings(List<string> texts)
+    {
+        var client = httpClientFactory.CreateClient();
+        var requestBody = new { texts };
+        var jsonContent = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+
+        try
+        {
+            // Call the FastAPI embedding service
+            var response = await client.PostAsync($"{_embeddingServerSettings.Url}/batch", jsonContent);
+
+            // Check if the request was successful
+            if (response.IsSuccessStatusCode)
+            {
+                var resultContent = await response.Content.ReadAsStringAsync();
+                var embeddingBatchResponse = JsonSerializer.Deserialize<EmbeddingBatchResponse>(resultContent,
+                    new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+                if (embeddingBatchResponse != null)
+                {
+                    // Convert the array of embeddings to List<Vector>
+                    return embeddingBatchResponse.Embeddings.Select(emb => new Vector(emb)).ToList();
+                }
+                else
+                {
+                    throw new NullReferenceException("Embedding Batch Response is null");
                 }
             }
             else
