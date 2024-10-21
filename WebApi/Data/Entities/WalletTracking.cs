@@ -14,6 +14,7 @@ public class WalletTracking
     public string? PaymentCode { get; set; }
     public DateTime? RefundedAt { get; set; }
     public DateTime? DepositedAt { get; set; }
+    public DateTime? SellerPaidAt { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public Wallet Wallet { get; set; } = default!;
