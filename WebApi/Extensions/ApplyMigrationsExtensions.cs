@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Data.Entities;
 using WebApi.Data.Seeds;
 using WebApi.Services.Embedding;
 
@@ -86,88 +85,88 @@ public static class ApplyMigrationsExtensions
             await context.SaveChangesAsync();
         }
 
-        if (!await context.Gadgets.AnyAsync())
-        {
-            // Create lists to hold the names and conditions
-            var names = GadgetSeed.Default.Select(gadget => gadget.Name).ToList();
-            var conditions = GadgetSeed.Default.Select(gadget => gadget.Condition).ToList();
+        //if (!await context.Gadgets.AnyAsync())
+        //{
+        //    // Create lists to hold the names and conditions
+        //    var names = GadgetSeed.Default.Select(gadget => gadget.Name).ToList();
+        //    var conditions = GadgetSeed.Default.Select(gadget => gadget.Condition).ToList();
 
-            // Get embeddings for names and conditions in a batch
-            var nameVectors = await embeddingService.GetEmbeddings(names);
-            var conditionVectors = await embeddingService.GetEmbeddings(conditions);
+        //    // Get embeddings for names and conditions in a batch
+        //    var nameVectors = await embeddingService.GetEmbeddings(names);
+        //    var conditionVectors = await embeddingService.GetEmbeddings(conditions);
 
-            int index = 0;
-            foreach (var gadget in GadgetSeed.Default)
-            {
-                gadget.NameVector = nameVectors[index];
-                gadget.ConditionVector = conditionVectors[index];
-                gadget.Status = GadgetStatus.Active;
-                gadget.IsForSale = true;
-                gadget.CreatedAt = DateTime.UtcNow;
-                gadget.UpdatedAt = DateTime.UtcNow;
-                gadget.Quantity = 0;
+        //    int index = 0;
+        //    foreach (var gadget in GadgetSeed.Default)
+        //    {
+        //        gadget.NameVector = nameVectors[index];
+        //        gadget.ConditionVector = conditionVectors[index];
+        //        gadget.Status = GadgetStatus.Active;
+        //        gadget.IsForSale = true;
+        //        gadget.CreatedAt = DateTime.UtcNow;
+        //        gadget.UpdatedAt = DateTime.UtcNow;
+        //        gadget.Quantity = 0;
 
-                context.Gadgets.Add(gadget);
-                index++;
-            }
-
-
-            foreach (var gadgetImage in GadgetImageSeed.Default)
-            {
-                context.GadgetImages.Add(gadgetImage);
-            }
-
-            foreach (var gadgetDescription in GadgetDescriptionSeed.Default)
-            {
-                context.GadgetDescriptions.Add(gadgetDescription);
-            }
+        //        context.Gadgets.Add(gadget);
+        //        index++;
+        //    }
 
 
-            var values = SpecificationValueLaptopSeed.Default.Select(s => s.Value).ToList();
-            var valueVectors = await embeddingService.GetEmbeddings(values);
-            index = 0;
-            foreach (var specificationValue in SpecificationValueLaptopSeed.Default)
-            {
-                specificationValue.Vector = valueVectors[index];
+        //    foreach (var gadgetImage in GadgetImageSeed.Default)
+        //    {
+        //        context.GadgetImages.Add(gadgetImage);
+        //    }
 
-                context.SpecificationValues.Add(specificationValue);
-                index++;
-            }
+        //    foreach (var gadgetDescription in GadgetDescriptionSeed.Default)
+        //    {
+        //        context.GadgetDescriptions.Add(gadgetDescription);
+        //    }
 
-            values = SpecificationValueDienThoaiSeed.Default.Select(s => s.Value).ToList();
-            valueVectors = await embeddingService.GetEmbeddings(values);
-            index = 0;
-            foreach (var specificationValue in SpecificationValueDienThoaiSeed.Default)
-            {
-                specificationValue.Vector = valueVectors[index];
 
-                context.SpecificationValues.Add(specificationValue);
-                index++;
-            }
+        //    var values = SpecificationValueLaptopSeed.Default.Select(s => s.Value).ToList();
+        //    var valueVectors = await embeddingService.GetEmbeddings(values);
+        //    index = 0;
+        //    foreach (var specificationValue in SpecificationValueLaptopSeed.Default)
+        //    {
+        //        specificationValue.Vector = valueVectors[index];
 
-            values = SpecificationValueTaiNgheSeed.Default.Select(s => s.Value).ToList();
-            valueVectors = await embeddingService.GetEmbeddings(values);
-            index = 0;
-            foreach (var specificationValue in SpecificationValueTaiNgheSeed.Default)
-            {
-                specificationValue.Vector = valueVectors[index];
+        //        context.SpecificationValues.Add(specificationValue);
+        //        index++;
+        //    }
 
-                context.SpecificationValues.Add(specificationValue);
-                index++;
-            }
+        //    values = SpecificationValueDienThoaiSeed.Default.Select(s => s.Value).ToList();
+        //    valueVectors = await embeddingService.GetEmbeddings(values);
+        //    index = 0;
+        //    foreach (var specificationValue in SpecificationValueDienThoaiSeed.Default)
+        //    {
+        //        specificationValue.Vector = valueVectors[index];
 
-            values = SpecificationValueLoaSeed.Default.Select(s => s.Value).ToList();
-            valueVectors = await embeddingService.GetEmbeddings(values);
-            index = 0;
-            foreach (var specificationValue in SpecificationValueLoaSeed.Default)
-            {
-                specificationValue.Vector = valueVectors[index];
+        //        context.SpecificationValues.Add(specificationValue);
+        //        index++;
+        //    }
 
-                context.SpecificationValues.Add(specificationValue);
-                index++;
-            }
+        //    values = SpecificationValueTaiNgheSeed.Default.Select(s => s.Value).ToList();
+        //    valueVectors = await embeddingService.GetEmbeddings(values);
+        //    index = 0;
+        //    foreach (var specificationValue in SpecificationValueTaiNgheSeed.Default)
+        //    {
+        //        specificationValue.Vector = valueVectors[index];
 
-            await context.SaveChangesAsync();
-        }
+        //        context.SpecificationValues.Add(specificationValue);
+        //        index++;
+        //    }
+
+        //    values = SpecificationValueLoaSeed.Default.Select(s => s.Value).ToList();
+        //    valueVectors = await embeddingService.GetEmbeddings(values);
+        //    index = 0;
+        //    foreach (var specificationValue in SpecificationValueLoaSeed.Default)
+        //    {
+        //        specificationValue.Vector = valueVectors[index];
+
+        //        context.SpecificationValues.Add(specificationValue);
+        //        index++;
+        //    }
+
+        //    await context.SaveChangesAsync();
+        //}
     }
 }
