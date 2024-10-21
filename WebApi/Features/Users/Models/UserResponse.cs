@@ -13,4 +13,5 @@ public class UserResponse
     public AdminResponse? Admin { get; set; }
     public CustomerResponse? Customer { get; set; }
     public SellerResponse? Seller { get; set; }
+    public WalletResponse? Wallet { get; set; }
 }
