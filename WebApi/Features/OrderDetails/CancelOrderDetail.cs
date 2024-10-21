@@ -57,8 +57,11 @@ public class CancelOrderDetail : ControllerBase
 
         orderDetail!.Status = OrderDetailStatus.Cancelled;
 
+        var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
+
         WalletTracking walletTracking = new WalletTracking()
         {
+            WalletId = userWallet!.Id,
             OrderDetailId = orderDetailId,
             Amount = orderDetail.Amount,
             Type = WalletTrackingType.Refund,
