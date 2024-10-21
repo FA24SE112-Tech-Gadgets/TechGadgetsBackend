@@ -108,10 +108,12 @@ public class CreateOrder : ControllerBase
                     gadgetInformations.Add(gadgetInformation);
 
                     //Tính tổng giá tiền orderDetail
-                    orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    //orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    orderDetailAmount += 2000;
 
                     //Tính tổng giá tiền order
-                    totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    //totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    totalAmount += 2000;
 
                     //Xóa gadget ra khỏi cart
                     context.CartGadgets.Remove(cartGadget);
