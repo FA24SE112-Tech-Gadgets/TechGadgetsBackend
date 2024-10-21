@@ -52,8 +52,11 @@ public class SellerConfirmOrderDetail : ControllerBase
 
         orderDetail!.Status = OrderDetailStatus.Success;
 
+        var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
+
         WalletTracking walletTracking = new WalletTracking()
         {
+            WalletId = userWallet!.Id,
             OrderDetailId = orderDetailId,
             Amount = orderDetail.Amount,
             Type = WalletTrackingType.SellerTransfer,

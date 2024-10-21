@@ -11,6 +11,7 @@ public static class OrderMapper
             return new GadgetInformation
             {
                 GadgetName = gadget.Name,
+                GadgetThumbnailUrl = gadget.ThumbnailUrl,
                 GadgetPrice = gadget.Price,
                 GadgetId = gadget.Id,
             };
