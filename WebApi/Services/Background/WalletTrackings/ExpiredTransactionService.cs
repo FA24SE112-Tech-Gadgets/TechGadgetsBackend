@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Services.Background.WalletTrackings;
 
-public class ExpiredransactionService(IServiceProvider serviceProvider) : BackgroundService
+public class ExpiredTransactionService(IServiceProvider serviceProvider) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
@@ -16,8 +16,8 @@ public class ExpiredransactionService(IServiceProvider serviceProvider) : Backgr
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 await context.WalletTrackings
-                    .Where(a => a.CreatedAt <= DateTime.UtcNow.AddMinutes(-5))
-                    .ExecuteUpdateAsync(sa => sa
+                    .Where(wt => wt.CreatedAt <= DateTime.UtcNow.AddMinutes(-5) && wt.Status == Data.Entities.WalletTrackingStatus.Pending)
+                    .ExecuteUpdateAsync(wt => wt
                         .SetProperty(x => x.Status, Data.Entities.WalletTrackingStatus.Expired),
                         stoppingToken);
             }
