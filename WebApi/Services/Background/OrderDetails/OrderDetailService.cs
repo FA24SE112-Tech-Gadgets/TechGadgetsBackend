@@ -55,7 +55,7 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
 
                         //Update WalletTracking của Seller
                         wt.Status = WalletTrackingStatus.Success;
-                        //wt.PaidAt = DateTime.UtcNow;
+                        wt.SellerPaidAt = DateTime.UtcNow;
                     }
                     await context.SaveChangesAsync(stoppingToken);
                 }
