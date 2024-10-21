@@ -1,4 +1,5 @@
-﻿using WebApi.Services.Background.SellerApplications;
+﻿using WebApi.Services.Background.OrderDetails;
+using WebApi.Services.Background.SellerApplications;
 using WebApi.Services.Background.UserVerifies;
 using WebApi.Services.Background.WalletTrackings;
 
@@ -12,5 +13,6 @@ public static class BackgroundServicesExtensions
         services.AddHostedService<UserVerifyCleanupService>();
         services.AddHostedService<RejectSellerApplicationService>();
         services.AddHostedService<ExpiredTransactionService>();
+        services.AddHostedService<OrderDetailService>();
     }
 }
