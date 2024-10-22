@@ -5,8 +5,8 @@ namespace WebApi.Features.OrderDetails.Models;
 public class OrderDetailResponse
 {
     public OrderDetailStatus Status { get; set; }
-    public string CustomerAddress { get; set; } = default!;
-    public SellerOrderDetailResponse SellerInfo { get; set; } = default!;
+    public CustomerInfoResponse CustomerInfo { get; set; } = default!;
+    public SellerInfoResponse SellerInfo { get; set; } = default!;
     public int TotalQuantity { get; set; }
     public int TotalAmount { get; set; }
     public Guid OrderDetailId { get; set; }

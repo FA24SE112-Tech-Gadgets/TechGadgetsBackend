@@ -39,7 +39,8 @@ public class GetOrderDetailById : ControllerBase
             .Include(od => od.GadgetInformation)
             .FirstOrDefaultAsync(od => od.Id == orderDetailId);
 
-        var customerInfo = await context.Customers
+        var customerInfo = await context.CustomerInformation.FirstOrDefaultAsync(ci => ci.OrderDetailId == orderDetailId);
+        var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == orderDetailId);
 
         if (orderDetail == null)
         {
@@ -66,8 +67,8 @@ public class GetOrderDetailById : ControllerBase
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
             Status = orderDetail.Status,
-            CustomerAddress = orderDetail.Order.Customer.Address!,
-            SellerInfo = orderDetail.Seller.ToSellerOrderDetailResponse()!,
+            CustomerAddress = customerInfo!.Address,
+            SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
             TotalQuantity = totalQuantity,
             TotalAmount = totalAmount,
             OrderDetailId = orderDetailId,

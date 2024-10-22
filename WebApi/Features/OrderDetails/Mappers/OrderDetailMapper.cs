@@ -22,17 +22,30 @@ public static class OrderDetailMapper
         }
         return null;
     }
-    public static SellerOrderDetailResponse? ToSellerOrderDetailResponse(this Seller seller)
+    public static SellerInfoResponse? ToSellerOrderDetailResponse(this Seller seller)
     {
         if (seller != null)
         {
-            return new SellerOrderDetailResponse
+            return new SellerInfoResponse
             {
                 Id = seller.Id,
-                CompanyName = seller.CompanyName,
                 ShopName = seller.ShopName,
                 ShopAddress = seller.ShopAddress,
-                BusinessModel = seller.BusinessModel,
+                PhoneNumber = seller.PhoneNumber,
+            };
+        }
+        return null;
+    }
+
+    public static SellerInfoResponse? ToSellerInfoResponse(this SellerInformation seller)
+    {
+        if (seller != null)
+        {
+            return new SellerInfoResponse
+            {
+                Id = seller.Id,
+                ShopName = seller.ShopName,
+                ShopAddress = seller.Address,
                 PhoneNumber = seller.PhoneNumber,
             };
         }
