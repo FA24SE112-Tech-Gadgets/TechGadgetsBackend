@@ -36,13 +36,14 @@ public class GetGadgetById : ControllerBase
                                     .Include(g => g.GadgetDescriptions)
                                     .Include(g => g.GadgetImages)
                                     .Include(g => g.Reviews)
+                                    .Include(g => g.FavoriteGadgets)
                                     .FirstOrDefaultAsync(g => g.Id == id);
 
         if (gadget is null)
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_00)
-                        .AddReason("gadget", "Thiết bị không tồn tại")
+                        .AddReason("gadget", "Sản phẩm không tồn tại")
                         .Build();
         }
 
@@ -57,7 +58,8 @@ public class GetGadgetById : ControllerBase
             });
             await context.SaveChangesAsync();
         }
+        var customerId = user?.Customer?.Id;
 
-        return Ok(gadget.ToGadgetDetailResponse());
+        return Ok(gadget.ToGadgetDetailResponse(customerId));
     }
 }

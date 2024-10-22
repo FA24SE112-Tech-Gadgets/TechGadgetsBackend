@@ -10,6 +10,7 @@ public class Review
     public bool IsPositive { get; set; }
     public ReviewStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public Customer Customer { get; set; } = default!;
     public Gadget Gadget { get; set; } = default!;

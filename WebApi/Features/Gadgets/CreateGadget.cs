@@ -230,7 +230,7 @@ public class CreateGadget : ControllerBase
             }
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WES_00)
-                .AddReason("gadgetImages", "Lỗi khi lưu hình ảnh thiết bị")
+                .AddReason("gadgetImages", "Lỗi khi lưu hình ảnh Sản phẩm")
                 .Build();
         }
 
@@ -254,7 +254,7 @@ public class CreateGadget : ControllerBase
                     }
                     throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WES_00)
-                        .AddReason("gadgetDescription", "Lỗi khi lưu hình ảnh trong mô tả thiết bị")
+                        .AddReason("gadgetDescription", "Lỗi khi lưu hình ảnh trong mô tả Sản phẩm")
                         .Build();
                 }
 

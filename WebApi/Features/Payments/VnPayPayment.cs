@@ -38,7 +38,7 @@ public class VnPayPayment : ControllerBase
                 await context.SaveChangesAsync();
             }
         }
-        if (walletTracking != null && !request.IsSuccess)
+        if (walletTracking != null && walletTracking.Status == WalletTrackingStatus.Pending && !request.IsSuccess)
         {
             walletTracking.Status = WalletTrackingStatus.Cancelled;
             await context.SaveChangesAsync();
