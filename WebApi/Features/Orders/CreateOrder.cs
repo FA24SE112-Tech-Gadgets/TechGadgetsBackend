@@ -173,6 +173,28 @@ public class CreateOrder : ControllerBase
             orderDetail.GadgetInformation = gadgetInformations;
             orderDetails.Add(orderDetail);
 
+            //Tạo customerInfo để lưu cứng
+            CustomerInformation customerInformation = new CustomerInformation()
+            {
+                CustomerId = currentUser.Customer.Id,
+                FullName = currentUser.Customer.FullName,
+                Address = currentUser.Customer.Address,
+                PhoneNumber = currentUser.Customer.PhoneNumber!,
+                OrderDetail = orderDetail,
+            }!;
+            await context.CustomerInformation.AddAsync(customerInformation);
+
+            //Tạo sellerInfo để lưu cứng
+            SellerInformation sellerInformation = new SellerInformation()
+            {
+                SellerId = seller.Id,
+                ShopName = seller.ShopName,
+                PhoneNumber = seller.PhoneNumber,
+                Address = seller.ShopAddress,
+                OrderDetail = orderDetail,
+            }!;
+            await context.SellerInformation.AddAsync(sellerInformation);
+
             // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
             SystemOrderDetailTracking systemOrderDetailTracking = new SystemOrderDetailTracking()
             {

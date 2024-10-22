@@ -82,10 +82,7 @@ public class GetListOrderDetails : ControllerBase
         if (currentUser!.Role == Role.Seller)
         {
             var orderDetailsResponseList = new PagedList<SellerOrderDetailItemResponse>(
-                orderDetails.Items.Select(od => {
-                    var sodir = od.ToSellerOrderDetailItemResponse()!;
-                    return sodir;
-                }).ToList(),
+                orderDetails.Items.Select(od => od.ToSellerOrderDetailItemResponse()!).ToList(),
                 orderDetails.Page,
                 orderDetails.PageSize,
                 orderDetails.TotalItems
@@ -93,8 +90,15 @@ public class GetListOrderDetails : ControllerBase
             return Ok(orderDetailsResponseList);
         } else
         {
+            List<CustomerOrderDetailItemResponse> customerOrderDetailItemResponses = new List<CustomerOrderDetailItemResponse>()!;
+            foreach (var od in orderDetails.Items) {
+                var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == od.Id);
+                var sodir = od.ToCustomerOrderDetailItemResponse()!;
+                sodir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
+                customerOrderDetailItemResponses.Add(sodir);
+            }
             var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
-                orderDetails.Items.Select(od => od.ToCustomerOrderDetailItemResponse()!).ToList(),
+                customerOrderDetailItemResponses,
                 orderDetails.Page,
                 orderDetails.PageSize,
                 orderDetails.TotalItems
