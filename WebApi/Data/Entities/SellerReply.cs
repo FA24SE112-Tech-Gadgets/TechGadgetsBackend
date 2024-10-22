@@ -8,6 +8,7 @@ public class SellerReply
     public string Content { get; set; } = default!;
     public SellerReplyStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public Review Review { get; set; } = default!;
     public Seller Seller { get; set; } = default!;

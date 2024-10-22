@@ -8,7 +8,7 @@ namespace WebApi.Features.Gadgets.Mappers;
 
 public static class GadgetMapper
 {
-    public static GadgetResponse? ToGadgetResponse(this Gadget? gadget)
+    public static GadgetResponse? ToGadgetResponse(this Gadget? gadget, Guid? customerId)
     {
         if (gadget != null)
         {
@@ -20,12 +20,13 @@ public static class GadgetMapper
                 SellerStatus = gadget.Seller.User.Status,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 IsForSale = gadget.IsForSale,
+                IsFavorite = gadget.FavoriteGadgets.Any(fg => fg.CustomerId == customerId),
             };
         }
         return null;
     }
 
-    public static GadgetDetailResponse? ToGadgetDetailResponse(this Gadget? gadget)
+    public static GadgetDetailResponse? ToGadgetDetailResponse(this Gadget? gadget, Guid? customerId)
     {
         if (gadget != null)
         {
@@ -43,6 +44,7 @@ public static class GadgetMapper
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
                 IsForSale = gadget.IsForSale,
+                IsFavorite = gadget.FavoriteGadgets.Any(fg => fg.CustomerId == customerId),
                 Category = gadget.Category.ToCategoryResponse()!,
                 SellerStatus = gadget.Seller.User.Status,
                 GadgetImages = gadget.GadgetImages.Select(g => g.ImageUrl).ToArray(),
