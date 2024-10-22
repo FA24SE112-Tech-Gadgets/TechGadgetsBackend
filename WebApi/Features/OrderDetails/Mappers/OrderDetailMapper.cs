@@ -22,7 +22,7 @@ public static class OrderDetailMapper
         }
         return null;
     }
-    private static SellerOrderDetailResponse? ToSellerOrderDetailResponse(this Seller seller)
+    public static SellerOrderDetailResponse? ToSellerOrderDetailResponse(this Seller seller)
     {
         if (seller != null)
         {
