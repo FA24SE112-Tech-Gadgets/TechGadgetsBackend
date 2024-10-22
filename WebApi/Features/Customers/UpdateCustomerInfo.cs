@@ -1,10 +1,8 @@
 ﻿using FluentValidation;
-using Google.Apis.Storage.v1;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
-using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Models;
@@ -94,7 +92,7 @@ public class UpdateCustomerInfo : ControllerBase
                             "<br>&nbsp; - Ngày sinh phải lớn hơn 18 tuổi. Format YYYY-MM-DD." +
                             "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt."
     )]
-    [ProducesResponseType(typeof(SellerApplicationDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
