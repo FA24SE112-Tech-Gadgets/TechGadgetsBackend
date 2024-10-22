@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Features.Payments.Models;
 
 namespace WebApi.Features.Payments;
@@ -32,10 +33,15 @@ public class VnPayPayment : ControllerBase
             if (userWallet != null)
             {
                 userWallet.Amount += walletTracking.Amount;
-                walletTracking.Status = Data.Entities.WalletTrackingStatus.Success;
+                walletTracking.Status = WalletTrackingStatus.Success;
                 walletTracking.DepositedAt = DateTime.UtcNow;
                 await context.SaveChangesAsync();
             }
+        }
+        if (walletTracking != null && !request.IsSuccess)
+        {
+            walletTracking.Status = WalletTrackingStatus.Cancelled;
+            await context.SaveChangesAsync();
         }
 
         return Redirect($"{request.ReturnUrl}");
