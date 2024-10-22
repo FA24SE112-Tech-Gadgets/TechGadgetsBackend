@@ -12,12 +12,10 @@ public static class OrderDetailMapper
             return new GadgetInformationOrderDetailResponse
             {
                 Id = gadgetInformation.Id,
-                OrderDetailId = gadgetInformation.OrderDetailId,
-                GadgetThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
-                GadgetName = gadgetInformation.GadgetName,
-                GadgetPrice = gadgetInformation.GadgetPrice,
-                GadgetQuantity = gadgetInformation.GadgetQuantity,
-                GadgetId = gadgetInformation.GadgetId,
+                Name = gadgetInformation.GadgetName,
+                Price = gadgetInformation.GadgetPrice,
+                ThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
+                Quantity = gadgetInformation.GadgetQuantity,
             };
         }
         return null;
@@ -46,11 +44,11 @@ public static class OrderDetailMapper
             return gadgetInformations
             .Select(gi => new GadgetInformationOrderDetailResponse
             {
-                GadgetId = gi.GadgetId,
-                GadgetName = gi.GadgetName,
-                GadgetPrice = gi.GadgetPrice,
-                GadgetQuantity = gi.GadgetQuantity,
-                GadgetThumbnailUrl = gi.GadgetThumbnailUrl,
+                Id = gi.GadgetId,
+                Name = gi.GadgetName,
+                Price = gi.GadgetPrice,
+                Quantity = gi.GadgetQuantity,
+                ThumbnailUrl = gi.GadgetThumbnailUrl,
             })
             .ToList();
         }
