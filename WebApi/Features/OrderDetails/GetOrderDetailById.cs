@@ -35,12 +35,11 @@ public class GetOrderDetailById : ControllerBase
 
         var orderDetail = await context.OrderDetails
             .Include(od => od.Order)
-                .ThenInclude(o => o.Customer)
-            .Include(od => od.Order)
                 .ThenInclude(o => o.WalletTracking)
-            .Include(od => od.Seller)
             .Include(od => od.GadgetInformation)
             .FirstOrDefaultAsync(od => od.Id == orderDetailId);
+
+        var customerInfo = await context.Customers
 
         if (orderDetail == null)
         {
