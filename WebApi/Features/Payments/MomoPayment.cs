@@ -33,12 +33,12 @@ public class MomoPayment : ControllerBase
             if (userWallet != null)
             {
                 userWallet.Amount += walletTracking.Amount;
-                walletTracking.Status = Data.Entities.WalletTrackingStatus.Success;
+                walletTracking.Status = WalletTrackingStatus.Success;
                 walletTracking.DepositedAt = DateTime.UtcNow;
                 await context.SaveChangesAsync();
             }
         }
-        if (walletTracking != null && !request.IsSuccess)
+        if (walletTracking != null && walletTracking.Status == WalletTrackingStatus.Pending && !request.IsSuccess)
         {
             walletTracking.Status = WalletTrackingStatus.Cancelled;
             await context.SaveChangesAsync();

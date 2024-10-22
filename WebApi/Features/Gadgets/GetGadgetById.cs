@@ -36,6 +36,7 @@ public class GetGadgetById : ControllerBase
                                     .Include(g => g.GadgetDescriptions)
                                     .Include(g => g.GadgetImages)
                                     .Include(g => g.Reviews)
+                                    .Include(g => g.FavoriteGadgets)
                                     .FirstOrDefaultAsync(g => g.Id == id);
 
         if (gadget is null)
@@ -57,7 +58,8 @@ public class GetGadgetById : ControllerBase
             });
             await context.SaveChangesAsync();
         }
+        var customerId = user?.Customer?.Id;
 
-        return Ok(gadget.ToGadgetDetailResponse());
+        return Ok(gadget.ToGadgetDetailResponse(customerId));
     }
 }

@@ -8,6 +8,7 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.Gadgets.Models;
+using WebApi.Services.Auth;
 
 namespace WebApi.Features.Gadgets;
 
@@ -34,18 +35,22 @@ public class GetGadgets : ControllerBase
         `SortColumn` (optional): name, price, createdAt, updatedAt
         """
     )]
-    public async Task<IActionResult> Handler([FromQuery] Request request, [FromServices] AppDbContext context)
+    public async Task<IActionResult> Handler([FromQuery] Request request, [FromServices] AppDbContext context, CurrentUserService currentUserService)
     {
         var query = context.Gadgets
                             .Include(c => c.Seller)
                                 .ThenInclude(s => s.User)
+                            .Include(c => c.FavoriteGadgets)
                             .AsQueryable();
+
+        var user = await currentUserService.GetCurrentUser();
+        var customerId = user?.Customer?.Id;
 
         query = query.OrderByColumn(GetSortProperty(request), request.SortOrder);
 
         var response = await query
                             .Where(c => c.Name.Contains(request.Name ?? ""))
-                            .Select(c => c.ToGadgetResponse())
+                            .Select(c => c.ToGadgetResponse(customerId))
                             .ToPagedListAsync(request);
 
         return Ok(response);
