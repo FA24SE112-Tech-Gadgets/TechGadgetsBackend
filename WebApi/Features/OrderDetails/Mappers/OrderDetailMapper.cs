@@ -80,7 +80,6 @@ public static class OrderDetailMapper
                 Id = orderDetail.Id,
                 OrderId = orderDetail.OrderId,
                 Amount = orderDetail.Amount,
-                Seller = orderDetail.Seller.ToSellerOrderDetailResponse()!,
                 Status = orderDetail.Status,
                 GadgetInformation = orderDetail.GadgetInformation.ToListGadgetInformations()!,
                 CreatedAt = orderDetail.CreatedAt,
