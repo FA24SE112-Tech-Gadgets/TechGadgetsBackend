@@ -239,7 +239,7 @@ public class CreateOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
 
         //Save tất cả mọi thứ vô DB
-        if ((orderDetails.Count >= 0 && totalAmount >= 0) || listCartGadgets.Count >= 0)
+        if ((orderDetails.Count > 0 && totalAmount > 0) || listCartGadgets.Count > 0)
         {
             await context.SaveChangesAsync();
         } else

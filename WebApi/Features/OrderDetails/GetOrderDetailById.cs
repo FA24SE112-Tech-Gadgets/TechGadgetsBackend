@@ -64,7 +64,7 @@ public class GetOrderDetailById : ControllerBase
             totalAmount += (gi.GadgetQuantity * gi.GadgetPrice);
         }
 
-        var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund);
+        var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.OrderDetailId == orderDetailId);
 
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
