@@ -22,8 +22,7 @@ public class GetOrderDetailById : ControllerBase
         Summary = "Get Order Detail Information By OrderDetailId",
         Description = "API is for get order detail information by orderDetailId." +
                             "<br>&nbsp; - Customer dùng API này để xem chi tiết orderDetail của mình." +
-                            "<br>&nbsp; - Seller dùng API này để xem chi tiết orderDetail liên quan đến mình." +
-                            "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết."
+                            "<br>&nbsp; - Seller dùng API này để xem chi tiết orderDetail liên quan đến mình."
     )]
     [ProducesResponseType(typeof(OrderDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
