@@ -37,21 +37,6 @@ public static class OrderDetailMapper
         return null;
     }
 
-    public static SellerInfoResponse? ToSellerInfoResponse(this SellerInformation seller)
-    {
-        if (seller != null)
-        {
-            return new SellerInfoResponse
-            {
-                Id = seller.Id,
-                ShopName = seller.ShopName,
-                ShopAddress = seller.Address,
-                PhoneNumber = seller.PhoneNumber,
-            };
-        }
-        return null;
-    }
-
     private static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformations(this ICollection<GadgetInformation> gadgetInformations)
     {
         // Kiểm tra nếu gadgetInformations không null và có ít nhất một phần tử

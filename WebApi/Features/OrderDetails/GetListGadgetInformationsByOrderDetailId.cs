@@ -37,7 +37,6 @@ public class GetListGadgetInformationsByOrderDetailId : ControllerBase
             .Include(od => od.Order)
             .FirstOrDefaultAsync(od => od.Id == orderDetailId);
 
-
         if (orderDetail == null)
         {
             throw TechGadgetException.NewBuilder()

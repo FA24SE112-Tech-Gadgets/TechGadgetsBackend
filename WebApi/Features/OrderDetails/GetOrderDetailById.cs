@@ -67,7 +67,7 @@ public class GetOrderDetailById : ControllerBase
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
             Status = orderDetail.Status,
-            CustomerAddress = customerInfo!.Address,
+            CustomerInfo = customerInfo!.ToCustomerInfoResponse()!,
             SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
             TotalQuantity = totalQuantity,
             TotalAmount = totalAmount,
