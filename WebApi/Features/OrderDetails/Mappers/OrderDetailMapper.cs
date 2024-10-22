@@ -12,28 +12,10 @@ public static class OrderDetailMapper
             return new GadgetInformationOrderDetailResponse
             {
                 Id = gadgetInformation.Id,
-                OrderDetailId = gadgetInformation.OrderDetailId,
-                GadgetThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
-                GadgetName = gadgetInformation.GadgetName,
-                GadgetPrice = gadgetInformation.GadgetPrice,
-                GadgetQuantity = gadgetInformation.GadgetQuantity,
-                GadgetId = gadgetInformation.GadgetId,
-            };
-        }
-        return null;
-    }
-    private static SellerOrderDetailResponse? ToSellerOrderDetailResponse(this Seller seller)
-    {
-        if (seller != null)
-        {
-            return new SellerOrderDetailResponse
-            {
-                Id = seller.Id,
-                CompanyName = seller.CompanyName,
-                ShopName = seller.ShopName,
-                ShopAddress = seller.ShopAddress,
-                BusinessModel = seller.BusinessModel,
-                PhoneNumber = seller.PhoneNumber,
+                Name = gadgetInformation.GadgetName,
+                Price = gadgetInformation.GadgetPrice,
+                ThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
+                Quantity = gadgetInformation.GadgetQuantity,
             };
         }
         return null;
@@ -55,6 +37,24 @@ public static class OrderDetailMapper
         return null;
     }
 
+    public static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformationsDetail(this ICollection<GadgetInformation> gadgetInformations)
+    {
+        if (gadgetInformations != null && gadgetInformations.Count > 0)
+        {
+            return gadgetInformations
+            .Select(gi => new GadgetInformationOrderDetailResponse
+            {
+                Id = gi.GadgetId,
+                Name = gi.GadgetName,
+                Price = gi.GadgetPrice,
+                Quantity = gi.GadgetQuantity,
+                ThumbnailUrl = gi.GadgetThumbnailUrl,
+            })
+            .ToList();
+        }
+        return null;
+    }
+
     public static CustomerOrderDetailItemResponse? ToCustomerOrderDetailItemResponse(this OrderDetail orderDetail)
     {
         if (orderDetail != null)
@@ -64,7 +64,6 @@ public static class OrderDetailMapper
                 Id = orderDetail.Id,
                 OrderId = orderDetail.OrderId,
                 Amount = orderDetail.Amount,
-                Seller = orderDetail.Seller.ToSellerOrderDetailResponse()!,
                 Status = orderDetail.Status,
                 GadgetInformation = orderDetail.GadgetInformation.ToListGadgetInformations()!,
                 CreatedAt = orderDetail.CreatedAt,

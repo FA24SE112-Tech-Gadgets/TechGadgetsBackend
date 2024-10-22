@@ -45,8 +45,8 @@ public class CreateWalletDeposit : ControllerBase
         }
     }
 
-    [HttpPost("wallet-trackings/deposit")]
-    [Tags("Wallet Trackings")]
+    [HttpPost("wallet/deposit")]
+    [Tags("Wallets")]
     [SwaggerOperation(
         Summary = "Create Wallet Deposit",
         Description = "This API is for create wallet deposit. Note: " +
@@ -111,7 +111,7 @@ public class CreateWalletDeposit : ControllerBase
                     PaymentReferenceId = vnPayPaymentCode,
                     Amount = request.Amount,
                     Info = request.Info,
-                    returnUrl = request.ReturnUrl,
+                    ReturnUrl = request.ReturnUrl,
                 }!;
                 try
                 {
@@ -133,7 +133,7 @@ public class CreateWalletDeposit : ControllerBase
                     PaymentReferenceId = momoPaymentCode,
                     Amount = request.Amount,
                     Info = request.Info,
-                    returnUrl = request.ReturnUrl,
+                    ReturnUrl = request.ReturnUrl,
                 }!;
                 try
                 {

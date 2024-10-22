@@ -41,7 +41,9 @@ public class CreateOrder : ControllerBase
         Description = "This API is for customer create order. Note: " +
                             "<br>&nbsp; - Dùng API này để thanh toán đơn hàng(trừ tiền có sẵn trong ví)." +
                             "<br>&nbsp; - Sau khi gọi API này thì những gadget thanh toán, sẽ không còn nằm trong cart nữa." +
-                            "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví"
+                            "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
+                            "<br>&nbsp; - Customer cần điền Address trước khi tiến hành tạo order (Trước khi gọi API)" +
+                            "<br>&nbsp; - Không thể tạo đơn với những sản phẩm nằm ngoài giỏ hàng."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -50,6 +52,15 @@ public class CreateOrder : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Customer!.Address == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("customers", "Người dùng chưa nhập địa chỉ nhận hàng.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -66,6 +77,7 @@ public class CreateOrder : ControllerBase
             .Where(c => c.CustomerId == currentUser!.Customer!.Id)   // Lọc theo giỏ hàng của user
             .SelectMany(c => c.CartGadgets.Select(cg => cg.Gadget.Seller)) // Lấy seller từ các sản phẩm trong giỏ hàng
             .Distinct()  // Loại bỏ seller trùng lặp
+            .Include(s => s.User)
             .OrderBy(s => s.Id) // Sắp xếp để có thể phân trang
             .ToListAsync();
 
@@ -90,6 +102,15 @@ public class CreateOrder : ControllerBase
         //Chia order theo từng seller
         foreach (var seller in sellers)
         {
+            //Validate user(seller) status inactive
+            if (seller.User.Status != UserStatus.Active)
+            {
+                throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("seller", $"Người bán {seller.Id} đã bị vô hiệu hóa.")
+                .Build();
+            }
+
             OrderDetail orderDetail = new OrderDetail()
             {
                 SellerId = seller.Id,
@@ -104,6 +125,35 @@ public class CreateOrder : ControllerBase
                 if (cartGadget.Gadget.SellerId == seller.Id)
                 {
                     GadgetInformation gadgetInformation = cartGadget.Gadget.ToGadgetInformation()!;
+
+                    //Validate gadget status inactive
+                    if (cartGadget.Gadget.Status != GadgetStatus.Active)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Sản phẩm {cartGadget.GadgetId} đã bị vô hiệu hóa.")
+                        .Build();
+                    }
+
+                    //Validate gadget IsForSale
+                    if (!cartGadget.Gadget.IsForSale)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Sản phẩm {cartGadget.GadgetId} đã ngừng kinh doanh.")
+                        .Build();
+                    }
+
+                    //Validate gadget không còn đủ sản phẩm
+                    if (cartGadget.Gadget.Quantity < cartGadget.Quantity)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Số lượng sản phẩm {cartGadget.GadgetId} không đủ.")
+                        .Build();
+                    }
+                    cartGadget.Gadget.Quantity -= cartGadget.Quantity;
+
                     gadgetInformation.GadgetQuantity = cartGadget.Quantity;
                     gadgetInformations.Add(gadgetInformation);
 
@@ -120,6 +170,28 @@ public class CreateOrder : ControllerBase
             orderDetail.Amount = orderDetailAmount;
             orderDetail.GadgetInformation = gadgetInformations;
             orderDetails.Add(orderDetail);
+
+            //Tạo customerInfo để lưu cứng
+            CustomerInformation customerInformation = new CustomerInformation()
+            {
+                CustomerId = currentUser.Customer.Id,
+                FullName = currentUser.Customer.FullName,
+                Address = currentUser.Customer.Address,
+                PhoneNumber = currentUser.Customer.PhoneNumber!,
+                OrderDetail = orderDetail,
+            }!;
+            await context.CustomerInformation.AddAsync(customerInformation);
+
+            //Tạo sellerInfo để lưu cứng
+            SellerInformation sellerInformation = new SellerInformation()
+            {
+                SellerId = seller.Id,
+                ShopName = seller.ShopName,
+                PhoneNumber = seller.PhoneNumber,
+                Address = seller.ShopAddress,
+                OrderDetail = orderDetail,
+            }!;
+            await context.SellerInformation.AddAsync(sellerInformation);
 
             // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
             SystemOrderDetailTracking systemOrderDetailTracking = new SystemOrderDetailTracking()
@@ -165,7 +237,16 @@ public class CreateOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
 
         //Save tất cả mọi thứ vô DB
-        await context.SaveChangesAsync();
+        if ((orderDetails.Count > 0 && totalAmount > 0) || listCartGadgets.Count > 0)
+        {
+            await context.SaveChangesAsync();
+        } else
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", "Sản phẩm không có trong giỏ hàng.")
+            .Build();
+        }
 
         return Ok();
     }

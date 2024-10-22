@@ -14,10 +14,12 @@ public class Customer
 
     public User User { get; set; } = default!;
     public Cart Cart { get; set; } = default!;
+    public ICollection<Review> Reviews { get; set; } = [];
     public ICollection<KeywordHistory> KeywordHistories { get; set; } = [];
     public ICollection<GadgetHistory> GadgetHistories { get; set; } = [];
     public ICollection<FavoriteGadget> FavoriteGadgets { get; set; } = [];
     public ICollection<Order> Orders { get; set; } = [];
+    public ICollection<CustomerInformation> CustomerInformation { get; set; } = [];
 }
 
 public enum Gender
