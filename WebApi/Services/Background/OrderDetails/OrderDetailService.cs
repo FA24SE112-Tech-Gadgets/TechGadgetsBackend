@@ -94,6 +94,10 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                         CreatedAt = DateTime.UtcNow,
                         RefundedAt = DateTime.UtcNow,
                     }!;
+
+                    //Update OrderDetail status = Cancelled
+                    sodt.OrderDetail.Status = OrderDetailStatus.Cancelled;
+
                     await context.WalletTrackings.AddAsync(walletTracking, stoppingToken);
                     await context.SaveChangesAsync(stoppingToken);
                 }
