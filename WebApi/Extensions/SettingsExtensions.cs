@@ -15,5 +15,6 @@ public static class SettingsExtensions
         services.Configure<RabbitMQSettings>(configuration.GetSection(RabbitMQSettings.Section));
         services.Configure<ScrapeDataSettings>(configuration.GetSection(ScrapeDataSettings.Section));
         services.Configure<EmbeddingServerSettings>(configuration.GetSection(EmbeddingServerSettings.Section));
+        services.Configure<OpenAIClientSettings>(configuration.GetSection(OpenAIClientSettings.Section));
     }
 }
