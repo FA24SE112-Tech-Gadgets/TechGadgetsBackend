@@ -15,6 +15,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Category> Categories { get; set; }
     public DbSet<CategoryBrand> CategoryBrands { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<CustomerInformation> CustomerInformation { get; set; }
     public DbSet<FavoriteGadget> FavoriteGadgets { get; set; }
     public DbSet<Gadget> Gadgets { get; set; }
     public DbSet<GadgetDescription> GadgetDescriptions { get; set; }
@@ -33,6 +34,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<SearchAIVector> SearchAIVectors { get; set; }
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<SellerApplication> SellerApplications { get; set; }
+    public DbSet<SellerInformation> SellerInformation { get; set; }
     public DbSet<SellerReply> SellerReplies { get; set; }
     public DbSet<SpecificationKey> SpecificationKeys { get; set; }
     public DbSet<SpecificationUnit> SpecificationUnits { get; set; }

@@ -6,6 +6,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.OrderDetails.Mappers;
+using WebApi.Features.OrderDetails.Models;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.OrderDetails;
@@ -13,18 +14,18 @@ namespace WebApi.Features.OrderDetails;
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Customer, Role.Seller)]
-public class GetOrderDetailInDetail : ControllerBase
+public class GetOrderDetailById : ControllerBase
 {
     [HttpGet("order-details/{orderDetailId}")]
     [Tags("Order Details")]
     [SwaggerOperation(
-        Summary = "Get Order Details In Detail By OrderDetailId",
-        Description = "API is for get order detail by orderDetailId." +
+        Summary = "Get Order Detail Information By OrderDetailId",
+        Description = "API is for get order detail information by orderDetailId." +
                             "<br>&nbsp; - Customer dùng API này để xem chi tiết orderDetail của mình." +
                             "<br>&nbsp; - Seller dùng API này để xem chi tiết orderDetail liên quan đến mình." +
                             "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết."
     )]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OrderDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -34,9 +35,12 @@ public class GetOrderDetailInDetail : ControllerBase
 
         var orderDetail = await context.OrderDetails
             .Include(od => od.Order)
-            .Include(od => od.Seller)
+                .ThenInclude(o => o.WalletTracking)
             .Include(od => od.GadgetInformation)
             .FirstOrDefaultAsync(od => od.Id == orderDetailId);
+
+        var customerInfo = await context.CustomerInformation.FirstOrDefaultAsync(ci => ci.OrderDetailId == orderDetailId);
+        var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == orderDetailId);
 
         if (orderDetail == null)
         {
@@ -52,14 +56,27 @@ public class GetOrderDetailInDetail : ControllerBase
             .AddReason("orderDetail", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
             .Build();
         }
+        int totalQuantity = 0;
+        int totalAmount = 0;
+        foreach (var gi in orderDetail.GadgetInformation)
+        {
+            totalQuantity += gi.GadgetQuantity;
+            totalAmount += (gi.GadgetQuantity * gi.GadgetPrice);
+        }
 
-        if (currentUser!.Role == Role.Seller)
+        OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
-            return Ok(orderDetail.ToSellerOrderDetailItemResponse());
-        }
-        else
-        {
-            return Ok(orderDetail.ToCustomerOrderDetailItemResponse());
-        }
+            Status = orderDetail.Status,
+            CustomerInfo = customerInfo!.ToCustomerInfoResponse()!,
+            SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
+            TotalQuantity = totalQuantity,
+            TotalAmount = totalAmount,
+            OrderDetailId = orderDetailId,
+            OrderDetailCreatedAt = orderDetail.CreatedAt,
+            WalletTrackingCreatedAt = orderDetail.Order.WalletTracking.CreatedAt,
+            OrderDetailUpdatedAt = (orderDetail.Status == OrderDetailStatus.Cancelled || orderDetail.Status == OrderDetailStatus.Success) ? orderDetail.UpdatedAt : null,
+        }!;
+
+        return Ok(orderDetailResponse);
     }
 }
