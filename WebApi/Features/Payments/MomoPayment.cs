@@ -38,6 +38,6 @@ public class MomoPayment : ControllerBase
             }
         }
 
-        return Redirect($"{request.ReturnUrl}?isSuccess={request.IsSuccess}");
+        return Redirect($"{request.ReturnUrl}");
     }
 }
