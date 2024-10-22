@@ -17,19 +17,20 @@ public class VnPayPaymentService(
     public async Task<string> CreatePaymentAsync(VnPayPayment payment)
     {
         var pay = new VnPayLibrary();
-        pay.AddRequestData("vnp_ReturnUrl", $"{currentServerService.ServerUrl}/{_vnPaySettings.CallbackUrl}?returnUrl={payment.returnUrl}");
+        pay.AddRequestData("vnp_ReturnUrl", $"{currentServerService.ServerUrl}/{_vnPaySettings.CallbackUrl}?returnUrl={payment.ReturnUrl}");
         pay.AddRequestData("vnp_Version", _vnPaySettings.Version);
         pay.AddRequestData("vnp_Command", _vnPaySettings.Command);
         pay.AddRequestData("vnp_TmnCode", _vnPaySettings.TmnCode);
         pay.AddRequestData("vnp_CurrCode", _vnPaySettings.CurrCode);
         pay.AddRequestData("vnp_Locale", _vnPaySettings.Locale);
 
-        pay.AddRequestData("vnp_Amount", ((int)payment.Amount * 100).ToString());
-        pay.AddRequestData("vnp_CreateDate", payment.Time.ToString("yyyyMMddHHmmss"));
+        pay.AddRequestData("vnp_Amount", (payment.Amount * 100).ToString());
+        pay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
         pay.AddRequestData("vnp_IpAddr", UtilityExtensions.GetIpAddress());
         pay.AddRequestData("vnp_OrderInfo", payment.Info ?? DefaultPaymentInfo);
         pay.AddRequestData("vnp_OrderType", "deposit");
         pay.AddRequestData("vnp_TxnRef", payment.PaymentReferenceId);
+        pay.AddRequestData("vnp_ExpireDate", DateTime.Now.AddMinutes(5).ToString("yyyyMMddHHmmss"));
 
         var paymentUrl = pay.CreateRequestUrl(
             _vnPaySettings.PaymentEndpoint,
