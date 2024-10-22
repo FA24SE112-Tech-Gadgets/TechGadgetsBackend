@@ -20,6 +20,7 @@ public static class UserMapper
                 Admin = user.Admin.ToAdminResponse(),
                 Seller = user.Seller.ToSellerResponse(),
                 Customer = user.Customer.ToCustomerResponse(),
+                Wallet = user.Wallet.ToWalletResponse(),
             };
         }
         return null;
