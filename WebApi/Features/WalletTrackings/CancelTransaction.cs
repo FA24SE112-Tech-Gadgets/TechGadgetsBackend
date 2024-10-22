@@ -17,7 +17,7 @@ public class CancelTransaction : ControllerBase
     [HttpPut("wallet-trackings/{walletTrackingId}/cancel")]
     [Tags("Wallet Trackings")]
     [SwaggerOperation(
-        Summary = "Cacncel Wallet Deposit",
+        Summary = "Cancel Wallet Deposit",
         Description = "This API is for cancel wallet deposit. Note: " +
                             "<br>&nbsp; - Giao dịch không thể hủy có thể là do đã Success hoặc Expired hoặc Canceled hoặc Failed hoặc khác WalletTrackingType"
     )]
