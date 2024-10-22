@@ -45,7 +45,7 @@ public class SellerConfirmOrderDetail : ControllerBase
         if (orderDetail!.SellerId != currentUser!.Seller!.Id)
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
+            .WithCode(TechGadgetErrorCode.WEB_02)
             .AddReason("orderDetail", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
             .Build();
         }

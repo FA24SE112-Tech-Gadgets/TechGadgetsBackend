@@ -37,7 +37,8 @@ public class GetListOrderDetails : ControllerBase
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
                             "<br>&nbsp; - Customer dùng API này để lấy ra danh sách orderDetail của mình." +
                             "<br>&nbsp; - Seller dùng API này để lấy ra những orderDetail liên quan đến mình." +
-                            "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết."
+                            "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết." +
+                            "<br>&nbsp; - LƯU Ý: Trong API này Gadgets chỉ lấy ra gadget đầu tiên, nên muốn xem danh sách gadget có trong order thì gọi API khác."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]

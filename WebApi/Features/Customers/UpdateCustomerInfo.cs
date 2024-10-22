@@ -5,7 +5,6 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 using WebApi.Services.Storage;
 

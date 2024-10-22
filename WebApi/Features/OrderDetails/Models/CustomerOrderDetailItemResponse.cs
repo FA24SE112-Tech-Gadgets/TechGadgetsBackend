@@ -9,6 +9,6 @@ public class CustomerOrderDetailItemResponse
     public int Amount { get; set; }
     public SellerInfoResponse SellerInfo { get; set; } = default!;
     public OrderDetailStatus Status { get; set; }
-    public ICollection<GadgetInformationOrderDetailResponse> GadgetInformation { get; set; } = [];
+    public ICollection<GadgetInformationOrderDetailResponse> Gadgets { get; set; } = [];
     public DateTime CreatedAt { get; set; }
 }
