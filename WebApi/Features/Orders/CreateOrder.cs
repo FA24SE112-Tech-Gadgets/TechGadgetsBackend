@@ -66,6 +66,7 @@ public class CreateOrder : ControllerBase
             .Where(c => c.CustomerId == currentUser!.Customer!.Id)   // Lọc theo giỏ hàng của user
             .SelectMany(c => c.CartGadgets.Select(cg => cg.Gadget.Seller)) // Lấy seller từ các sản phẩm trong giỏ hàng
             .Distinct()  // Loại bỏ seller trùng lặp
+            .Include(s => s.User)
             .OrderBy(s => s.Id) // Sắp xếp để có thể phân trang
             .ToListAsync();
 
@@ -90,6 +91,15 @@ public class CreateOrder : ControllerBase
         //Chia order theo từng seller
         foreach (var seller in sellers)
         {
+            //Validate user(seller) status inactive
+            if (seller.User.Status != UserStatus.Active)
+            {
+                throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("seller", $"Người bán {seller.Id} đã bị vô hiệu hóa.")
+                .Build();
+            }
+
             OrderDetail orderDetail = new OrderDetail()
             {
                 SellerId = seller.Id,
@@ -104,14 +114,45 @@ public class CreateOrder : ControllerBase
                 if (cartGadget.Gadget.SellerId == seller.Id)
                 {
                     GadgetInformation gadgetInformation = cartGadget.Gadget.ToGadgetInformation()!;
+
+                    //Validate gadget status inactive
+                    if (cartGadget.Gadget.Status != GadgetStatus.Active)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Sản phẩm {cartGadget.GadgetId} đã bị vô hiệu hóa.")
+                        .Build();
+                    }
+
+                    //Validate gadget IsForSale
+                    if (!cartGadget.Gadget.IsForSale)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Sản phẩm {cartGadget.GadgetId} đã ngừng kinh doanh.")
+                        .Build();
+                    }
+
+                    //Validate gadget không còn đủ sản phẩm
+                    if (cartGadget.Gadget.Quantity < cartGadget.Quantity)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", $"Số lượng sản phẩm {cartGadget.GadgetId} không đủ.")
+                        .Build();
+                    }
+                    cartGadget.Gadget.Quantity -= cartGadget.Quantity;
+
                     gadgetInformation.GadgetQuantity = cartGadget.Quantity;
                     gadgetInformations.Add(gadgetInformation);
 
                     //Tính tổng giá tiền orderDetail
-                    orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    //orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    orderDetailAmount += 2000;
 
                     //Tính tổng giá tiền order
-                    totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    //totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    totalAmount += 2000;
 
                     //Xóa gadget ra khỏi cart
                     context.CartGadgets.Remove(cartGadget);

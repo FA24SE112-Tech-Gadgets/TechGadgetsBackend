@@ -8,7 +8,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.OrderDetails.Mappers;
 using WebApi.Features.OrderDetails.Models;
-using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.OrderDetails;
