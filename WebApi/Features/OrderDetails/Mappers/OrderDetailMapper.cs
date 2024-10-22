@@ -11,7 +11,7 @@ public static class OrderDetailMapper
         {
             return new GadgetInformationOrderDetailResponse
             {
-                Id = gadgetInformation.Id,
+                Id = gadgetInformation.GadgetId,
                 Name = gadgetInformation.GadgetName,
                 Price = gadgetInformation.GadgetPrice,
                 ThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
@@ -65,7 +65,7 @@ public static class OrderDetailMapper
                 OrderId = orderDetail.OrderId,
                 Amount = orderDetail.Amount,
                 Status = orderDetail.Status,
-                GadgetInformation = orderDetail.GadgetInformation.ToListGadgetInformations()!,
+                Gadgets = orderDetail.GadgetInformation.ToListGadgetInformations()!,
                 CreatedAt = orderDetail.CreatedAt,
             };
         }
