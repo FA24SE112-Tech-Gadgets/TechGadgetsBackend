@@ -64,6 +64,8 @@ public class GetOrderDetailById : ControllerBase
             totalAmount += (gi.GadgetQuantity * gi.GadgetPrice);
         }
 
+        var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund);
+
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
             Status = orderDetail.Status,
@@ -75,6 +77,7 @@ public class GetOrderDetailById : ControllerBase
             OrderDetailCreatedAt = orderDetail.CreatedAt,
             WalletTrackingCreatedAt = orderDetail.Order.WalletTracking.CreatedAt,
             OrderDetailUpdatedAt = (orderDetail.Status == OrderDetailStatus.Cancelled || orderDetail.Status == OrderDetailStatus.Success) ? orderDetail.UpdatedAt : null,
+            CancelledReason = walletTrackingCancel != null ? walletTrackingCancel.Reason : null,
         }!;
 
         return Ok(orderDetailResponse);
