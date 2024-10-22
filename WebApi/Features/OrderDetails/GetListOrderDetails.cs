@@ -8,7 +8,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.OrderDetails.Mappers;
 using WebApi.Features.OrderDetails.Models;
-using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.OrderDetails;
@@ -91,8 +90,15 @@ public class GetListOrderDetails : ControllerBase
             return Ok(orderDetailsResponseList);
         } else
         {
+            List<CustomerOrderDetailItemResponse> customerOrderDetailItemResponses = new List<CustomerOrderDetailItemResponse>()!;
+            foreach (var od in orderDetails.Items) {
+                var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == od.Id);
+                var sodir = od.ToCustomerOrderDetailItemResponse()!;
+                sodir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
+                customerOrderDetailItemResponses.Add(sodir);
+            }
             var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
-                orderDetails.Items.Select(od => od.ToCustomerOrderDetailItemResponse()!).ToList(),
+                customerOrderDetailItemResponses,
                 orderDetails.Page,
                 orderDetails.PageSize,
                 orderDetails.TotalItems
