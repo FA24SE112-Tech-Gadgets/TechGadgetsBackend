@@ -46,7 +46,8 @@ public class CreateReview : ControllerBase
                             "<br>&nbsp; - Mỗi gadget trong 1 đơn hàng chỉ được đánh 1 lần." +
                             "<br>&nbsp;     Ví dụ: Gadget A có trong 3 đơn thì customer có thể đánh giá Gadget A 3 lần" +
                             "<br>&nbsp; - Customer chỉ có thể đánh giá đơn của mình thôi" +
-                            "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là cần truyền gadgetId có trong orderDetailId đó."
+                            "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là cần truyền gadgetId có trong orderDetailId đó." +
+                            "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -70,7 +71,7 @@ public class CreateReview : ControllerBase
         if (currentUser!.Role == Role.Customer && orderDetail!.Order.CustomerId != currentUser!.Customer!.Id)
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
+            .WithCode(TechGadgetErrorCode.WEB_02)
             .AddReason("orderDetail", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
             .Build();
         }
@@ -83,7 +84,47 @@ public class CreateReview : ControllerBase
             .Build();
         }
 
+        bool isGadgetExist = await context.GadgetInformation
+            .AnyAsync(gi => gi.GadgetId == gadgetId && gi.OrderDetailId == orderDetailId);
 
+        if (!isGadgetExist)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", $"Sản phẩm {gadgetId} không có trong đơn {orderDetailId}. Hoặc sản phẩm không tồn tại.")
+            .Build();
+        }
+
+        bool isAnyReview = await context.Reviews.AnyAsync(r => r.OrderDetailId == orderDetailId && r.GadgetId == gadgetId);
+
+        if (isAnyReview)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_01)
+            .AddReason("review", $"Sản phẩm {gadgetId} này trong đơn {orderDetailId} đã được đánh giá.")
+            .Build();
+        }
+
+        bool isPositive = false;
+        if (request.Rating >= 3)
+        {
+            isPositive = true;
+        }
+
+        Review review = new Review()
+        {
+            GadgetId = gadgetId,
+            OrderDetailId = orderDetailId,
+            CustomerId = currentUser.Customer!.Id,
+            Rating = request.Rating,
+            Content = request.Content,
+            IsPositive = isPositive,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+        }!;
+
+        await context.Reviews.AddAsync(review);
+        await context.SaveChangesAsync();
 
         return Created();
     }
