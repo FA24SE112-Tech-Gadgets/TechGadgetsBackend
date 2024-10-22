@@ -82,7 +82,10 @@ public class GetListOrderDetails : ControllerBase
         if (currentUser!.Role == Role.Seller)
         {
             var orderDetailsResponseList = new PagedList<SellerOrderDetailItemResponse>(
-                orderDetails.Items.Select(od => od.ToSellerOrderDetailItemResponse()!).ToList(),
+                orderDetails.Items.Select(od => {
+                    var sodir = od.ToSellerOrderDetailItemResponse()!;
+                    return sodir;
+                }).ToList(),
                 orderDetails.Page,
                 orderDetails.PageSize,
                 orderDetails.TotalItems

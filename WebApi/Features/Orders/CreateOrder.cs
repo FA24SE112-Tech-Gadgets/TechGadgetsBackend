@@ -41,7 +41,9 @@ public class CreateOrder : ControllerBase
         Description = "This API is for customer create order. Note: " +
                             "<br>&nbsp; - Dùng API này để thanh toán đơn hàng(trừ tiền có sẵn trong ví)." +
                             "<br>&nbsp; - Sau khi gọi API này thì những gadget thanh toán, sẽ không còn nằm trong cart nữa." +
-                            "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví"
+                            "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
+                            "<br>&nbsp; - Customer cần điền Address trước khi tiến hành tạo order (Trước khi gọi API)" +
+                            "<br>&nbsp; - Không thể tạo đơn với những sản phẩm nằm ngoài giỏ hàng."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -50,6 +52,15 @@ public class CreateOrder : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Customer!.Address == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("customers", "Người dùng chưa nhập địa chỉ nhận hàng.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -206,7 +217,16 @@ public class CreateOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
 
         //Save tất cả mọi thứ vô DB
-        await context.SaveChangesAsync();
+        if (orderDetails.Count >= 0 && totalAmount >= 0)
+        {
+            await context.SaveChangesAsync();
+        } else
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", "Sản phẩm không có trong giỏ hàng.")
+            .Build();
+        }
 
         return Ok();
     }
