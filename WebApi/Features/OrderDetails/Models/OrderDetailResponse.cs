@@ -14,4 +14,5 @@ public class OrderDetailResponse
     public DateTime OrderDetailCreatedAt { get; set; }
     public DateTime WalletTrackingCreatedAt { get; set; }
     public DateTime? OrderDetailUpdatedAt { get; set; } = default!;
+    public string? CancelledReason { get; set; } = default!;
 }

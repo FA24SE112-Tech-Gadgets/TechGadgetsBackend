@@ -50,6 +50,14 @@ public class SellerConfirmOrderDetail : ControllerBase
             .Build();
         }
 
+        if (orderDetail.Status != OrderDetailStatus.Pending)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("orderDetail", "Đơn này đã Success/Cancelled rồi.")
+            .Build();
+        }
+
         orderDetail!.Status = OrderDetailStatus.Success;
 
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
