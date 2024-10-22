@@ -14,6 +14,7 @@ public class OrderDetail
     public Order Order { get; set; } = default!;
     public Seller Seller { get; set; } = default!;
     public SystemOrderDetailTracking SystemOrderDetailTracking { get; set; } = default!;
+    public ICollection<Review> Reviews { get; set; } = [];
     public ICollection<GadgetInformation> GadgetInformation { get; set; } = [];
 }
 
