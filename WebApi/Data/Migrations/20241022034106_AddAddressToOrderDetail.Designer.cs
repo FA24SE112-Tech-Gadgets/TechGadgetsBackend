@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241022034106_AddAddressToOrderDetail")]
+    partial class AddAddressToOrderDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,39 +209,6 @@ namespace WebApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderDetailId");
-
-                    b.ToTable("CustomerInformation");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
@@ -575,8 +545,16 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("PickUpAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("SellerId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ShippingAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -774,39 +752,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("SellerApplications");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.SellerInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderDetailId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("SellerInformation");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
@@ -1202,25 +1147,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.CustomerInformation", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Customer", "Customer")
-                        .WithMany("CustomerInformation")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("OrderDetail");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
@@ -1464,25 +1390,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SellerInformation", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.Seller", "Seller")
-                        .WithMany("SellerInformation")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderDetail");
-
-                    b.Navigation("Seller");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Review", "Review")
@@ -1657,8 +1564,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Cart")
                         .IsRequired();
 
-                    b.Navigation("CustomerInformation");
-
                     b.Navigation("FavoriteGadgets");
 
                     b.Navigation("GadgetHistories");
@@ -1729,8 +1634,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Gadgets");
 
                     b.Navigation("OrderDetails");
-
-                    b.Navigation("SellerInformation");
 
                     b.Navigation("SellerReplies");
                 });

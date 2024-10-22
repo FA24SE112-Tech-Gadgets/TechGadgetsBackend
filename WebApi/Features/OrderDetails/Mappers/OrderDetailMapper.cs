@@ -22,17 +22,15 @@ public static class OrderDetailMapper
         }
         return null;
     }
-    private static SellerOrderDetailResponse? ToSellerOrderDetailResponse(this Seller seller)
+    public static SellerInfoResponse? ToSellerOrderDetailResponse(this Seller seller)
     {
         if (seller != null)
         {
-            return new SellerOrderDetailResponse
+            return new SellerInfoResponse
             {
                 Id = seller.Id,
-                CompanyName = seller.CompanyName,
                 ShopName = seller.ShopName,
                 ShopAddress = seller.ShopAddress,
-                BusinessModel = seller.BusinessModel,
                 PhoneNumber = seller.PhoneNumber,
             };
         }
@@ -52,6 +50,24 @@ public static class OrderDetailMapper
         }
 
         // Trả về null nếu không có phần tử nào
+        return null;
+    }
+
+    public static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformationsDetail(this ICollection<GadgetInformation> gadgetInformations)
+    {
+        if (gadgetInformations != null && gadgetInformations.Count > 0)
+        {
+            return gadgetInformations
+            .Select(gi => new GadgetInformationOrderDetailResponse
+            {
+                GadgetId = gi.GadgetId,
+                GadgetName = gi.GadgetName,
+                GadgetPrice = gi.GadgetPrice,
+                GadgetQuantity = gi.GadgetQuantity,
+                GadgetThumbnailUrl = gi.GadgetThumbnailUrl,
+            })
+            .ToList();
+        }
         return null;
     }
 

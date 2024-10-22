@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241022035731_AddCustomerAndSellerInformation")]
+    partial class AddCustomerAndSellerInformation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,10 +223,6 @@ namespace WebApi.Data.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<Guid>("OrderDetailId")
                         .HasColumnType("uuid");
@@ -795,10 +794,6 @@ namespace WebApi.Data.Migrations
 
                     b.Property<Guid>("SellerId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ShopName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

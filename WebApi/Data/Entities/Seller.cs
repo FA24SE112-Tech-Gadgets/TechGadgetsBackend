@@ -23,6 +23,7 @@ public class Seller
     public ICollection<OrderDetail> OrderDetails { get; set; } = [];
     public ICollection<BillingMail> BillingMails { get; set; } = [];
     public ICollection<SellerReply> SellerReplies { get; set; } = [];
+    public ICollection<SellerInformation> SellerInformation { get; set; } = [];
 }
 
 public enum BusinessModel

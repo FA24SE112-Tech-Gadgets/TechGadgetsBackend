@@ -19,6 +19,7 @@ public class Customer
     public ICollection<GadgetHistory> GadgetHistories { get; set; } = [];
     public ICollection<FavoriteGadget> FavoriteGadgets { get; set; } = [];
     public ICollection<Order> Orders { get; set; } = [];
+    public ICollection<CustomerInformation> CustomerInformation { get; set; } = [];
 }
 
 public enum Gender
