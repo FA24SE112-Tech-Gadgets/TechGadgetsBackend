@@ -55,6 +55,24 @@ public static class OrderDetailMapper
         return null;
     }
 
+    public static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformationsDetail(this ICollection<GadgetInformation> gadgetInformations)
+    {
+        if (gadgetInformations != null && gadgetInformations.Count > 0)
+        {
+            return gadgetInformations
+            .Select(gi => new GadgetInformationOrderDetailResponse
+            {
+                GadgetId = gi.GadgetId,
+                GadgetName = gi.GadgetName,
+                GadgetPrice = gi.GadgetPrice,
+                GadgetQuantity = gi.GadgetQuantity,
+                GadgetThumbnailUrl = gi.GadgetThumbnailUrl,
+            })
+            .ToList();
+        }
+        return null;
+    }
+
     public static CustomerOrderDetailItemResponse? ToCustomerOrderDetailItemResponse(this OrderDetail orderDetail)
     {
         if (orderDetail != null)
