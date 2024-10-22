@@ -74,6 +74,7 @@ public static class UserSeed
                 Id = Guid.Parse("d61a23a0-dbfe-429f-9c1f-5e0b955beff9"),
                 UserId = Guid.Parse("5a57223a-6e7d-401b-a19e-bf9282db69fe"),
                 FullName = "Nguỵ Chi Mai",
+                Address = "561A Điện Biên Phủ, Quận Bình Thạnh, TP.HCM",
                 Cart = new Cart
                 {
                     Id = Guid.Parse("46975434-37e8-4585-b7b5-2d7448a24517")
@@ -97,6 +98,7 @@ public static class UserSeed
                 Id = Guid.Parse("f9ff20a7-05b3-4dbc-b260-26ef16db8513"),
                 UserId = Guid.Parse("8d8707e4-299d-450b-bc5c-f8ab49504fce"),
                 FullName = "Lê Thuý Hiền",
+                Address = "88 Song Hành, P. An Phú , Quận 2 , TP. HCM",
                 Cart = new Cart
                 {
                     Id = Guid.Parse("f05bb2a5-d5e9-417d-a793-5c8333e41669")
