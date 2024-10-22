@@ -31,6 +31,16 @@ public static class ApplyMigrationsExtensions
             await context.SaveChangesAsync();
         }
 
+        if (!await context.SellerApplications.AnyAsync())
+        {
+            foreach (var application in SellerApplicationSeed.Default)
+            {
+                application.CreatedAt = DateTime.UtcNow;
+                context.SellerApplications.Add(application);
+            }
+            await context.SaveChangesAsync();
+        }
+
         if (!await context.Brands.AnyAsync())
         {
             foreach (var brand in BrandSeed.Default)
@@ -104,7 +114,7 @@ public static class ApplyMigrationsExtensions
         //        gadget.IsForSale = true;
         //        gadget.CreatedAt = DateTime.UtcNow;
         //        gadget.UpdatedAt = DateTime.UtcNow;
-        //        gadget.Quantity = 0;
+        //        gadget.Quantity = 50;
 
         //        context.Gadgets.Add(gadget);
         //        index++;
