@@ -61,6 +61,14 @@ public class CreateOrder : ControllerBase
             .Build();
         }
 
+        if (currentUser!.Customer!.PhoneNumber == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("customers", "Người dùng chưa nhập số điện thoại nhận hàng.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 

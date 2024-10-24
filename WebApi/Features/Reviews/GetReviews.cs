@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -12,31 +11,10 @@ namespace WebApi.Features.Reviews;
 
 [ApiController]
 [JwtValidation]
-[RolesFilter(Role.Customer)]
-[RequestValidation<Request>]
-public class CreateReview : ControllerBase
+[RolesFilter(Role.Customer, Role.Seller)]
+public class GetReviews : ControllerBase
 {
-    public new class Request
-    {
-        public int Rating { get; set; }
-        public string Content { get; set; } = default!;
-    }
-
-    public class Validator : AbstractValidator<Request>
-    {
-        public Validator()
-        {
-            RuleFor(r => r.Content)
-                .NotEmpty()
-                .WithMessage("Nội dung đánh giá không được để trống");
-
-            RuleFor(r => r.Rating)
-                .InclusiveBetween(0, 5)
-                .WithMessage("Đánh giá phải nằm trong khoảng từ 0 đến 5");
-        }
-    }
-
-    [HttpPost("review/order-detail/{orderDetailId}/gadget/{gadgetId}")]
+    [HttpGet("review/order-detail/{orderDetailId}/gadget/{gadgetId}")]
     [Tags("Reviews")]
     [SwaggerOperation(
         Summary = "Customer Create Review",
@@ -53,7 +31,7 @@ public class CreateReview : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid orderDetailId, [FromRoute] Guid gadgetId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromRoute] Guid orderDetailId, [FromRoute] Guid gadgetId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
@@ -105,28 +83,6 @@ public class CreateReview : ControllerBase
             .Build();
         }
 
-        bool isPositive = false;
-        if (request.Rating >= 3)
-        {
-            isPositive = true;
-        }
-
-        Review review = new Review()
-        {
-            GadgetId = gadgetId,
-            OrderDetailId = orderDetailId,
-            CustomerId = currentUser.Customer!.Id,
-            Rating = request.Rating,
-            Content = request.Content,
-            IsPositive = isPositive,
-            Status = ReviewStatus.Active,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-        }!;
-
-        await context.Reviews.AddAsync(review);
-        await context.SaveChangesAsync();
-
-        return Created();
+        return Ok();
     }
 }
