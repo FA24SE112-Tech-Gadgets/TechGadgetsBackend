@@ -65,11 +65,7 @@ public class GetCustomerFavoriteGadget : ControllerBase
         }
 
         var favoriteGadgets = await query
-            .ToPagedListAsync(request)
-            ?? throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("favoriteGadgets", "Không tìm thấy sản phẩm yêu thích.")
-            .Build();
+            .ToPagedListAsync(request);
 
         var favoriteGadgetResponseList = new PagedList<FavoriteGadgetResponse>(
             favoriteGadgets.Items.Select(fg => fg.ToFavoriteGadgetResponse()!).ToList(),

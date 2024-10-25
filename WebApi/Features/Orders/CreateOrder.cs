@@ -61,6 +61,14 @@ public class CreateOrder : ControllerBase
             .Build();
         }
 
+        if (currentUser!.Customer!.PhoneNumber == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("customers", "Người dùng chưa nhập số điện thoại nhận hàng.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -110,13 +118,13 @@ public class CreateOrder : ControllerBase
                 .AddReason("seller", $"Người bán {seller.Id} đã bị vô hiệu hóa.")
                 .Build();
             }
-
+            var createdAt = DateTime.UtcNow;
             OrderDetail orderDetail = new OrderDetail()
             {
                 SellerId = seller.Id,
                 Status = OrderDetailStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt,
             }!;
             List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;
             int orderDetailAmount = 0;

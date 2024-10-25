@@ -49,7 +49,7 @@ public class CreateReview : ControllerBase
                             "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là cần truyền gadgetId có trong orderDetailId đó." +
                             "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được."
     )]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -119,6 +119,7 @@ public class CreateReview : ControllerBase
             Rating = request.Rating,
             Content = request.Content,
             IsPositive = isPositive,
+            Status = ReviewStatus.Active,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         }!;
