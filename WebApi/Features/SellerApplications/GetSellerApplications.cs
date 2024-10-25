@@ -66,11 +66,7 @@ public class GetSellerApplications : ControllerBase
         }
 
         var sellerApplications = await query
-            .ToPagedListAsync(request)
-            ?? throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("sellerApplication", "Không tìm thấy đơn này.")
-            .Build();
+            .ToPagedListAsync(request);
 
         var sellerApplicationsResponseList = new PagedList<SellerApplicationItemResponse>(
             sellerApplications.Items.Select(sa => sa.ToSellerApplicationItemResponse()!).ToList(),
