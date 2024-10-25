@@ -118,13 +118,13 @@ public class CreateOrder : ControllerBase
                 .AddReason("seller", $"Người bán {seller.Id} đã bị vô hiệu hóa.")
                 .Build();
             }
-
+            var createdAt = DateTime.UtcNow;
             OrderDetail orderDetail = new OrderDetail()
             {
                 SellerId = seller.Id,
                 Status = OrderDetailStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt,
             }!;
             List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;
             int orderDetailAmount = 0;
