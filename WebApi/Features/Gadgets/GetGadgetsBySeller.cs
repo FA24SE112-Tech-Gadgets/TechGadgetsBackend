@@ -40,7 +40,7 @@ public class GetGadgetsBySeller : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_00)
-                        .AddReason("seller", "seller không tồn tại")
+                        .AddReason("seller", "Seller không tồn tại")
                         .Build();
         }
 

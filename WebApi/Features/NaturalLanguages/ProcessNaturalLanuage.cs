@@ -27,6 +27,10 @@ public class ProcessNaturalLanuage : ControllerBase
     public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService)
     {
         var query = await naturalLanguageService.GetRequestByUserInput(request.Input);
+        if (query == null)
+        {
+            return Ok("natural language query is null");
+        }
         return Ok(query);
     }
 }
