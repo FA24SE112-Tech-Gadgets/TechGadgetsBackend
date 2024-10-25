@@ -15,6 +15,7 @@ public static class ReviewMapper
                 Customer = review.Customer.ToCustomerReviewResponse()!,
                 Rating = review.Rating,
                 Content = review.Content,
+                SellerReply = review.SellerReply == null ? null : review.SellerReply.ToSellerReplyResponse(),
                 IsPositive = review.IsPositive,
                 Status = review.Status,
                 CreatedAt = review.CreatedAt,
