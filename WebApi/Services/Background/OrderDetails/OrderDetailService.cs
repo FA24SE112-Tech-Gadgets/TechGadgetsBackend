@@ -67,6 +67,8 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                     .Include(sodt => sodt.FromUser)
                         .ThenInclude(u => u.Wallet)
                     .Include(sodt => sodt.OrderDetail)
+                        .ThenInclude(od => od.GadgetInformation)
+                            .ThenInclude(gi => gi.Gadget)
                     .Where(sodt => sodt.CreatedAt <= DateTime.UtcNow.AddMinutes(-5) && sodt.Status == SystemOrderDetailTrackingStatus.Pending)
                     .ToListAsync(stoppingToken);
 
@@ -100,6 +102,14 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                     sodt.OrderDetail.Status = OrderDetailStatus.Cancelled;
 
                     await context.WalletTrackings.AddAsync(walletTracking, stoppingToken);
+
+                    //Hoàn lại quantity cho gadget của Seller
+                    var gadgetInformations = sodt.OrderDetail.GadgetInformation;
+                    foreach (var gi in gadgetInformations)
+                    {
+                        gi.Gadget.Quantity += gi.GadgetQuantity;
+                    }
+
                     await context.SaveChangesAsync(stoppingToken);
                 }
             }

@@ -38,6 +38,8 @@ public class CancelOrderDetail : ControllerBase
 
         var orderDetail = await context.OrderDetails
             .Include(od => od.Order)
+            .Include(od => od.GadgetInformation)
+                .ThenInclude(gi => gi.Gadget)
             .FirstOrDefaultAsync(od => od.Id == orderDetailId);
         if (orderDetail == null)
         {
@@ -93,6 +95,14 @@ public class CancelOrderDetail : ControllerBase
         }
 
         await context.WalletTrackings.AddAsync(walletTracking);
+
+        //Hoàn lại quantity cho gadget của Seller
+        var gadgetInformations = orderDetail.GadgetInformation;
+        foreach (var gi in gadgetInformations)
+        {
+            gi.Gadget.Quantity += gi.GadgetQuantity;
+        }
+
         await context.SaveChangesAsync();
 
         return Ok();

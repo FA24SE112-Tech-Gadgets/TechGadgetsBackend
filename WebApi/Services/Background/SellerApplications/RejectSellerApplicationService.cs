@@ -23,7 +23,7 @@ public class RejectSellerApplicationService(IServiceProvider serviceProvider) : 
                         stoppingToken);
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(30), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
         }
     }
 }
