@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
@@ -44,7 +45,7 @@ public class GetReviewsByGadgetId : ControllerBase
                             "<br>&nbsp; - Nếu không truyền thì không filter theo kiểu đó." +
                             "<br>&nbsp; - Truyền bao nhiêu filter bấy nhiêu."
     )]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(PagedList<ReviewResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -52,9 +53,11 @@ public class GetReviewsByGadgetId : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var query = context.Reviews.AsQueryable();
+        var query = context.Reviews
+            .Include(r => r.SellerReply)
+            .AsQueryable();
 
-        query.Where(r => r.CustomerId == currentUser!.Customer!.Id && r.GadgetId == gadgetId);
+        query.Where(r => r.GadgetId == gadgetId);
 
         if (request.IsPositive != null)
         {
