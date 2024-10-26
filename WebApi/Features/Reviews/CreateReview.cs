@@ -47,7 +47,8 @@ public class CreateReview : ControllerBase
                             "<br>&nbsp;     Ví dụ: Gadget A có trong 3 đơn thì customer có thể đánh giá Gadget A 3 lần" +
                             "<br>&nbsp; - Customer chỉ có thể đánh giá đơn của mình thôi" +
                             "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là chỉ cần truyền sellerOrderItemId của gadget trong đơn đó." +
-                            "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được."
+                            "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được." +
+                            "<br>&nbsp; - Không thể review những item đã quá 10 phút."
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -73,7 +74,7 @@ public class CreateReview : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
-            .AddReason("sellerOrder", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
+            .AddReason("sellerOrder", "Người dùng không đủ thẩm quyền để đánh giá sản phẩm này.")
             .Build();
         }
 
@@ -82,6 +83,14 @@ public class CreateReview : ControllerBase
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("sellerOrder", "Đơn này chưa hoàn thành hoặc đã hủy.")
+            .Build();
+        }
+
+        if (sellerOrderItem.SellerOrder.CreatedAt <= DateTime.UtcNow.AddMinutes(-10))
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_02)
+            .AddReason("review", "Đã quá thời gian đánh giá (10 phút).")
             .Build();
         }
 

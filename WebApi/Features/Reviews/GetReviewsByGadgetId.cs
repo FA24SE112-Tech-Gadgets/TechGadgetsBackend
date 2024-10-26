@@ -46,36 +46,43 @@ public class GetReviewsByGadgetId : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid gadgetId, AppDbContext context)
     {
-        var query = context.Reviews
-            .Include(r => r.SellerReply)
-            .Include(r => r.SellerOrderItem)
+        var query = context.Gadgets
+            .Include(g => g.SellerOrderItems)
+            .Where(g => g.Id == gadgetId)
+            .SelectMany(g => g.SellerOrderItems)
+            .Include(soi => soi.Review)
+                .ThenInclude(r => r != null ? r.SellerReply : null)
+                .ThenInclude(sr => sr != null ? sr.Seller : null)
+            .Include(soi => soi.Review)
+                .ThenInclude(r => r != null ? r.Customer : null)
             .AsQueryable();
 
-        query.Where(r => r.SellerOrderItem.GadgetId == gadgetId);
+        //Chỉ lấy những item nào có Review va review status = Active
+        query = query.Where(soi => soi.Review != null && soi.Review.Status == Data.Entities.ReviewStatus.Active);
 
         if (request.IsPositive != null)
         {
-            query = query.Where(r => r.IsPositive == request.IsPositive);
+            query = query.Where(soi => soi.Review!.IsPositive == request.IsPositive);
         }
 
         if (request.SortByRating != null)
         {
             query = request.SortByRating == SortByRating.ASC
-            ? query.OrderBy(r => r.Rating)
-            : query.OrderByDescending(r => r.Rating);
+            ? query.OrderBy(soi => soi.Review!.Rating)
+            : query.OrderByDescending(soi => soi.Review!.Rating);
         }
 
         if (request.SortByDate != null)
         {
             query = request.SortByDate == SortByDate.ASC
-                ? query.OrderBy(r => r.CreatedAt)
-                : query.OrderByDescending(r => r.CreatedAt);
+                ? query.OrderBy(soi => soi.Review!.CreatedAt)
+                : query.OrderByDescending(soi => soi.Review!.CreatedAt);
         }
 
         var reviews = await query.ToPagedListAsync(request);
 
         var reviewsResponse = new PagedList<ReviewResponse>(
-            reviews.Items.Select(r => r.ToReviewResponse()!).ToList(),
+            reviews.Items.Select(soi => soi.Review!.ToReviewResponse()!).ToList(),
             reviews.Page,
             reviews.PageSize,
             reviews.TotalItems

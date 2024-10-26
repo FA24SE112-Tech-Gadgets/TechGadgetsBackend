@@ -32,7 +32,7 @@ public class ConfirmSellerOrder : ControllerBase
         var currentUser = await currentUserService.GetCurrentUser();
 
         var sellerOrder = await context.SellerOrders
-            .Include(so => so.Order)
+            .Include(so => so.SellerOrderItems)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
         if (sellerOrder == null)
         {
