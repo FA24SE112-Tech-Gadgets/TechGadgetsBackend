@@ -2,19 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
-using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
-using WebApi.Data.Entities;
 using WebApi.Features.Reviews.Mappers;
 using WebApi.Features.Reviews.Models;
-using WebApi.Services.Auth;
 
 namespace WebApi.Features.Reviews;
 
 [ApiController]
-[JwtValidation]
-[RolesFilter(Role.Customer, Role.Seller)]
 public class GetReviewsByGadgetId : ControllerBase
 {
     public new class Request : PagedRequest
@@ -49,10 +44,8 @@ public class GetReviewsByGadgetId : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid gadgetId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid gadgetId, AppDbContext context)
     {
-        var currentUser = await currentUserService.GetCurrentUser();
-
         var query = context.Reviews
             .Include(r => r.SellerReply)
             .AsQueryable();
