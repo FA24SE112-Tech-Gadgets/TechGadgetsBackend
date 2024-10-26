@@ -28,8 +28,7 @@ public class Gadget
     public Seller Seller { get; set; } = default!;
     public Brand Brand { get; set; } = default!;
     public Category Category { get; set; } = default!;
-    public ICollection<GadgetInformation> GadgetInformation { get; set; } = [];
-    public ICollection<Review> Reviews { get; set; } = [];
+    public ICollection<SellerOrderItem> SellerOrderItems { get; set; } = [];
     public ICollection<CartGadget> CartGadgets { get; set; } = [];
     public ICollection<GadgetDescription> GadgetDescriptions { get; set; } = [];
     public ICollection<SpecificationValue> SpecificationValues { get; set; } = [];
