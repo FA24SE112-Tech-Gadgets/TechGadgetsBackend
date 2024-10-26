@@ -6,7 +6,7 @@ public class SystemOrderDetailTracking
 {
     public Guid Id { get; set; }
     public Guid SystemWalletId { get; set; }
-    public Guid OrderDetailId { get; set; }
+    public Guid SellerOrderId { get; set; }
 
     [ForeignKey(nameof(FromUser))]
     public Guid FromUserId { get; set; }
@@ -19,7 +19,7 @@ public class SystemOrderDetailTracking
     public DateTime UpdatedAt { get; set; }
 
     public SystemWallet SystemWallet { get; set; } = default!;
-    public OrderDetail OrderDetail { get; set; } = default!;
+    public SellerOrder SellerOrder { get; set; } = default!;
     public User FromUser { get; set; } = default!;
     public User ToUser { get; set; } = default!;
 }
