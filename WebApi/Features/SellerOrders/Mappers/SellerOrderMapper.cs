@@ -5,29 +5,32 @@ namespace WebApi.Features.SellerOrders.Mappers;
 
 public static class SellerOrderMapper
 {
-    private static SellerOrderItemInItemResponse? ToGadgetInformationOrderDetailResponse(this SellerOrderItem gadgetInformation)
+    private static SellerOrderItemInItemResponse? ToGadgetInformationOrderDetailResponse(this SellerOrderItem sellerOrderItem)
     {
-        if (gadgetInformation != null)
+        if (sellerOrderItem != null)
         {
             return new SellerOrderItemInItemResponse
             {
-                Id = gadgetInformation.GadgetId,
-                Price = gadgetInformation.GadgetPrice,
-                Quantity = gadgetInformation.GadgetQuantity,
+                SellerOrderItemId = sellerOrderItem.Id,
+                GadgetId = sellerOrderItem.GadgetId,
+                Name = sellerOrderItem.Gadget.Name,
+                Price = sellerOrderItem.GadgetPrice,
+                ThumbnailUrl = sellerOrderItem.Gadget.ThumbnailUrl,
+                Quantity = sellerOrderItem.GadgetQuantity,
             };
         }
         return null;
     }
 
-    private static List<SellerOrderItemInItemResponse>? ToListGadgetInformations(this ICollection<SellerOrderItem> gadgetInformations)
+    private static List<SellerOrderItemInItemResponse>? ToListSellerOrderItems(this ICollection<SellerOrderItem> sellerOrderItem)
     {
         // Kiểm tra nếu gadgetInformations không null và có ít nhất một phần tử
-        if (gadgetInformations.Count() > 0)
+        if (sellerOrderItem.Count() > 0)
         {
             // Lấy phần tử đầu tiên và chuyển đổi nó thành GadgetInformationOrderDetailResponse, rồi đưa vào một danh sách mới
             return new List<SellerOrderItemInItemResponse>
             {
-                gadgetInformations.First().ToGadgetInformationOrderDetailResponse()!
+                sellerOrderItem.First().ToGadgetInformationOrderDetailResponse()!
             }!;
         }
 
@@ -35,47 +38,56 @@ public static class SellerOrderMapper
         return null;
     }
 
-    public static List<SellerOrderItemInItemResponse>? ToListSellerOrderItemsDetail(this ICollection<SellerOrderItem> gadgetInformations)
+    public static List<SellerOrderItemInItemResponse>? ToListSellerOrderItemsDetail(this ICollection<SellerOrderItem> sellerOrderItems)
     {
-        if (gadgetInformations != null && gadgetInformations.Count > 0)
+        if (sellerOrderItems != null && sellerOrderItems.Count > 0)
         {
-            return gadgetInformations
-            .Select(gi => new SellerOrderItemInItemResponse
+            return sellerOrderItems
+            .Select(soi => new SellerOrderItemInItemResponse
             {
-                Id = gi.GadgetId,
-                Price = gi.GadgetPrice,
-                Quantity = gi.GadgetQuantity,
+                SellerOrderItemId = soi.Id,
+                GadgetId = soi.GadgetId,
+                Name = soi.Gadget.Name,
+                Price = soi.GadgetPrice,
+                ThumbnailUrl = soi.Gadget.ThumbnailUrl,
+                Quantity = soi.GadgetQuantity,
             })
             .ToList();
         }
         return null;
     }
 
-    public static CustomerSellerOrderItemResponse? ToCustomerOrderDetailItemResponse(this SellerOrder orderDetail)
+    public static CustomerSellerOrderItemResponse? ToCustomerSellerOrderItemResponse(this SellerOrder sellerOrder)
     {
-        if (orderDetail != null)
+        if (sellerOrder != null)
         {
             return new CustomerSellerOrderItemResponse
             {
-                Id = orderDetail.Id,
-                OrderId = orderDetail.OrderId,
-                Status = orderDetail.Status,
-                Gadgets = orderDetail.SellerOrderItems.ToListGadgetInformations()!,
-                CreatedAt = orderDetail.CreatedAt,
+                Id = sellerOrder.Id,
+                OrderId = sellerOrder.OrderId,
+                Status = sellerOrder.Status,
+                Gadgets = sellerOrder.SellerOrderItems.ToListSellerOrderItems()!,
+                CreatedAt = sellerOrder.CreatedAt,
             };
         }
         return null;
     }
 
-    public static SellerOrderResponse? ToSellerOrderDetailItemResponse(this SellerOrder orderDetail)
+    public static SellerOrderResponse? ToSellerSellerOrderItemResponse(this SellerOrder sellerOrder)
     {
-        if (orderDetail != null)
+        if (sellerOrder != null)
         {
+            int totalAmount = 0;
+            foreach (var soi in sellerOrder.SellerOrderItems)
+            {
+                totalAmount += (soi.GadgetPrice * soi.GadgetQuantity);
+            }
             return new SellerOrderResponse
             {
-                Id = orderDetail.Id,
-                Status = orderDetail.Status,
-                CreatedAt = orderDetail.CreatedAt,
+                Id = sellerOrder.Id,
+                Amount = totalAmount,
+                Status = sellerOrder.Status,
+                CreatedAt = sellerOrder.CreatedAt,
             };
         }
         return null;

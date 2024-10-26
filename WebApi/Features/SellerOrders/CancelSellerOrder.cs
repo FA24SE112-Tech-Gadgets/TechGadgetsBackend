@@ -38,6 +38,7 @@ public class CancelSellerOrder : ControllerBase
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.Order)
+                .ThenInclude(o => o.WalletTracking)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(gi => gi.Gadget)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
@@ -67,12 +68,12 @@ public class CancelSellerOrder : ControllerBase
 
         sellerOrder!.Status = SellerOrderStatus.Cancelled;
 
-        var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
+        var customerWallet = await context.Wallets.FirstOrDefaultAsync(w => w.Id == sellerOrder.Order.WalletTracking.WalletId);
 
         int totalAmount = 0;
         WalletTracking walletTracking = new WalletTracking()
         {
-            WalletId = userWallet!.Id,
+            WalletId = customerWallet!.Id,
             SellerOrderId = sellerOrderId,
             Type = WalletTrackingType.Refund,
             Status = WalletTrackingStatus.Pending,

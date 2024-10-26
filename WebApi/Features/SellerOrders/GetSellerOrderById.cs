@@ -24,7 +24,7 @@ public class GetSellerOrderById : ControllerBase
                             "<br>&nbsp; - Customer dùng API này để xem chi tiết sellerOrder của mình." +
                             "<br>&nbsp; - Seller dùng API này để xem chi tiết sellerOrder liên quan đến mình."
     )]
-    [ProducesResponseType(typeof(SellerOrderDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SellerInSellerOrderResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -67,17 +67,17 @@ public class GetSellerOrderById : ControllerBase
 
         var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.SellerOrderId == sellerOrderId);
 
-        SellerOrderDetailResponse sellerOrderResponse = new SellerOrderDetailResponse()
+        SellerInSellerOrderResponse sellerOrderResponse = new SellerInSellerOrderResponse()
         {
             Status = sellerOrder.Status,
             CustomerInfo = customerInfo!.ToCustomerInfoResponse()!,
             SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
             TotalQuantity = totalQuantity,
             TotalAmount = totalAmount,
-            OrderDetailId = sellerOrderId,
-            OrderDetailCreatedAt = sellerOrder.CreatedAt,
+            SellerOrderId = sellerOrderId,
+            SellerOrderCreatedAt = sellerOrder.CreatedAt,
             WalletTrackingCreatedAt = sellerOrder.Order.WalletTracking.CreatedAt,
-            OrderDetailUpdatedAt = (sellerOrder.Status == SellerOrderStatus.Cancelled || sellerOrder.Status == SellerOrderStatus.Success) ? sellerOrder.UpdatedAt : null,
+            SellerOrderUpdatedAt = (sellerOrder.Status == SellerOrderStatus.Cancelled || sellerOrder.Status == SellerOrderStatus.Success) ? sellerOrder.UpdatedAt : null,
             CancelledReason = walletTrackingCancel != null ? walletTrackingCancel.Reason : null,
         }!;
 
