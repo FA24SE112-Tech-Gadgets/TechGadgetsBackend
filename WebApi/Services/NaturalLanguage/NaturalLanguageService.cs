@@ -4,11 +4,12 @@ using OpenAI.Chat;
 using System.Text.Json;
 using WebApi.Common.Settings;
 using WebApi.Data;
+using WebApi.Services.Embedding;
 using WebApi.Services.NaturalLanguage.Models;
 
 namespace WebApi.Services.AI;
 
-public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppDbContext context)
+public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppDbContext context, EmbeddingService embeddingService)
 {
     private readonly OpenAIClientSettings _settings = options.Value;
 
@@ -29,22 +30,21 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             "Full HD", "QQVGA", "QVGA", "2K", "1.5K", "Retina", "4k"
             ];
 
-        List<string> operatingSystems = [
+        List<string> operatingSystems = ["Windows", "Android", "Linux", "MacOS", "ChromeOS", "iOS", "Táo"];
 
-            ];
 
         string myPrompt = $@"
         I have data in postgres of gadgets that user can search.
 
-        Purposes are: {string.Join(", ", purposes)}
+        purposes are: {string.Join(", ", purposes)}
         If user query not mention, give me empty array
 
 
-        Brands are: {string.Join(", ", brands)}
+        brands are: {string.Join(", ", brands)}
         If user query not mention, give me empty array
 
 
-        Categories are: {string.Join(", ", categories)}
+        categories are: {string.Join(", ", categories)}
         If user query not mention, give me empty array
 
 
@@ -83,6 +83,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         isHighResolution can be true or false
         you can use this keywork array as a addition reference that results in isHighResolution is true: {string.Join(", ", highResolutionKeywords)}
         If user does not mention, give me false 
+
+
+        operatingSystems are: {string.Join(", ", operatingSystems)}
+        If user query not mention, give me empty array       
 
 
         User's query: {input}
@@ -147,10 +151,16 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isHighResolution": {
                             "type": "boolean"
+                        },
+                        "operatingSystems": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
                     "required": ["purposes","brands","categories","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen","isFoldable",
-                                 "minInch","maxInch","isHighResolution"],
+                                 "minInch","maxInch","isHighResolution","operatingSystems"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
@@ -184,7 +194,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
         }
 
+        filter!.InputVector = await embeddingService.GetEmbedding(input);
 
-        return filter!;
+        return filter;
     }
 }

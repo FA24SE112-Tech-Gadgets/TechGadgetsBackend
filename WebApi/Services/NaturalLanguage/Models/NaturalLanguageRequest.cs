@@ -1,7 +1,10 @@
-﻿namespace WebApi.Services.NaturalLanguage.Models;
+﻿using Pgvector;
+
+namespace WebApi.Services.NaturalLanguage.Models;
 
 public class NaturalLanguageRequest
 {
+    public Vector? InputVector { get; set; }
     public List<string> Purposes { get; set; } = [];
     public List<string> Brands { get; set; } = [];
     public List<string> Categories { get; set; } = [];
@@ -14,4 +17,5 @@ public class NaturalLanguageRequest
     public float MinInch { get; set; }
     public float MaxInch { get; set; }
     public bool IsHighResolution { get; set; }
+    public List<string> OperatingSystems { get; set; } = [];
 }
