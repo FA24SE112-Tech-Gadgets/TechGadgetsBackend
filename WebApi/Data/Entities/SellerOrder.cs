@@ -16,7 +16,7 @@ public class SellerOrder
     public Seller Seller { get; set; } = default!;
     public CustomerInformation CustomerInformation { get; set; } = default!;
     public SellerInformation SellerInformation { get; set; } = default!;
-    public SystemOrderDetailTracking SystemOrderDetailTracking { get; set; } = default!;
+    public SystemSellerOrderTracking SystemOrderDetailTracking { get; set; } = default!;
     public ICollection<SellerOrderItem> SellerOrderItems { get; set; } = [];
 }
 

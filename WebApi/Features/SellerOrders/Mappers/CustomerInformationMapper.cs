@@ -1,7 +1,7 @@
 ﻿using WebApi.Data.Entities;
-using WebApi.Features.OrderDetails.Models;
+using WebApi.Features.SellerOrders.Models;
 
-namespace WebApi.Features.OrderDetails.Mappers;
+namespace WebApi.Features.SellerOrders.Mappers;
 
 public static class CustomerInformationMapper
 {

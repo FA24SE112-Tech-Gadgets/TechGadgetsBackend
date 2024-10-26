@@ -1,4 +1,4 @@
-﻿namespace WebApi.Features.OrderDetails.Models;
+﻿namespace WebApi.Features.SellerOrders.Models;
 
 public class SellerInfoResponse
 {

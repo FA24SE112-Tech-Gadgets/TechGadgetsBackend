@@ -6,21 +6,21 @@ using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.OrderDetails.Mappers;
-using WebApi.Features.OrderDetails.Models;
+using WebApi.Features.SellerOrders.Mappers;
+using WebApi.Features.SellerOrders.Models;
 using WebApi.Services.Auth;
 
-namespace WebApi.Features.OrderDetails;
+namespace WebApi.Features.SellerOrders;
 
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Customer, Role.Seller)]
-public class GetListOrderDetails : ControllerBase
+public class GetListSellerOrders : ControllerBase
 {
     public new class Request : PagedRequest
     {
         public SortByDate SortByDate { get; set; }
-        public OrderDetailStatus? Status { get; set; }
+        public SellerOrderStatus? Status { get; set; }
     }
 
     public enum SortByDate
@@ -28,11 +28,11 @@ public class GetListOrderDetails : ControllerBase
         DESC, ASC
     }
 
-    [HttpGet("order-details")]
-    [Tags("Order Details")]
+    [HttpGet("seller-orders")]
+    [Tags("Seller Orders")]
     [SwaggerOperation(
-        Summary = "Get List Of Order Details",
-        Description = "API is for get list of order details." +
+        Summary = "Get List Of Seller Orders",
+        Description = "API is for get list of seller orders." +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'" +
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
                             "<br>&nbsp; - Customer dùng API này để lấy ra danh sách orderDetail của mình." +
@@ -48,7 +48,7 @@ public class GetListOrderDetails : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var query = context.OrderDetails.AsQueryable();
+        var query = context.SellerOrders.AsQueryable();
 
         if (currentUser!.Role == Role.Seller)
         {
@@ -58,7 +58,8 @@ public class GetListOrderDetails : ControllerBase
             query = query
                 .Include(od => od.Order)
                 .Include(od => od.Seller)
-                .Include(od => od.GadgetInformation)
+                .Include(od => od.SellerOrderItems)
+                .Include(so => so.SellerInformation)
                 .Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
         }
 
@@ -82,7 +83,7 @@ public class GetListOrderDetails : ControllerBase
 
         if (currentUser!.Role == Role.Seller)
         {
-            var orderDetailsResponseList = new PagedList<SellerOrderDetailItemResponse>(
+            var orderDetailsResponseList = new PagedList<SellerOrderResponse>(
                 orderDetails.Items.Select(od => od.ToSellerOrderDetailItemResponse()!).ToList(),
                 orderDetails.Page,
                 orderDetails.PageSize,
@@ -91,14 +92,14 @@ public class GetListOrderDetails : ControllerBase
             return Ok(orderDetailsResponseList);
         } else
         {
-            List<CustomerOrderDetailItemResponse> customerOrderDetailItemResponses = new List<CustomerOrderDetailItemResponse>()!;
+            List<CustomerSellerOrderItemResponse> customerOrderDetailItemResponses = new List<CustomerSellerOrderItemResponse>()!;
             foreach (var od in orderDetails.Items) {
-                var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == od.Id);
+                var sellerInfo = od.SellerInformation;
                 var sodir = od.ToCustomerOrderDetailItemResponse()!;
                 sodir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
                 customerOrderDetailItemResponses.Add(sodir);
             }
-            var orderDetailsResponseList = new PagedList<CustomerOrderDetailItemResponse>(
+            var orderDetailsResponseList = new PagedList<CustomerSellerOrderItemResponse>(
                 customerOrderDetailItemResponses,
                 orderDetails.Page,
                 orderDetails.PageSize,

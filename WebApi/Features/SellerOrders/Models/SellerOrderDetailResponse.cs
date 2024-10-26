@@ -1,10 +1,10 @@
 ﻿using WebApi.Data.Entities;
 
-namespace WebApi.Features.OrderDetails.Models;
+namespace WebApi.Features.SellerOrders.Models;
 
-public class OrderDetailResponse
+public class SellerOrderDetailResponse
 {
-    public OrderDetailStatus Status { get; set; }
+    public SellerOrderStatus Status { get; set; }
     public CustomerInfoResponse CustomerInfo { get; set; } = default!;
     public SellerInfoResponse SellerInfo { get; set; } = default!;
     public int TotalQuantity { get; set; }
