@@ -49,86 +49,87 @@ public class GetGadgetsReviews : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromQuery] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
-        var currentUser = await currentUserService.GetCurrentUser();
+        //var currentUser = await currentUserService.GetCurrentUser();
 
-        if (currentUser!.Role == Role.Customer)
-        {
-            var query = context.Orders
-            .Include(o => o.SellerOrders)
-                .ThenInclude(od => od.Reviews)
-            .Where(o => o.CustomerId == currentUser!.Customer!.Id)
-            .SelectMany(o => o.OrderDetails)
-            .Include(od => od.GadgetInformation)
-                .ThenInclude(gi => gi.Gadget)
-            .AsQueryable();
+        //if (currentUser!.Role == Role.Customer)
+        //{
+        //    var query = context.Orders
+        //    .Include(o => o.SellerOrders)
+        //        .ThenInclude(od => od.Reviews)
+        //    .Where(o => o.CustomerId == currentUser!.Customer!.Id)
+        //    .SelectMany(o => o.OrderDetails)
+        //    .Include(od => od.GadgetInformation)
+        //        .ThenInclude(gi => gi.Gadget)
+        //    .AsQueryable();
 
-            if (request.FilterBy != FilterBy.Reviewed && request.FilterBy != FilterBy.NotReview)
-            {
-                throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEA_00)
-                .AddReason("filterBy", "Customer dùng sai filterBy.")
-                .Build();
-            }
+        //    if (request.FilterBy != FilterBy.Reviewed && request.FilterBy != FilterBy.NotReview)
+        //    {
+        //        throw TechGadgetException.NewBuilder()
+        //        .WithCode(TechGadgetErrorCode.WEA_00)
+        //        .AddReason("filterBy", "Customer dùng sai filterBy.")
+        //        .Build();
+        //    }
 
-            // Sort theo SortByDate
-            if (request.SortByDate != null)
-            {
-                query = request.SortByDate == SortByDate.ASC
-                    ? query.OrderBy(od => od.CreatedAt)
-                    : query.OrderByDescending(od => od.CreatedAt);
-            }
+        //    // Sort theo SortByDate
+        //    if (request.SortByDate != null)
+        //    {
+        //        query = request.SortByDate == SortByDate.ASC
+        //            ? query.OrderBy(od => od.CreatedAt)
+        //            : query.OrderByDescending(od => od.CreatedAt);
+        //    }
 
-            var orderDetails = await query.ToListAsync();
+        //    var orderDetails = await query.ToListAsync();
 
-            List<GadgetReviewResponse> gadgetReviewResponses = new List<GadgetReviewResponse>()!;
-            foreach (var od in orderDetails)
-            {
-                var gadgetinformations = od.GadgetInformation;
-                foreach (var gi in gadgetinformations)
-                {
-                    if (request.FilterBy == FilterBy.Reviewed)
-                    {
-                        var gadgetReviews = await context.Reviews
-                            .Include(r => r.SellerReply)
-                            .Include(r => r.Gadget)
-                            .Where(r => r.GadgetId == gi.GadgetId && r.OrderDetailId == od.Id)
-                            .Select(r => r.ToGadgetReviewResponse()!)
-                            .ToListAsync();
-                        gadgetReviewResponses.AddRange(gadgetReviews);
-                    }
-                    else
-                    {
-                        bool isReviewed = await context.Reviews.AnyAsync(r => r.GadgetId == gi.GadgetId && r.OrderDetailId == od.Id);
-                        if (!isReviewed)
-                        {
-                            GadgetReviewResponse gadgetReviewResponse = new GadgetReviewResponse()
-                            {
-                                Id = gi.GadgetId,
-                                Name = gi.Gadget.Name,
-                                ThumbnailUrl = gi.Gadget.ThumbnailUrl,
-                                Status = gi.Gadget.Status,
-                            }!;
-                            gadgetReviewResponses.Add(gadgetReviewResponse);
-                        }
-                    }
-                }
-            }
-            int page = request.Page == null ? 0 : (int)request.Page;
-            int pageSize = request.PageSize == null ? 10 : (int)request.PageSize;
-            int skip = (page - 1) * pageSize;
+        //    List<GadgetReviewResponse> gadgetReviewResponses = new List<GadgetReviewResponse>()!;
+        //    foreach (var od in orderDetails)
+        //    {
+        //        var gadgetinformations = od.GadgetInformation;
+        //        foreach (var gi in gadgetinformations)
+        //        {
+        //            if (request.FilterBy == FilterBy.Reviewed)
+        //            {
+        //                var gadgetReviews = await context.Reviews
+        //                    .Include(r => r.SellerReply)
+        //                    .Include(r => r.Gadget)
+        //                    .Where(r => r.GadgetId == gi.GadgetId && r.OrderDetailId == od.Id)
+        //                    .Select(r => r.ToGadgetReviewResponse()!)
+        //                    .ToListAsync();
+        //                gadgetReviewResponses.AddRange(gadgetReviews);
+        //            }
+        //            else
+        //            {
+        //                bool isReviewed = await context.Reviews.AnyAsync(r => r.GadgetId == gi.GadgetId && r.OrderDetailId == od.Id);
+        //                if (!isReviewed)
+        //                {
+        //                    GadgetReviewResponse gadgetReviewResponse = new GadgetReviewResponse()
+        //                    {
+        //                        Id = gi.GadgetId,
+        //                        Name = gi.Gadget.Name,
+        //                        ThumbnailUrl = gi.Gadget.ThumbnailUrl,
+        //                        Status = gi.Gadget.Status,
+        //                    }!;
+        //                    gadgetReviewResponses.Add(gadgetReviewResponse);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    int page = request.Page == null ? 0 : (int)request.Page;
+        //    int pageSize = request.PageSize == null ? 10 : (int)request.PageSize;
+        //    int skip = (page - 1) * pageSize;
 
-            var response = new PagedList<GadgetReviewResponse>(
-                gadgetReviewResponses.Skip(skip).Take(pageSize).ToList(),
-                page,
-                pageSize,
-                gadgetReviewResponses.Count
-            );
-            return Ok(response);
-        }
-        else
-        {
-            
-            return Ok();
-        }
+        //    var response = new PagedList<GadgetReviewResponse>(
+        //        gadgetReviewResponses.Skip(skip).Take(pageSize).ToList(),
+        //        page,
+        //        pageSize,
+        //        gadgetReviewResponses.Count
+        //    );
+        //    return Ok(response);
+        //}
+        //else
+        //{
+
+        //    return Ok();
+        //}
+        return Ok();
     }
 }

@@ -48,9 +48,10 @@ public class GetReviewsByGadgetId : ControllerBase
     {
         var query = context.Reviews
             .Include(r => r.SellerReply)
+            .Include(r => r.SellerOrderItem)
             .AsQueryable();
 
-        query.Where(r => r.GadgetId == gadgetId);
+        query.Where(r => r.SellerOrderItem.GadgetId == gadgetId);
 
         if (request.IsPositive != null)
         {

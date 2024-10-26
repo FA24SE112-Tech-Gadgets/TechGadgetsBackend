@@ -5,26 +5,26 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.OrderDetails.Mappers;
-using WebApi.Features.OrderDetails.Models;
+using WebApi.Features.SellerOrders.Mappers;
+using WebApi.Features.SellerOrders.Models;
 using WebApi.Services.Auth;
 
-namespace WebApi.Features.OrderDetails;
+namespace WebApi.Features.SellerOrders;
 
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Customer, Role.Seller)]
-public class GetOrderDetailById : ControllerBase
+public class GetSellerOrderById : ControllerBase
 {
     [HttpGet("seller-orders/{sellerOrderId}")]
     [Tags("Seller Orders")]
     [SwaggerOperation(
-        Summary = "Get Order Detail Information By SellerOrderId",
-        Description = "API is for get order detail information by sellerOrderId." +
+        Summary = "Get Seller Order Information By SellerOrderId",
+        Description = "API is for get seller order information by sellerOrderId." +
                             "<br>&nbsp; - Customer dùng API này để xem chi tiết sellerOrder của mình." +
                             "<br>&nbsp; - Seller dùng API này để xem chi tiết sellerOrder liên quan đến mình."
     )]
-    [ProducesResponseType(typeof(OrderDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SellerOrderDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -32,26 +32,26 @@ public class GetOrderDetailById : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var orderDetail = await context.SellerOrders
-            .Include(od => od.Order)
+        var sellerOrder = await context.SellerOrders
+            .Include(so => so.Order)
                 .ThenInclude(o => o.WalletTracking)
-            .Include(od => od.SellerOrderItems)
+            .Include(so => so.SellerOrderItems)
             .Include(so => so.CustomerInformation)
             .Include(so => so.SellerInformation)
-            .FirstOrDefaultAsync(od => od.Id == sellerOrderId);
+            .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
 
-        var customerInfo = orderDetail!.CustomerInformation;
-        var sellerInfo = orderDetail!.SellerInformation;
+        var customerInfo = sellerOrder!.CustomerInformation;
+        var sellerInfo = sellerOrder!.SellerInformation;
 
-        if (orderDetail == null)
+        if (sellerOrder == null)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEA_00)
-            .AddReason("orderDetail", "Không tìm thấy đơn hàng này.")
+            .AddReason("sellerOrder", "Không tìm thấy đơn hàng này.")
             .Build();
         }
 
-        if ((currentUser!.Role == Role.Customer && orderDetail!.Order.CustomerId != currentUser!.Customer!.Id) || (currentUser!.Role == Role.Seller && orderDetail!.SellerId != currentUser!.Seller!.Id)) {
+        if ((currentUser!.Role == Role.Customer && sellerOrder!.Order.CustomerId != currentUser!.Customer!.Id) || (currentUser!.Role == Role.Seller && sellerOrder!.SellerId != currentUser!.Seller!.Id)) {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
             .AddReason("orderDetail", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
@@ -59,28 +59,28 @@ public class GetOrderDetailById : ControllerBase
         }
         int totalQuantity = 0;
         int totalAmount = 0;
-        foreach (var gi in orderDetail.SellerOrderItems)
+        foreach (var soi in sellerOrder.SellerOrderItems)
         {
-            totalQuantity += gi.GadgetQuantity;
-            totalAmount += (gi.GadgetQuantity * gi.GadgetPrice);
+            totalQuantity += soi.GadgetQuantity;
+            totalAmount += (soi.GadgetQuantity * soi.GadgetPrice);
         }
 
         var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.SellerOrderId == sellerOrderId);
 
-        OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
+        SellerOrderDetailResponse sellerOrderResponse = new SellerOrderDetailResponse()
         {
-            Status = orderDetail.Status,
+            Status = sellerOrder.Status,
             CustomerInfo = customerInfo!.ToCustomerInfoResponse()!,
             SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
             TotalQuantity = totalQuantity,
             TotalAmount = totalAmount,
             OrderDetailId = sellerOrderId,
-            OrderDetailCreatedAt = orderDetail.CreatedAt,
-            WalletTrackingCreatedAt = orderDetail.Order.WalletTracking.CreatedAt,
-            OrderDetailUpdatedAt = (orderDetail.Status == SellerOrderStatus.Cancelled || orderDetail.Status == SellerOrderStatus.Success) ? orderDetail.UpdatedAt : null,
+            OrderDetailCreatedAt = sellerOrder.CreatedAt,
+            WalletTrackingCreatedAt = sellerOrder.Order.WalletTracking.CreatedAt,
+            OrderDetailUpdatedAt = (sellerOrder.Status == SellerOrderStatus.Cancelled || sellerOrder.Status == SellerOrderStatus.Success) ? sellerOrder.UpdatedAt : null,
             CancelledReason = walletTrackingCancel != null ? walletTrackingCancel.Reason : null,
         }!;
 
-        return Ok(orderDetailResponse);
+        return Ok(sellerOrderResponse);
     }
 }

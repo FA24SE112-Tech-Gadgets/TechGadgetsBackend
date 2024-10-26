@@ -9,14 +9,15 @@ public static class GadgetMapper
     {
         if (review != null)
         {
-            return new GadgetReviewResponse
-            {
-                Id = review.GadgetId,
-                Name = review.Gadget.Name,
-                ThumbnailUrl = review.Gadget.ThumbnailUrl,
-                Review = review.ToReviewResponse()!,
-                Status = review.Gadget.Status,
-            };
+            //return new GadgetReviewResponse
+            //{
+            //    Id = review.GadgetId,
+            //    Name = review.Gadget.Name,
+            //    ThumbnailUrl = review.Gadget.ThumbnailUrl,
+            //    Review = review.ToReviewResponse()!,
+            //    Status = review.Gadget.Status,
+            //};
+            return null;
         }
         return null;
     }
