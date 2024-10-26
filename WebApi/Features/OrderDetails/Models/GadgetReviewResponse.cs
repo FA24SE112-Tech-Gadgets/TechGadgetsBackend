@@ -1,6 +1,6 @@
 ﻿using WebApi.Data.Entities;
 
-namespace WebApi.Features.Reviews.Models;
+namespace WebApi.Features.OrderDetails.Models;
 
 public class GadgetReviewResponse
 {

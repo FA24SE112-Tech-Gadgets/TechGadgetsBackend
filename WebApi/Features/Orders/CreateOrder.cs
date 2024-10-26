@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -202,6 +203,7 @@ public class CreateOrder : ControllerBase
             await context.SellerInformation.AddAsync(sellerInformation);
 
             // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
+            createdAt = DateTime.UtcNow;
             SystemOrderDetailTracking systemOrderDetailTracking = new SystemOrderDetailTracking()
             {
                 SystemWalletId = systemWallet!.Id,
@@ -209,8 +211,8 @@ public class CreateOrder : ControllerBase
                 FromUserId = currentUser.Id,
                 ToUserId = seller.UserId,
                 Status = SystemOrderDetailTrackingStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt,
             }!;
             await context.SystemOrderDetailTrackings.AddAsync(systemOrderDetailTracking);
         }

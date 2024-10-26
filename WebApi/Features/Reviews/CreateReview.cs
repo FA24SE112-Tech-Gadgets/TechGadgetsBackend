@@ -111,6 +111,7 @@ public class CreateReview : ControllerBase
             isPositive = true;
         }
 
+        var createdAt = DateTime.UtcNow;
         Review review = new Review()
         {
             GadgetId = gadgetId,
@@ -120,8 +121,8 @@ public class CreateReview : ControllerBase
             Content = request.Content,
             IsPositive = isPositive,
             Status = ReviewStatus.Active,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
+            UpdatedAt = createdAt,
         }!;
 
         await context.Reviews.AddAsync(review);
