@@ -16,30 +16,32 @@ namespace WebApi.Features.OrderDetails;
 [RolesFilter(Role.Customer, Role.Seller)]
 public class GetOrderDetailById : ControllerBase
 {
-    [HttpGet("order-details/{orderDetailId}")]
-    [Tags("Order Details")]
+    [HttpGet("seller-orders/{sellerOrderId}")]
+    [Tags("Seller Orders")]
     [SwaggerOperation(
-        Summary = "Get Order Detail Information By OrderDetailId",
-        Description = "API is for get order detail information by orderDetailId." +
-                            "<br>&nbsp; - Customer dùng API này để xem chi tiết orderDetail của mình." +
-                            "<br>&nbsp; - Seller dùng API này để xem chi tiết orderDetail liên quan đến mình."
+        Summary = "Get Order Detail Information By SellerOrderId",
+        Description = "API is for get order detail information by sellerOrderId." +
+                            "<br>&nbsp; - Customer dùng API này để xem chi tiết sellerOrder của mình." +
+                            "<br>&nbsp; - Seller dùng API này để xem chi tiết sellerOrder liên quan đến mình."
     )]
     [ProducesResponseType(typeof(OrderDetailResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromRoute] Guid orderDetailId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var orderDetail = await context.OrderDetails
+        var orderDetail = await context.SellerOrders
             .Include(od => od.Order)
                 .ThenInclude(o => o.WalletTracking)
-            .Include(od => od.GadgetInformation)
-            .FirstOrDefaultAsync(od => od.Id == orderDetailId);
+            .Include(od => od.SellerOrderItems)
+            .Include(so => so.CustomerInformation)
+            .Include(so => so.SellerInformation)
+            .FirstOrDefaultAsync(od => od.Id == sellerOrderId);
 
-        var customerInfo = await context.CustomerInformation.FirstOrDefaultAsync(ci => ci.OrderDetailId == orderDetailId);
-        var sellerInfo = await context.SellerInformation.FirstOrDefaultAsync(si => si.OrderDetailId == orderDetailId);
+        var customerInfo = orderDetail!.CustomerInformation;
+        var sellerInfo = orderDetail!.SellerInformation;
 
         if (orderDetail == null)
         {
@@ -57,13 +59,13 @@ public class GetOrderDetailById : ControllerBase
         }
         int totalQuantity = 0;
         int totalAmount = 0;
-        foreach (var gi in orderDetail.GadgetInformation)
+        foreach (var gi in orderDetail.SellerOrderItems)
         {
             totalQuantity += gi.GadgetQuantity;
             totalAmount += (gi.GadgetQuantity * gi.GadgetPrice);
         }
 
-        var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.OrderDetailId == orderDetailId);
+        var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.SellerOrderId == sellerOrderId);
 
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse()
         {
@@ -72,10 +74,10 @@ public class GetOrderDetailById : ControllerBase
             SellerInfo = sellerInfo!.ToSellerInfoResponse()!,
             TotalQuantity = totalQuantity,
             TotalAmount = totalAmount,
-            OrderDetailId = orderDetailId,
+            OrderDetailId = sellerOrderId,
             OrderDetailCreatedAt = orderDetail.CreatedAt,
             WalletTrackingCreatedAt = orderDetail.Order.WalletTracking.CreatedAt,
-            OrderDetailUpdatedAt = (orderDetail.Status == OrderDetailStatus.Cancelled || orderDetail.Status == OrderDetailStatus.Success) ? orderDetail.UpdatedAt : null,
+            OrderDetailUpdatedAt = (orderDetail.Status == SellerOrderStatus.Cancelled || orderDetail.Status == SellerOrderStatus.Success) ? orderDetail.UpdatedAt : null,
             CancelledReason = walletTrackingCancel != null ? walletTrackingCancel.Reason : null,
         }!;
 

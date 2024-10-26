@@ -54,7 +54,7 @@ public class GetGadgetsReviews : ControllerBase
         if (currentUser!.Role == Role.Customer)
         {
             var query = context.Orders
-            .Include(o => o.OrderDetails)
+            .Include(o => o.SellerOrders)
                 .ThenInclude(od => od.Reviews)
             .Where(o => o.CustomerId == currentUser!.Customer!.Id)
             .SelectMany(o => o.OrderDetails)
