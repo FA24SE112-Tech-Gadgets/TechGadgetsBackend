@@ -39,7 +39,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<SpecificationKey> SpecificationKeys { get; set; }
     public DbSet<SpecificationUnit> SpecificationUnits { get; set; }
     public DbSet<SpecificationValue> SpecificationValues { get; set; }
-    public DbSet<SystemOrderDetailTracking> SystemOrderDetailTrackings { get; set; }
+    public DbSet<SystemSellerOrderTracking> SystemSellerOrderTrackings { get; set; }
     public DbSet<SystemWallet> SystemWallets { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserVerify> UserVerifies { get; set; }

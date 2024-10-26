@@ -1,6 +1,6 @@
-﻿namespace WebApi.Features.OrderDetails.Models;
+﻿namespace WebApi.Features.SellerOrders.Models;
 
-public class GadgetInformationOrderDetailResponse
+public class SellerOrderItemInItemResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;

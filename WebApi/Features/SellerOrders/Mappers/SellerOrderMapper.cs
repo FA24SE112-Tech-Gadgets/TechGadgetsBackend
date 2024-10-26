@@ -1,33 +1,31 @@
 ﻿using WebApi.Data.Entities;
-using WebApi.Features.OrderDetails.Models;
+using WebApi.Features.SellerOrders.Models;
 
-namespace WebApi.Features.OrderDetails.Mappers;
+namespace WebApi.Features.SellerOrders.Mappers;
 
-public static class OrderDetailMapper
+public static class SellerOrderMapper
 {
-    private static GadgetInformationOrderDetailResponse? ToGadgetInformationOrderDetailResponse(this GadgetInformation gadgetInformation)
+    private static SellerOrderItemInItemResponse? ToGadgetInformationOrderDetailResponse(this SellerOrderItem gadgetInformation)
     {
         if (gadgetInformation != null)
         {
-            return new GadgetInformationOrderDetailResponse
+            return new SellerOrderItemInItemResponse
             {
                 Id = gadgetInformation.GadgetId,
-                Name = gadgetInformation.GadgetName,
                 Price = gadgetInformation.GadgetPrice,
-                ThumbnailUrl = gadgetInformation.GadgetThumbnailUrl,
                 Quantity = gadgetInformation.GadgetQuantity,
             };
         }
         return null;
     }
 
-    private static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformations(this ICollection<GadgetInformation> gadgetInformations)
+    private static List<SellerOrderItemInItemResponse>? ToListGadgetInformations(this ICollection<SellerOrderItem> gadgetInformations)
     {
         // Kiểm tra nếu gadgetInformations không null và có ít nhất một phần tử
         if (gadgetInformations.Count() > 0)
         {
             // Lấy phần tử đầu tiên và chuyển đổi nó thành GadgetInformationOrderDetailResponse, rồi đưa vào một danh sách mới
-            return new List<GadgetInformationOrderDetailResponse>
+            return new List<SellerOrderItemInItemResponse>
             {
                 gadgetInformations.First().ToGadgetInformationOrderDetailResponse()!
             }!;
@@ -37,49 +35,45 @@ public static class OrderDetailMapper
         return null;
     }
 
-    public static List<GadgetInformationOrderDetailResponse>? ToListGadgetInformationsDetail(this ICollection<GadgetInformation> gadgetInformations)
+    public static List<SellerOrderItemInItemResponse>? ToListSellerOrderItemsDetail(this ICollection<SellerOrderItem> gadgetInformations)
     {
         if (gadgetInformations != null && gadgetInformations.Count > 0)
         {
             return gadgetInformations
-            .Select(gi => new GadgetInformationOrderDetailResponse
+            .Select(gi => new SellerOrderItemInItemResponse
             {
                 Id = gi.GadgetId,
-                Name = gi.GadgetName,
                 Price = gi.GadgetPrice,
                 Quantity = gi.GadgetQuantity,
-                ThumbnailUrl = gi.GadgetThumbnailUrl,
             })
             .ToList();
         }
         return null;
     }
 
-    public static CustomerOrderDetailItemResponse? ToCustomerOrderDetailItemResponse(this OrderDetail orderDetail)
+    public static CustomerSellerOrderItemResponse? ToCustomerOrderDetailItemResponse(this SellerOrder orderDetail)
     {
         if (orderDetail != null)
         {
-            return new CustomerOrderDetailItemResponse
+            return new CustomerSellerOrderItemResponse
             {
                 Id = orderDetail.Id,
                 OrderId = orderDetail.OrderId,
-                Amount = orderDetail.Amount,
                 Status = orderDetail.Status,
-                Gadgets = orderDetail.GadgetInformation.ToListGadgetInformations()!,
+                Gadgets = orderDetail.SellerOrderItems.ToListGadgetInformations()!,
                 CreatedAt = orderDetail.CreatedAt,
             };
         }
         return null;
     }
 
-    public static SellerOrderDetailItemResponse? ToSellerOrderDetailItemResponse(this OrderDetail orderDetail)
+    public static SellerOrderResponse? ToSellerOrderDetailItemResponse(this SellerOrder orderDetail)
     {
         if (orderDetail != null)
         {
-            return new SellerOrderDetailItemResponse
+            return new SellerOrderResponse
             {
                 Id = orderDetail.Id,
-                Amount = orderDetail.Amount,
                 Status = orderDetail.Status,
                 CreatedAt = orderDetail.CreatedAt,
             };

@@ -2,7 +2,7 @@
 
 namespace WebApi.Data.Entities;
 
-public class SystemOrderDetailTracking
+public class SystemSellerOrderTracking
 {
     public Guid Id { get; set; }
     public Guid SystemWalletId { get; set; }
@@ -14,7 +14,7 @@ public class SystemOrderDetailTracking
     [ForeignKey(nameof(ToUser))]
     public Guid ToUserId { get; set; }
 
-    public SystemOrderDetailTrackingStatus Status { get; set; }
+    public SystemSellerOrderTrackingStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
@@ -24,7 +24,7 @@ public class SystemOrderDetailTracking
     public User ToUser { get; set; } = default!;
 }
 
-public enum SystemOrderDetailTrackingStatus
+public enum SystemSellerOrderTrackingStatus
 {
     Refunded, Paid, Pending
 }
