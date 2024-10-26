@@ -36,7 +36,7 @@ public class GetGadgetsReviews : ControllerBase
     [HttpGet("reviews/gadgets")]
     [Tags("Reviews")]
     [SwaggerOperation(
-        Summary = "Get List Gadgets Need Review/Reviewed/Need Reply/Replied",
+        Summary = "Customer/Seller Get Their List Gadgets Need Review/Reviewed/Need Reply/Replied",
         Description = "API is for get list of gadgets need review/reviewed/need reply/replied base on Customer/Seller. Note:" +
                             "<br>&nbsp; - FilterBy: 'NotReview', 'Reviewed', 'NotReply', 'Replied'. Default: 'NotReview'" +
                             "<br>&nbsp; - Dùng API này để lấy ra danh sách các sản phầm chưa đánh giá/đã đánh giá (Customer) và chưa phản hồi/đã phản hồi (Seller)." +
