@@ -14,7 +14,7 @@ namespace WebApi.Features.Gadgets;
 [ApiController]
 public class GetGadgetByCategoryId : ControllerBase
 {
-    [HttpGet("gadgets/category/{categoryId}")]
+    [HttpGet("gadgets/category/old/{categoryId}")]
     [Tags("Gadgets")]
     [SwaggerOperation(
         Summary = "Get List Gadgets By CategoryId",
