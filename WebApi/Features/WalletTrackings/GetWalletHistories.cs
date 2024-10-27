@@ -14,7 +14,7 @@ namespace WebApi.Features.WalletTrackings;
 
 [ApiController]
 [JwtValidation]
-[RolesFilter(Role.Customer)]
+[RolesFilter(Role.Customer, Role.Seller)]
 public class GetWalletHistories : ControllerBase
 {
     public new class Request : PagedRequest

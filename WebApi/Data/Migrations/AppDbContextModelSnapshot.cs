@@ -218,15 +218,15 @@ namespace WebApi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -235,8 +235,6 @@ namespace WebApi.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderDetailId");
 
                     b.ToTable("CustomerInformation");
                 });
@@ -435,41 +433,6 @@ namespace WebApi.Data.Migrations
                     b.ToTable("GadgetImages");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.GadgetInformation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("GadgetName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("GadgetPrice")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GadgetQuantity")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("GadgetThumbnailUrl")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GadgetId");
-
-                    b.HasIndex("OrderDetailId");
-
-                    b.ToTable("GadgetInformation");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.KeywordHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -534,6 +497,10 @@ namespace WebApi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
@@ -560,40 +527,6 @@ namespace WebApi.Data.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SellerId");
-
-                    b.ToTable("OrderDetails");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
                 {
                     b.Property<Guid>("Id")
@@ -610,14 +543,14 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsPositive")
                         .HasColumnType("boolean");
 
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
+
+                    b.Property<Guid>("SellerOrderItemId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -630,7 +563,8 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("GadgetId");
+                    b.HasIndex("SellerOrderItemId")
+                        .IsUnique();
 
                     b.ToTable("Reviews");
                 });
@@ -789,8 +723,8 @@ namespace WebApi.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("OrderDetailId")
-                        .HasColumnType("uuid");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -805,11 +739,77 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderDetailId");
-
                     b.HasIndex("SellerId");
 
                     b.ToTable("SellerInformation");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CustomerInformationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SellerInformationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerInformationId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("SellerId");
+
+                    b.HasIndex("SellerInformationId");
+
+                    b.ToTable("SellerOrders");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GadgetId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GadgetPrice")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GadgetQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("SellerOrderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GadgetId");
+
+                    b.HasIndex("SellerOrderId");
+
+                    b.ToTable("SellerOrderItems");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
@@ -922,7 +922,7 @@ namespace WebApi.Data.Migrations
                     b.ToTable("SpecificationValues");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SystemOrderDetailTracking", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SystemSellerOrderTracking", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -934,7 +934,7 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("FromUserId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("OrderDetailId")
+                    b.Property<Guid>("SellerOrderId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Status")
@@ -954,14 +954,14 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("FromUserId");
 
-                    b.HasIndex("OrderDetailId")
+                    b.HasIndex("SellerOrderId")
                         .IsUnique();
 
                     b.HasIndex("SystemWalletId");
 
                     b.HasIndex("ToUserId");
 
-                    b.ToTable("SystemOrderDetailTrackings");
+                    b.ToTable("SystemSellerOrderTrackings");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SystemWallet", b =>
@@ -1070,9 +1070,6 @@ namespace WebApi.Data.Migrations
                     b.Property<DateTime?>("DepositedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("OrderDetailId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("OrderId")
                         .HasColumnType("uuid");
 
@@ -1087,6 +1084,9 @@ namespace WebApi.Data.Migrations
 
                     b.Property<DateTime?>("RefundedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("SellerOrderId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("SellerPaidAt")
                         .HasColumnType("timestamp with time zone");
@@ -1104,10 +1104,10 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderDetailId")
+                    b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.HasIndex("OrderId")
+                    b.HasIndex("SellerOrderId")
                         .IsUnique();
 
                     b.HasIndex("WalletId");
@@ -1216,15 +1216,7 @@ namespace WebApi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
-
-                    b.Navigation("OrderDetail");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
@@ -1336,25 +1328,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Gadget");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.GadgetInformation", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("GadgetInformation")
-                        .HasForeignKey("GadgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithMany("GadgetInformation")
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gadget");
-
-                    b.Navigation("OrderDetail");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.KeywordHistory", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
@@ -1399,25 +1372,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Order", "Order")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Data.Entities.Seller", "Seller")
-                        .WithMany("OrderDetails")
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Seller");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.Customer", "Customer")
@@ -1426,15 +1380,15 @@ namespace WebApi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("Reviews")
-                        .HasForeignKey("GadgetId")
+                    b.HasOne("WebApi.Data.Entities.SellerOrderItem", "SellerOrderItem")
+                        .WithOne("Review")
+                        .HasForeignKey("WebApi.Data.Entities.Review", "SellerOrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Gadget");
+                    b.Navigation("SellerOrderItem");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SearchAIVector", b =>
@@ -1472,21 +1426,67 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerInformation", b =>
                 {
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("WebApi.Data.Entities.Seller", "Seller")
                         .WithMany("SellerInformation")
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("OrderDetail");
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrder", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.CustomerInformation", "CustomerInformation")
+                        .WithMany("SellerOrders")
+                        .HasForeignKey("CustomerInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.Order", "Order")
+                        .WithMany("SellerOrders")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.Seller", "Seller")
+                        .WithMany("SellerOrders")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.SellerInformation", "SellerInformation")
+                        .WithMany("SellerOrders")
+                        .HasForeignKey("SellerInformationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CustomerInformation");
+
+                    b.Navigation("Order");
 
                     b.Navigation("Seller");
+
+                    b.Navigation("SellerInformation");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrderItem", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
+                        .WithMany("SellerOrderItems")
+                        .HasForeignKey("GadgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Data.Entities.SellerOrder", "SellerOrder")
+                        .WithMany("SellerOrderItems")
+                        .HasForeignKey("SellerOrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gadget");
+
+                    b.Navigation("SellerOrder");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
@@ -1555,7 +1555,7 @@ namespace WebApi.Data.Migrations
                     b.Navigation("SpecificationUnit");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.SystemOrderDetailTracking", b =>
+            modelBuilder.Entity("WebApi.Data.Entities.SystemSellerOrderTracking", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.User", "FromUser")
                         .WithMany()
@@ -1563,9 +1563,9 @@ namespace WebApi.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
+                    b.HasOne("WebApi.Data.Entities.SellerOrder", "SellerOrder")
                         .WithOne("SystemOrderDetailTracking")
-                        .HasForeignKey("WebApi.Data.Entities.SystemOrderDetailTracking", "OrderDetailId")
+                        .HasForeignKey("WebApi.Data.Entities.SystemSellerOrderTracking", "SellerOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1583,7 +1583,7 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("FromUser");
 
-                    b.Navigation("OrderDetail");
+                    b.Navigation("SellerOrder");
 
                     b.Navigation("SystemWallet");
 
@@ -1614,13 +1614,13 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.WalletTracking", b =>
                 {
-                    b.HasOne("WebApi.Data.Entities.OrderDetail", "OrderDetail")
-                        .WithOne("WalletTracking")
-                        .HasForeignKey("WebApi.Data.Entities.WalletTracking", "OrderDetailId");
-
                     b.HasOne("WebApi.Data.Entities.Order", "Order")
                         .WithOne("WalletTracking")
                         .HasForeignKey("WebApi.Data.Entities.WalletTracking", "OrderId");
+
+                    b.HasOne("WebApi.Data.Entities.SellerOrder", "SellerOrder")
+                        .WithOne("WalletTracking")
+                        .HasForeignKey("WebApi.Data.Entities.WalletTracking", "SellerOrderId");
 
                     b.HasOne("WebApi.Data.Entities.Wallet", "Wallet")
                         .WithMany("WalletTrackings")
@@ -1630,7 +1630,7 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("Order");
 
-                    b.Navigation("OrderDetail");
+                    b.Navigation("SellerOrder");
 
                     b.Navigation("Wallet");
                 });
@@ -1676,6 +1676,11 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Reviews");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.CustomerInformation", b =>
+                {
+                    b.Navigation("SellerOrders");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.Gadget", b =>
                 {
                     b.Navigation("CartGadgets");
@@ -1688,9 +1693,7 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("GadgetImages");
 
-                    b.Navigation("GadgetInformation");
-
-                    b.Navigation("Reviews");
+                    b.Navigation("SellerOrderItems");
 
                     b.Navigation("SpecificationValues");
                 });
@@ -1702,20 +1705,10 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
                 {
-                    b.Navigation("OrderDetails");
+                    b.Navigation("SellerOrders");
 
                     b.Navigation("WalletTracking")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.OrderDetail", b =>
-                {
-                    b.Navigation("GadgetInformation");
-
-                    b.Navigation("SystemOrderDetailTracking")
-                        .IsRequired();
-
-                    b.Navigation("WalletTracking");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
@@ -1734,9 +1727,9 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("Gadgets");
 
-                    b.Navigation("OrderDetails");
-
                     b.Navigation("SellerInformation");
+
+                    b.Navigation("SellerOrders");
 
                     b.Navigation("SellerReplies");
                 });
@@ -1744,6 +1737,26 @@ namespace WebApi.Data.Migrations
             modelBuilder.Entity("WebApi.Data.Entities.SellerApplication", b =>
                 {
                     b.Navigation("BillingMailApplications");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerInformation", b =>
+                {
+                    b.Navigation("SellerOrders");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrder", b =>
+                {
+                    b.Navigation("SellerOrderItems");
+
+                    b.Navigation("SystemOrderDetailTracking")
+                        .IsRequired();
+
+                    b.Navigation("WalletTracking");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SellerOrderItem", b =>
+                {
+                    b.Navigation("Review");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationKey", b =>

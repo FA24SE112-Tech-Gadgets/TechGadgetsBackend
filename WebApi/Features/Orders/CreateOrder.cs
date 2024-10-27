@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -61,6 +62,14 @@ public class CreateOrder : ControllerBase
             .Build();
         }
 
+        if (currentUser!.Customer!.PhoneNumber == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("customers", "Người dùng chưa nhập số điện thoại nhận hàng.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -97,7 +106,7 @@ public class CreateOrder : ControllerBase
             CustomerId = currentUser!.Customer!.Id,
         }!;
 
-        List<OrderDetail> orderDetails = new List<OrderDetail>()!;
+        List<SellerOrder> sellerOrders = new List<SellerOrder>()!;
 
         //Chia order theo từng seller
         foreach (var seller in sellers)
@@ -111,20 +120,30 @@ public class CreateOrder : ControllerBase
                 .Build();
             }
 
-            OrderDetail orderDetail = new OrderDetail()
+            var customerInformation = await context.CustomerInformation
+                .OrderByDescending(ci => ci.CreatedAt)
+                .FirstOrDefaultAsync(ci => ci.CustomerId == currentUser!.Customer!.Id);
+
+            var sellerInformation = await context.SellerInformation
+                .OrderByDescending(ci => ci.CreatedAt)
+                .FirstOrDefaultAsync(ci => ci.SellerId == seller.Id);
+
+            var createdAt = DateTime.UtcNow;
+            SellerOrder sellerOrder = new SellerOrder()
             {
                 SellerId = seller.Id,
-                Status = OrderDetailStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CustomerInformation = customerInformation!,
+                SellerInformation = sellerInformation!,
+                Status = SellerOrderStatus.Pending,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt,
             }!;
-            List<GadgetInformation> gadgetInformations = new List<GadgetInformation>()!;
-            int orderDetailAmount = 0;
+            List<SellerOrderItem> sellerOrderItems = new List<SellerOrderItem>()!;
             foreach (var cartGadget in listCartGadgets)
             {
                 if (cartGadget.Gadget.SellerId == seller.Id)
                 {
-                    GadgetInformation gadgetInformation = cartGadget.Gadget.ToGadgetInformation()!;
+                    SellerOrderItem sellerOrderItem = cartGadget.Gadget.ToGadgetInformation()!;
 
                     //Validate gadget status inactive
                     if (cartGadget.Gadget.Status != GadgetStatus.Active)
@@ -154,11 +173,8 @@ public class CreateOrder : ControllerBase
                     }
                     cartGadget.Gadget.Quantity -= cartGadget.Quantity;
 
-                    gadgetInformation.GadgetQuantity = cartGadget.Quantity;
-                    gadgetInformations.Add(gadgetInformation);
-
-                    //Tính tổng giá tiền orderDetail
-                    orderDetailAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    sellerOrderItem.GadgetQuantity = cartGadget.Quantity;
+                    sellerOrderItems.Add(sellerOrderItem);
 
                     //Tính tổng giá tiền order
                     totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
@@ -167,46 +183,24 @@ public class CreateOrder : ControllerBase
                     context.CartGadgets.Remove(cartGadget);
                 }
             }
-            orderDetail.Amount = orderDetailAmount;
-            orderDetail.GadgetInformation = gadgetInformations;
-            orderDetails.Add(orderDetail);
-
-            //Tạo customerInfo để lưu cứng
-            CustomerInformation customerInformation = new CustomerInformation()
-            {
-                CustomerId = currentUser.Customer.Id,
-                FullName = currentUser.Customer.FullName,
-                Address = currentUser.Customer.Address,
-                PhoneNumber = currentUser.Customer.PhoneNumber!,
-                OrderDetail = orderDetail,
-            }!;
-            await context.CustomerInformation.AddAsync(customerInformation);
-
-            //Tạo sellerInfo để lưu cứng
-            SellerInformation sellerInformation = new SellerInformation()
-            {
-                SellerId = seller.Id,
-                ShopName = seller.ShopName,
-                PhoneNumber = seller.PhoneNumber,
-                Address = seller.ShopAddress,
-                OrderDetail = orderDetail,
-            }!;
-            await context.SellerInformation.AddAsync(sellerInformation);
+            sellerOrder.SellerOrderItems = sellerOrderItems;
+            sellerOrders.Add(sellerOrder);
 
             // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
-            SystemOrderDetailTracking systemOrderDetailTracking = new SystemOrderDetailTracking()
+            createdAt = DateTime.UtcNow;
+            SystemSellerOrderTracking systemOrderDetailTracking = new SystemSellerOrderTracking()
             {
                 SystemWalletId = systemWallet!.Id,
-                OrderDetail = orderDetail,
+                SellerOrder = sellerOrder,
                 FromUserId = currentUser.Id,
                 ToUserId = seller.UserId,
-                Status = SystemOrderDetailTrackingStatus.Pending,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                Status = SystemSellerOrderTrackingStatus.Pending,
+                CreatedAt = createdAt,
+                UpdatedAt = createdAt,
             }!;
-            await context.SystemOrderDetailTrackings.AddAsync(systemOrderDetailTracking);
+            await context.SystemSellerOrderTrackings.AddAsync(systemOrderDetailTracking);
         }
-        order.OrderDetails = orderDetails;
+        order.SellerOrders = sellerOrders;
 
         //Check số dư ví coi đủ để thanh toán không
         if (userWallet!.Amount == 0 || totalAmount > userWallet!.Amount)
@@ -237,7 +231,7 @@ public class CreateOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
 
         //Save tất cả mọi thứ vô DB
-        if ((orderDetails.Count > 0 && totalAmount > 0) || listCartGadgets.Count > 0)
+        if ((sellerOrders.Count > 0 && totalAmount > 0) || listCartGadgets.Count > 0)
         {
             await context.SaveChangesAsync();
         } else

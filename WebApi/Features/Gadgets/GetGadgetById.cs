@@ -35,7 +35,6 @@ public class GetGadgetById : ControllerBase
                                         .ThenInclude(sv => sv.SpecificationUnit)
                                     .Include(g => g.GadgetDescriptions)
                                     .Include(g => g.GadgetImages)
-                                    .Include(g => g.Reviews)
                                     .Include(g => g.FavoriteGadgets)
                                     .FirstOrDefaultAsync(g => g.Id == id);
 

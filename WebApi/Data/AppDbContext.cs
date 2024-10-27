@@ -23,23 +23,23 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<GadgetFilterOption> GadgetFilterOptions { get; set; }
     public DbSet<GadgetHistory> GadgetHistories { get; set; }
     public DbSet<GadgetImage> GadgetImages { get; set; }
-    public DbSet<GadgetInformation> GadgetInformation { get; set; }
     public DbSet<KeywordHistory> KeywordHistories { get; set; }
     public DbSet<Manager> Managers { get; set; }
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<SearchAI> SearchAIs { get; set; }
     public DbSet<SearchAIVector> SearchAIVectors { get; set; }
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<SellerApplication> SellerApplications { get; set; }
     public DbSet<SellerInformation> SellerInformation { get; set; }
+    public DbSet<SellerOrder> SellerOrders { get; set; }
+    public DbSet<SellerOrderItem> SellerOrderItems { get; set; }
     public DbSet<SellerReply> SellerReplies { get; set; }
     public DbSet<SpecificationKey> SpecificationKeys { get; set; }
     public DbSet<SpecificationUnit> SpecificationUnits { get; set; }
     public DbSet<SpecificationValue> SpecificationValues { get; set; }
-    public DbSet<SystemOrderDetailTracking> SystemOrderDetailTrackings { get; set; }
+    public DbSet<SystemSellerOrderTracking> SystemSellerOrderTrackings { get; set; }
     public DbSet<SystemWallet> SystemWallets { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserVerify> UserVerifies { get; set; }
