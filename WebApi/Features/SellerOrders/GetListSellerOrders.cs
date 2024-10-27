@@ -52,58 +52,67 @@ public class GetListSellerOrders : ControllerBase
 
         if (currentUser!.Role == Role.Seller)
         {
-            query = query.Where(od => od.SellerId == currentUser.Seller!.Id);
+            query = query
+                .Include(so => so.SellerOrderItems)
+                .Where(od => od.SellerId == currentUser.Seller!.Id);
         } else
         {
             query = query
-                .Include(od => od.Order)
-                .Include(od => od.Seller)
-                .Include(od => od.SellerOrderItems)
+                .Include(so => so.Order)
+                .Include(so => so.Seller)
+                .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.Gadget)
                 .Include(so => so.SellerInformation)
                 .Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
         }
 
         if (request.Status != null)
         {
-            query = query.Where(od => od.Status == request.Status);
+            query = query.Where(so => so.Status == request.Status);
         }
 
         if (request.SortByDate == SortByDate.DESC)
         {
             // Thêm sắp xếp theo CreatedAt (giảm dần, gần nhất trước)
-            query = query.OrderByDescending(od => od.CreatedAt);
+            query = query.OrderByDescending(so => so.CreatedAt);
         }
         else
         {
-            query = query.OrderBy(od => od.CreatedAt);
+            query = query.OrderBy(so => so.CreatedAt);
         }
 
-        var orderDetails = await query
+        var sellerOrders = await query
             .ToPagedListAsync(request);
 
         if (currentUser!.Role == Role.Seller)
         {
             var orderDetailsResponseList = new PagedList<SellerOrderResponse>(
-                orderDetails.Items.Select(od => od.ToSellerOrderDetailItemResponse()!).ToList(),
-                orderDetails.Page,
-                orderDetails.PageSize,
-                orderDetails.TotalItems
+                sellerOrders.Items.Select(so => so.ToSellerSellerOrderItemResponse()!).ToList(),
+                sellerOrders.Page,
+                sellerOrders.PageSize,
+                sellerOrders.TotalItems
             );
             return Ok(orderDetailsResponseList);
         } else
         {
             List<CustomerSellerOrderItemResponse> customerOrderDetailItemResponses = new List<CustomerSellerOrderItemResponse>()!;
-            foreach (var od in orderDetails.Items) {
-                var sellerInfo = od.SellerInformation;
-                var sodir = od.ToCustomerOrderDetailItemResponse()!;
-                sodir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
-                customerOrderDetailItemResponses.Add(sodir);
+            foreach (var so in sellerOrders.Items) {
+                var sellerInfo = so.SellerInformation;
+                var csoir = so.ToCustomerSellerOrderItemResponse()!;
+                csoir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
+                int totalAmount = 0;
+                foreach (var g in csoir.Gadgets)
+                {
+                    totalAmount += (g.Price * g.Quantity);
+                }
+                csoir.Amount = totalAmount;
+                customerOrderDetailItemResponses.Add(csoir);
             }
             var orderDetailsResponseList = new PagedList<CustomerSellerOrderItemResponse>(
                 customerOrderDetailItemResponses,
-                orderDetails.Page,
-                orderDetails.PageSize,
-                orderDetails.TotalItems
+                sellerOrders.Page,
+                sellerOrders.PageSize,
+                sellerOrders.TotalItems
             );
             return Ok(orderDetailsResponseList);
         }

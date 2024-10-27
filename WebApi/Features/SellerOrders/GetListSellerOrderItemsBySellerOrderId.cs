@@ -17,13 +17,14 @@ namespace WebApi.Features.SellerOrders;
 [RolesFilter(Role.Customer, Role.Seller)]
 public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
 {
-    [HttpGet("seller-order/{sellerOrderId}/gadgets")]
+    [HttpGet("seller-order/{sellerOrderId}/items")]
     [Tags("Seller Orders")]
     [SwaggerOperation(
-        Summary = "Get List Gadgets In Seller Order By SellerOrderId",
-        Description = "API is for get list gadgets in sellerOrder by sellerOrderId." +
+        Summary = "Get List Items In Seller Order By SellerOrderId",
+        Description = "API is for get list items in sellerOrder by sellerOrderId." +
                             "<br>&nbsp; - Customer dùng API này để xem danh sách gadgets có trong sellerOrder của mình." +
-                            "<br>&nbsp; - Seller dùng API này để xem danh sách gadgets có trong sellerOrder liên quan đến mình."
+                            "<br>&nbsp; - Seller dùng API này để xem danh sách gadgets có trong sellerOrder liên quan đến mình." +
+                            "<br>&nbsp; - SellerOrderItemId khác với GadgetId."
     )]
     [ProducesResponseType(typeof(PagedList<SellerOrderItemInItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -34,8 +35,10 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
         var currentUser = await currentUserService.GetCurrentUser();
 
         var sellerOrder = await context.SellerOrders
-            .Include(od => od.Order)
-            .FirstOrDefaultAsync(od => od.Id == sellerOrderId);
+            .Include(so => so.Order)
+            .Include(so => so.SellerOrderItems)
+                .ThenInclude(soi => soi.Gadget)
+            .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
 
         if (sellerOrder == null)
         {
