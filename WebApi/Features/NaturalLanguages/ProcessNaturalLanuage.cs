@@ -46,8 +46,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
         var result = new
         {
-            query,
-            d = "xyz"
+            query
         };
         return Ok(result);
     }
