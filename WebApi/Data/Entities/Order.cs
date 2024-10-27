@@ -7,5 +7,5 @@ public class Order
 
     public Customer Customer { get; set; } = default!;
     public WalletTracking WalletTracking { get; set; } = default!;
-    public ICollection<OrderDetail> OrderDetails { get; set; } = [];
+    public ICollection<SellerOrder> SellerOrders { get; set; } = [];
 }

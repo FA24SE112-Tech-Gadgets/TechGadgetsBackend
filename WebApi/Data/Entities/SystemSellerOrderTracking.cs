@@ -2,11 +2,11 @@
 
 namespace WebApi.Data.Entities;
 
-public class SystemOrderDetailTracking
+public class SystemSellerOrderTracking
 {
     public Guid Id { get; set; }
     public Guid SystemWalletId { get; set; }
-    public Guid OrderDetailId { get; set; }
+    public Guid SellerOrderId { get; set; }
 
     [ForeignKey(nameof(FromUser))]
     public Guid FromUserId { get; set; }
@@ -14,17 +14,17 @@ public class SystemOrderDetailTracking
     [ForeignKey(nameof(ToUser))]
     public Guid ToUserId { get; set; }
 
-    public SystemOrderDetailTrackingStatus Status { get; set; }
+    public SystemSellerOrderTrackingStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
     public SystemWallet SystemWallet { get; set; } = default!;
-    public OrderDetail OrderDetail { get; set; } = default!;
+    public SellerOrder SellerOrder { get; set; } = default!;
     public User FromUser { get; set; } = default!;
     public User ToUser { get; set; } = default!;
 }
 
-public enum SystemOrderDetailTrackingStatus
+public enum SystemSellerOrderTrackingStatus
 {
     Refunded, Paid, Pending
 }
