@@ -84,7 +84,7 @@ public static class UserSeed
             Wallet = new Wallet
             {
                 Id = Guid.Parse("62fa1037-79b4-48e2-ac49-9bbf69d41420"),
-                Amount = 0,
+                Amount = 1000000000,
             }
         },
         new User {
@@ -109,7 +109,7 @@ public static class UserSeed
             Wallet = new Wallet
             {
                 Id = Guid.Parse("43e2028e-e7a7-46cb-94bd-fcbc28d66a48"),
-                Amount = 0,
+                Amount = 1000000000,
             }
         },
         new User {

@@ -49,7 +49,6 @@ public static class ApplyMigrationsExtensions
             await context.SaveChangesAsync();
         }
 
-
         if (!await context.SellerApplications.AnyAsync())
         {
             foreach (var application in SellerApplicationSeed.Default)
@@ -110,6 +109,16 @@ public static class ApplyMigrationsExtensions
             foreach (var specificationUnit in SpecificationUnitSeed.Default)
             {
                 context.SpecificationUnits.Add(specificationUnit);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.GadgetFilters.AnyAsync())
+        {
+            foreach (var gadgetFilter in GadgetFilterSeed.Default)
+            {
+                gadgetFilter.Vector = await embeddingService.GetEmbedding(gadgetFilter.Value);
+                context.GadgetFilters.Add(gadgetFilter);
             }
             await context.SaveChangesAsync();
         }
