@@ -20,7 +20,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Gadget> Gadgets { get; set; }
     public DbSet<GadgetDescription> GadgetDescriptions { get; set; }
     public DbSet<GadgetFilter> GadgetFilters { get; set; }
-    public DbSet<GadgetFilterOption> GadgetFilterOptions { get; set; }
     public DbSet<GadgetHistory> GadgetHistories { get; set; }
     public DbSet<GadgetImage> GadgetImages { get; set; }
     public DbSet<KeywordHistory> KeywordHistories { get; set; }
