@@ -1,11 +1,15 @@
-﻿namespace WebApi.Data.Entities;
+﻿using Pgvector;
+
+namespace WebApi.Data.Entities;
 
 public class GadgetFilter
 {
     public Guid Id { get; set; }
-    public Guid CategoryId { get; set; }
-    public string Name { get; set; } = default!;
+    public Guid SpecificationKeyId { get; set; }
+    public Guid? SpecificationUnitId { get; set; }
+    public string Value { get; set; } = default!;
+    public Vector Vector { get; set; } = default!;
 
-    public Category Category { get; set; } = default!;
-    public ICollection<GadgetFilterOption> GadgetFilterOptions { get; set; } = [];
+    public SpecificationKey SpecificationKey { get; set; } = default!;
+    public SpecificationUnit? SpecificationUnit { get; set; }
 }
