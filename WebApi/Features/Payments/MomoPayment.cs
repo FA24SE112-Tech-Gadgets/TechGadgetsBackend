@@ -44,6 +44,6 @@ public class MomoPayment : ControllerBase
             await context.SaveChangesAsync();
         }
 
-        return Redirect($"{request.ReturnUrl}");
+        return Redirect($"{request.ReturnUrl}?isSuccess={request.IsSuccess}");
     }
 }
