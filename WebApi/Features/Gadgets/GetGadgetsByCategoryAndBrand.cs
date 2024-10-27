@@ -14,6 +14,13 @@ namespace WebApi.Features.Gadgets;
 [ApiController]
 public class GetGadgetsByCategoryAndBrand : ControllerBase
 {
+    public new class Request : PagedRequest
+    {
+        public List<Guid>? Brands { get; set; }
+        public SortDir? SortOrder { get; set; }
+        public string? SortColumn { get; set; }
+    }
+
     [HttpGet("gadgets/category/{categoryId}/brand/{brandId}")]
     [Tags("Gadgets")]
     [SwaggerOperation(
