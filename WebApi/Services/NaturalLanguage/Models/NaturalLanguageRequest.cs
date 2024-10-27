@@ -31,4 +31,5 @@ public class NaturalLanguageRequest
     public string MinReleaseDate { get; set; } = default!;
     public string MaxReleaseDate { get; set; } = default!;
     public List<string> Colors { get; set; } = [];
+    public bool IsSmartPhone { get; set; }
 }

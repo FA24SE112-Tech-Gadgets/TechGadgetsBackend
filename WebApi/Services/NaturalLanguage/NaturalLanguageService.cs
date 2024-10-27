@@ -42,6 +42,17 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                                  "Kháng nước", "Công nghệ NFC", "Ban đêm", "Camera chống rung",
                                  "Hỗ trợ 5G", "Hỗ trợ 4G", "Sạc không dây", "Dành cho chơi game, lướt web, xem phim"];
 
+        List<string> conditions = ["Móp, méo", "Đã qua sử dụng", "Còn phiếu bảo hành", "Nguyên tem nguyên seal", "Vỡ màn hình",
+                                        "Lỗi phần cứng", "Pin 90%, 85%", "Hỏng màn hình", "Trầy xước", "Tình trạng còn zin"];
+
+        List<string> segmentations = ["Giá rẻ", "Giá tốt", "Giá sinh viên", "Tầm trung", "Cao cấp", "Hiện đại"];
+
+        List<string> locations = ["Hà Nội", "Hồ Chí Minh", "Cần Thơ", "Đà Nẵng", "Quy Nhơn"];
+
+        List<string> origins = ["Việt Nam", "Trung Quốc"];
+
+        List<string> colors = ["Xám", "Đen", "Xanh Đen", "Trắng", "Bạc", "Vàng", "Hồng"];
+
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
 
@@ -114,6 +125,37 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user query not mention, give me empty array
 
 
+        conditions are: {string.Join(", ", conditions)}
+        If user query not mention, give me empty array
+
+
+        segmentations are: {string.Join(", ", segmentations)}
+        If user query not mention, give me empty array
+
+
+        locations are: {string.Join(", ", locations)}
+        If user query not mention, give me empty array
+
+        
+        origins are: {string.Join(", ", origins)}
+        If user query not mention, give me empty array
+
+        
+        ReleaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY 
+        minReleaseDate must be after than or equal to 01/1990
+        If user does not mention, give me min value, which is 01/1990
+        
+        maxReleaseDate must be before than or equal to 12/2025
+        If user does not mention, give me max value, which is 12/2025
+        
+
+        colors are: {string.Join(", ", colors)}
+        If user query not mention, give me empty array            
+
+
+        isSmartPhone can be true or false
+        If user does not mention, give me false  
+        
         User's query: {input}
         ";
 
@@ -206,10 +248,50 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             "items": {
                                 "type": "string"
                             }
+                        },
+                        "conditions": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "segmentations": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "locations": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "origins": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "minReleaseDate": {
+                            "type": "string"
+                        },
+                        "maxReleaseDate": {
+                            "type": "string"
+                        },
+                        "colors": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "isSmartPhone": {
+                            "type": "boolean"
                         }
                     },
                     "required": ["purposes","brands","categories","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen","isFoldable",
-                                 "minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features"],
+                                 "minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
+                                 "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
