@@ -5,7 +5,7 @@ public class WalletTracking
     public Guid Id { get; set; }
     public Guid WalletId { get; set; }
     public Guid? OrderId { get; set; }
-    public Guid? OrderDetailId { get; set; }
+    public Guid? SellerOrderId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
     public int Amount { get; set; }
     public WalletTrackingType Type { get; set; }
@@ -19,7 +19,7 @@ public class WalletTracking
 
     public Wallet Wallet { get; set; } = default!;
     public Order? Order { get; set; }
-    public OrderDetail? OrderDetail { get; set; }
+    public SellerOrder? SellerOrder { get; set; }
 }
 
 public enum PaymentMethod

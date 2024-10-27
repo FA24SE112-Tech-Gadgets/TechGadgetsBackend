@@ -31,6 +31,25 @@ public static class ApplyMigrationsExtensions
             await context.SaveChangesAsync();
         }
 
+        if (!await context.CustomerInformation.AnyAsync())
+        {
+            foreach (var customerInformation in CustomerInformationSeed.Default)
+            {
+                context.CustomerInformation.Add(customerInformation);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.SellerInformation.AnyAsync())
+        {
+            foreach (var sellerInformation in SellerInformationSeed.Default)
+            {
+                context.SellerInformation.Add(sellerInformation);
+            }
+            await context.SaveChangesAsync();
+        }
+
+
         if (!await context.SellerApplications.AnyAsync())
         {
             foreach (var application in SellerApplicationSeed.Default)

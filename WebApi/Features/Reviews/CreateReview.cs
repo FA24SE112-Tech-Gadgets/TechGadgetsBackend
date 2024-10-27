@@ -36,7 +36,7 @@ public class CreateReview : ControllerBase
         }
     }
 
-    [HttpPost("review/order-detail/{orderDetailId}/gadget/{gadgetId}")]
+    [HttpPost("review/seller-order-item/{sellerOrderItemId}")]
     [Tags("Reviews")]
     [SwaggerOperation(
         Summary = "Customer Create Review",
@@ -46,62 +46,61 @@ public class CreateReview : ControllerBase
                             "<br>&nbsp; - Mỗi gadget trong 1 đơn hàng chỉ được đánh 1 lần." +
                             "<br>&nbsp;     Ví dụ: Gadget A có trong 3 đơn thì customer có thể đánh giá Gadget A 3 lần" +
                             "<br>&nbsp; - Customer chỉ có thể đánh giá đơn của mình thôi" +
-                            "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là cần truyền gadgetId có trong orderDetailId đó." +
-                            "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được."
+                            "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là chỉ cần truyền sellerOrderItemId của gadget trong đơn đó." +
+                            "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được." +
+                            "<br>&nbsp; - Không thể review những item đã quá 10 phút."
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid orderDetailId, [FromRoute] Guid gadgetId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderItemId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        var orderDetail = await context.OrderDetails
-            .Include(od => od.Order)
-            .FirstOrDefaultAsync(od => od.Id == orderDetailId);
-        if (orderDetail == null)
+        var sellerOrderItem = await context.SellerOrderItems
+            .Include(soi => soi.SellerOrder)
+                .ThenInclude(so => so.Order)
+            .FirstOrDefaultAsync(soi => soi.Id == sellerOrderItemId);
+        if (sellerOrderItem == null)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("orderDetail", "Không tìm thấy đơn này.")
+            .AddReason("sellerOrderItem", "Không tìm thấy sản phẩm này.")
             .Build();
         }
 
-        if (currentUser!.Role == Role.Customer && orderDetail!.Order.CustomerId != currentUser!.Customer!.Id)
+        if (sellerOrderItem.SellerOrder.Order.CustomerId != currentUser!.Customer!.Id)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
-            .AddReason("orderDetail", "Người dùng không đủ thẩm quyền để truy cập đơn này.")
+            .AddReason("sellerOrder", "Người dùng không đủ thẩm quyền để đánh giá sản phẩm này.")
             .Build();
         }
 
-        if (orderDetail.Status != OrderDetailStatus.Success)
+        if (sellerOrderItem.SellerOrder.Status != SellerOrderStatus.Success)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("orderDetail", "Đơn này chưa hoàn thành hoặc đã hủy.")
+            .AddReason("sellerOrder", "Đơn này chưa hoàn thành hoặc đã hủy.")
             .Build();
         }
 
-        bool isGadgetExist = await context.GadgetInformation
-            .AnyAsync(gi => gi.GadgetId == gadgetId && gi.OrderDetailId == orderDetailId);
-
-        if (!isGadgetExist)
+        if (sellerOrderItem.SellerOrder.CreatedAt <= DateTime.UtcNow.AddMinutes(-10))
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("gadget", $"Sản phẩm {gadgetId} không có trong đơn {orderDetailId}. Hoặc sản phẩm không tồn tại.")
+            .WithCode(TechGadgetErrorCode.WEB_02)
+            .AddReason("review", "Đã quá thời gian đánh giá (10 phút).")
             .Build();
         }
 
-        bool isAnyReview = await context.Reviews.AnyAsync(r => r.OrderDetailId == orderDetailId && r.GadgetId == gadgetId);
+        bool isAnyReview = sellerOrderItem.Review != null;
 
         if (isAnyReview)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_01)
-            .AddReason("review", $"Sản phẩm {gadgetId} này trong đơn {orderDetailId} đã được đánh giá.")
+            .AddReason("review", $"Sản phẩm này đã được đánh giá rồi.")
             .Build();
         }
 
@@ -114,8 +113,7 @@ public class CreateReview : ControllerBase
         var createdAt = DateTime.UtcNow;
         Review review = new Review()
         {
-            GadgetId = gadgetId,
-            OrderDetailId = orderDetailId,
+            SellerOrderItemId = sellerOrderItemId,
             CustomerId = currentUser.Customer!.Id,
             Rating = request.Rating,
             Content = request.Content,

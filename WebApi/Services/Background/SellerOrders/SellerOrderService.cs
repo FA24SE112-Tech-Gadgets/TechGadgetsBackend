@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Services.Background.OrderDetails;
 
-public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundService
+public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
@@ -16,7 +16,7 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
             {
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                //Refund and Confirm OrderDetail Case:
+                //Refund and Confirm SellerOrder Case:
                 var walletTrackings = await context.WalletTrackings
                     .Include(wt => wt.Wallet)
                     .Where(wt => (wt.Type == WalletTrackingType.Refund && wt.Status == WalletTrackingStatus.Pending)
@@ -27,8 +27,8 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
 
                 foreach (var wt in walletTrackings)
                 {
-                    var systemOrderDetailTracking = await context.SystemOrderDetailTrackings
-                        .FirstOrDefaultAsync(sodt => sodt.OrderDetailId == wt.OrderDetailId, stoppingToken);
+                    var systemSellerOrderTracking = await context.SystemSellerOrderTrackings
+                        .FirstOrDefaultAsync(ssot => ssot.SellerOrderId == wt.SellerOrderId, stoppingToken);
 
                     var userWallet = wt.Wallet;
                     if (wt.Type == WalletTrackingType.Refund)
@@ -37,9 +37,9 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                         systemWallet!.Amount -= wt.Amount;
                         userWallet!.Amount += wt.Amount;
 
-                        //Update SystemOrderDetailStatus = Refunded
-                        systemOrderDetailTracking!.Status = SystemOrderDetailTrackingStatus.Refunded;
-                        systemOrderDetailTracking!.UpdatedAt = DateTime.UtcNow;
+                        //Update SystemSellerOrderTrackingStatus = Refunded
+                        systemSellerOrderTracking!.Status = SystemSellerOrderTrackingStatus.Refunded;
+                        systemSellerOrderTracking!.UpdatedAt = DateTime.UtcNow;
 
                         //Update WalletTracking của Customer
                         wt.Status = WalletTrackingStatus.Success;
@@ -51,9 +51,9 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                         systemWallet!.Amount -= wt.Amount;
                         userWallet!.Amount += wt.Amount;
 
-                        //Update SystemOrderDetailStatus = Paid
-                        systemOrderDetailTracking!.Status = SystemOrderDetailTrackingStatus.Paid;
-                        systemOrderDetailTracking!.UpdatedAt = DateTime.UtcNow;
+                        //Update SystemSellerOrderTrackingStatus = Paid
+                        systemSellerOrderTracking!.Status = SystemSellerOrderTrackingStatus.Paid;
+                        systemSellerOrderTracking!.UpdatedAt = DateTime.UtcNow;
 
                         //Update WalletTracking của Seller
                         wt.Status = WalletTrackingStatus.Success;
@@ -63,34 +63,39 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                 }
 
                 //Time Confirm Expired Case
-                var systemOrderDetailTrackings = await context.SystemOrderDetailTrackings
-                    .Include(sodt => sodt.FromUser)
+                var systemSellerOrderTrackings = await context.SystemSellerOrderTrackings
+                    .Include(ssot => ssot.FromUser)
                         .ThenInclude(u => u.Wallet)
-                    .Include(sodt => sodt.OrderDetail)
-                        .ThenInclude(od => od.GadgetInformation)
-                            .ThenInclude(gi => gi.Gadget)
-                    .Where(sodt => sodt.CreatedAt <= DateTime.UtcNow.AddMinutes(-5) && sodt.Status == SystemOrderDetailTrackingStatus.Pending)
+                    .Include(ssot => ssot.SellerOrder)
+                        .ThenInclude(so => so.SellerOrderItems)
+                            .ThenInclude(soi => soi.Gadget)
+                    .Where(ssot => ssot.CreatedAt <= DateTime.UtcNow.AddMinutes(-5) && ssot.Status == SystemSellerOrderTrackingStatus.Pending)
                     .ToListAsync(stoppingToken);
 
-                foreach (var sodt in systemOrderDetailTrackings)
+                foreach (var ssot in systemSellerOrderTrackings)
                 {
-                    var userWallet = sodt.FromUser.Wallet;
+                    var userWallet = ssot.FromUser.Wallet;
 
+                    int totalAmount = 0;
+                    foreach (var soi in ssot.SellerOrder.SellerOrderItems)
+                    {
+                        totalAmount += (soi.GadgetPrice * soi.GadgetQuantity);
+                    }
 
                     //Trừ tiền trong system, hoàn về cho customer
-                    systemWallet!.Amount -= sodt.OrderDetail.Amount;
-                    userWallet!.Amount += sodt.OrderDetail.Amount;
+                    systemWallet!.Amount -= totalAmount;
+                    userWallet!.Amount += totalAmount;
 
-                    //Update SystemOrderDetailStatus = Refunded
-                    sodt!.Status = SystemOrderDetailTrackingStatus.Refunded;
-                    sodt!.UpdatedAt = DateTime.UtcNow;
+                    //Update SystemSellerOrderTrackingStatus = Refunded
+                    ssot!.Status = SystemSellerOrderTrackingStatus.Refunded;
+                    ssot!.UpdatedAt = DateTime.UtcNow;
 
                     //Create WalletTracking của Customer
                     WalletTracking walletTracking = new WalletTracking()
                     {
                         WalletId = userWallet!.Id,
-                        OrderDetailId = sodt.OrderDetailId,
-                        Amount = sodt.OrderDetail.Amount,
+                        SellerOrderId = ssot.SellerOrderId,
+                        Amount = totalAmount,
                         Type = WalletTrackingType.Refund,
                         Status = WalletTrackingStatus.Success,
                         CreatedAt = DateTime.UtcNow,
@@ -99,15 +104,15 @@ public class OrderDetailService(IServiceProvider serviceProvider) : BackgroundSe
                     }!;
 
                     //Update OrderDetail status = Cancelled
-                    sodt.OrderDetail.Status = OrderDetailStatus.Cancelled;
+                    ssot.SellerOrder.Status = SellerOrderStatus.Cancelled;
 
                     await context.WalletTrackings.AddAsync(walletTracking, stoppingToken);
 
                     //Hoàn lại quantity cho gadget của Seller
-                    var gadgetInformations = sodt.OrderDetail.GadgetInformation;
-                    foreach (var gi in gadgetInformations)
+                    var sellerOrderItems = ssot.SellerOrder.SellerOrderItems;
+                    foreach (var soi in sellerOrderItems)
                     {
-                        gi.Gadget.Quantity += gi.GadgetQuantity;
+                        soi.Gadget.Quantity += soi.GadgetQuantity;
                     }
 
                     await context.SaveChangesAsync(stoppingToken);

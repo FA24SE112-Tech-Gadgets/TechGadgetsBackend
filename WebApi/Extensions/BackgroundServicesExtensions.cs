@@ -13,6 +13,6 @@ public static class BackgroundServicesExtensions
         services.AddHostedService<UserVerifyCleanupService>();
         services.AddHostedService<RejectSellerApplicationService>();
         services.AddHostedService<ExpiredTransactionService>();
-        services.AddHostedService<OrderDetailService>();
+        services.AddHostedService<SellerOrderService>();
     }
 }
