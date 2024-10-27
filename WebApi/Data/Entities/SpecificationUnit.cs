@@ -7,5 +7,6 @@ public class SpecificationUnit
     public string Name { get; set; } = default!;
 
     public SpecificationKey SpecificationKey { get; set; } = default!;
+    public ICollection<GadgetFilter> GadgetFilters { get; set; } = [];
     public ICollection<SpecificationValue> SpecificationValues { get; set; } = [];
 }
