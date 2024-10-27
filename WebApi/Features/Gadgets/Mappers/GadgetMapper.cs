@@ -68,4 +68,15 @@ public static class GadgetMapper
         }
         return null;
     }
+
+    public static List<GadgetResponse>? ToListGadgetsResponse(this List<Gadget> gadgets, Guid? customerId)
+    {
+        if (gadgets != null)
+        {
+            return gadgets
+            .Select(gadget => gadget.ToGadgetResponse(customerId))
+            .ToList()!;
+        }
+        return null;
+    }
 }
