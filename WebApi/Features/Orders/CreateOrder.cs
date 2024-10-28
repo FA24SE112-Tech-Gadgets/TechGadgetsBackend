@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Linq;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
@@ -82,12 +82,10 @@ public class CreateOrder : ControllerBase
         }
 
         // Truy vấn để lấy seller từ giỏ hàng của user
-        var sellers = await context.Carts
-            .Where(c => c.CustomerId == currentUser!.Customer!.Id)   // Lọc theo giỏ hàng của user
-            .SelectMany(c => c.CartGadgets.Select(cg => cg.Gadget.Seller)) // Lấy seller từ các sản phẩm trong giỏ hàng
-            .Distinct()  // Loại bỏ seller trùng lặp
-            .Include(s => s.User)
-            .OrderBy(s => s.Id) // Sắp xếp để có thể phân trang
+        var sellers = await context.CartGadgets
+            .Include(cg => cg.Gadget)
+            .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
+            .Select(cg => cg.Gadget.Seller)
             .ToListAsync();
 
         // Lấy list cartGadget của user
