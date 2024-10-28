@@ -8,6 +8,7 @@ using WebApi.Features.Gadgets.Models;
 using WebApi.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Gadgets.Mappers;
+using Pgvector.EntityFrameworkCore;
 
 namespace WebApi.Features.Gadgets;
 
@@ -128,7 +129,7 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
                     {
                         if (sv.SpecificationUnitId == gadgetFilter!.SpecificationUnitId
                             && sv.SpecificationKeyId == gadgetFilter.SpecificationKeyId
-                            && sv.Value == gadgetFilter.Value)
+                            && CalculateL2Distance(sv.Vector.ToArray(), gadgetFilter.Vector.ToArray()) < 1)
                         {
                             filterMatched = true; // Thoả mãn gadgetFilter hiện tại
                             break; // Thoát khỏi vòng lặp inner
@@ -170,4 +171,20 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
             return Ok(response);
         }
     }
+    private static float CalculateL2Distance(float[] v1, float[] v2)
+    {
+        if (v1.Length != v2.Length)
+            throw new ArgumentException("Vectors must be of the same length.");
+
+        float sum = 0.0f;
+
+        for (int i = 0; i < v1.Length; i++)
+        {
+            float difference = v1[i] - v2[i];
+            sum += difference * difference;
+        }
+
+        return (float)Math.Sqrt(sum);
+    }
 }
+
