@@ -106,13 +106,13 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
                 }
 
                 // Kiểm tra trùng lặp GadgetFilter (Không cho filter vừa Ram 8GB vừa Ram 4GB cùng một lúc)
-                if (!specificationKeyIds.Add(gadgetFilter.SpecificationKeyId))
-                {
-                    throw TechGadgetException.NewBuilder()
-                        .WithCode(TechGadgetErrorCode.WEA_01)
-                        .AddReason("gadgetFilter", $"Không thể gadgetFilter cùng loại.")
-                        .Build();
-                }
+                //if (!specificationKeyIds.Add(gadgetFilter.SpecificationKeyId))
+                //{
+                //    throw TechGadgetException.NewBuilder()
+                //        .WithCode(TechGadgetErrorCode.WEA_01)
+                //        .AddReason("gadgetFilter", $"Không thể gadgetFilter cùng loại.")
+                //        .Build();
+                //}
 
                 gadgetFilters.Add(gadgetFilter);
             }
@@ -129,7 +129,15 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
                     {
                         if (sv.SpecificationUnitId == gadgetFilter!.SpecificationUnitId
                             && sv.SpecificationKeyId == gadgetFilter.SpecificationKeyId
-                            && CalculateL2Distance(sv.Vector.ToArray(), gadgetFilter.Vector.ToArray()) < 1)
+                            && sv.Value == gadgetFilter.Value && gadgetFilter.Value != "Khác")
+                        {
+                            filterMatched = true; // Thoả mãn gadgetFilter hiện tại
+                            break; // Thoát khỏi vòng lặp inner
+                        }
+
+                        if (sv.SpecificationUnitId == gadgetFilter!.SpecificationUnitId
+                            && sv.SpecificationKeyId == gadgetFilter.SpecificationKeyId
+                            && CalculateL2Distance(sv.Vector.ToArray(), gadgetFilter.Vector.ToArray()) < 1 && gadgetFilter.Value == "Khác")
                         {
                             filterMatched = true; // Thoả mãn gadgetFilter hiện tại
                             break; // Thoát khỏi vòng lặp inner
@@ -174,7 +182,13 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
     private static float CalculateL2Distance(float[] v1, float[] v2)
     {
         if (v1.Length != v2.Length)
-            throw new ArgumentException("Vectors must be of the same length.");
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_02)
+            .AddReason("vector", "Vector phải có cùng độ dài.")
+            .Build();
+        }
+
 
         float sum = 0.0f;
 
