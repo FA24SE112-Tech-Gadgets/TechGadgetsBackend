@@ -13,7 +13,7 @@ using Pgvector.EntityFrameworkCore;
 namespace WebApi.Features.Gadgets;
 
 [ApiController]
-public class GetGadgetsByCategoryAndBrand : ControllerBase
+public class GetGadgetsByCategoryIdWithFilter : ControllerBase
 {
     public new class Request : PagedRequest
     {
@@ -31,8 +31,8 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
         Description = "API is for get list of gadgets by categoryId with filters. Note:" +
                             "<br>&nbsp; - Truyền field nào, filter theo field đó." +
                             "<br>&nbsp; - GadgetStatus không truyền tức là lấy cả Active và Inactive luôn" +
-                            "<br>&nbsp; - GadgetFilter mỗi loại chỉ được chọn 1 thôi. Ví dụ: Ram thì chỉ 8GB ko thể vừa 8GB vừa 4GB cùng lúc." +
-                            "<br>&nbsp; - Gadgets trả về là Gadget phải đáp ứng tất cả các GadgetFilter truyền vào."
+                            "<br>&nbsp; - GadgetFilter mỗi loại được chọn nhiều. Ví dụ: Ram có thể vừa chọn 8GB vừa 4GB cùng lúc." +
+                            "<br>&nbsp; - Gadgets trả về là Gadget phải đáp ứng tất cả các GadgetFilter truyền vào. Ví dụ vừa phải có Ram 8GB hoặc 4GB vừa phải có Hệ điều hành: Android"
     )]
     [ProducesResponseType(typeof(PagedList<GadgetResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -81,7 +81,6 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
         {
             var gadgetFilterIds = request.GadgetFilters;
             List<GadgetFilter> gadgetFilters = new List<GadgetFilter>()!;
-            HashSet<Guid> specificationKeyIds = new HashSet<Guid>()!; //Dùng để check duplicate filter
 
             //Lấy ra danh sách các GadgetFilters muốn filter
             foreach (var gadgetFilterId in gadgetFilterIds)
@@ -105,54 +104,36 @@ public class GetGadgetsByCategoryAndBrand : ControllerBase
                     .Build();
                 }
 
-                // Kiểm tra trùng lặp GadgetFilter (Không cho filter vừa Ram 8GB vừa Ram 4GB cùng một lúc)
-                //if (!specificationKeyIds.Add(gadgetFilter.SpecificationKeyId))
-                //{
-                //    throw TechGadgetException.NewBuilder()
-                //        .WithCode(TechGadgetErrorCode.WEA_01)
-                //        .AddReason("gadgetFilter", $"Không thể gadgetFilter cùng loại.")
-                //        .Build();
-                //}
-
                 gadgetFilters.Add(gadgetFilter);
             }
 
+            // Group gadgetFilters by SpecificationKeyId
+            var groupedGadgetFilters = gadgetFilters
+                .GroupBy(gf => gf.SpecificationKeyId)
+                .ToList();
+
+            List<Gadget> test = new List<Gadget>()!;
+            // Filter gadgets based on grouped gadgetFilters
             foreach (var gadget in gadgets)
             {
-                // Kiểm tra xem gadget có thoả mãn tất cả các gadgetFilter không
-                bool allFiltersMatch = true; // Cờ để theo dõi trạng thái
-                foreach (var gadgetFilter in gadgetFilters)
+                // Ensure the gadget matches at least one filter from each filter group
+                bool allGroupsMatch = groupedGadgetFilters.All(gadgetFilterGroup =>
                 {
-                    bool filterMatched = false; // Cờ cho mỗi gadgetFilter
-
-                    foreach (var sv in gadget.SpecificationValues)
+                    return gadgetFilterGroup.Any(gadgetFilter =>
                     {
-                        if (sv.SpecificationUnitId == gadgetFilter!.SpecificationUnitId
+                        return gadget.SpecificationValues.Any(sv =>
+                            sv.SpecificationUnitId == gadgetFilter.SpecificationUnitId
                             && sv.SpecificationKeyId == gadgetFilter.SpecificationKeyId
-                            && sv.Value == gadgetFilter.Value && gadgetFilter.Value != "Khác")
-                        {
-                            filterMatched = true; // Thoả mãn gadgetFilter hiện tại
-                            break; // Thoát khỏi vòng lặp inner
-                        }
+                            && (
+                                (gadgetFilter.IsFilteredByVector && CalculateL2Distance(sv.Vector.ToArray(), gadgetFilter.Vector.ToArray()) < 1)
+                                || (!gadgetFilter.IsFilteredByVector && sv.Value == gadgetFilter.Value)
+                                )
+                            ) && gadgetFilter.Value != "Khác";
+                    });
+                });
 
-                        if (sv.SpecificationUnitId == gadgetFilter!.SpecificationUnitId
-                            && sv.SpecificationKeyId == gadgetFilter.SpecificationKeyId
-                            && CalculateL2Distance(sv.Vector.ToArray(), gadgetFilter.Vector.ToArray()) < 1 && gadgetFilter.Value == "Khác")
-                        {
-                            filterMatched = true; // Thoả mãn gadgetFilter hiện tại
-                            break; // Thoát khỏi vòng lặp inner
-                        }
-                    }
-
-                    if (!filterMatched)
-                    {
-                        allFiltersMatch = false; // Nếu không có bất kỳ sv nào thỏa mãn
-                        break; // Thoát khỏi vòng lặp gadgetFilter
-                    }
-                }
-
-                // Nếu tất cả các gadgetFilter đã thỏa mãn, thêm gadget vào danh sách
-                if (allFiltersMatch)
+                // If the gadget meets all group conditions, add to the response list
+                if (allGroupsMatch)
                 {
                     gadgetFiltersResponse.Add(gadget);
                 }
