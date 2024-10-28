@@ -133,6 +133,7 @@ public static class ApplyMigrationsExtensions
         //    var nameVectors = await embeddingService.GetEmbeddings(names);
         //    var conditionVectors = await embeddingService.GetEmbeddings(conditions);
 
+        //    var now = DateTime.UtcNow;
         //    int index = 0;
         //    foreach (var gadget in GadgetSeed.Default)
         //    {
@@ -140,8 +141,8 @@ public static class ApplyMigrationsExtensions
         //        gadget.ConditionVector = conditionVectors[index];
         //        gadget.Status = GadgetStatus.Active;
         //        gadget.IsForSale = true;
-        //        gadget.CreatedAt = DateTime.UtcNow;
-        //        gadget.UpdatedAt = DateTime.UtcNow;
+        //        gadget.CreatedAt = now;
+        //        gadget.UpdatedAt = now;
         //        gadget.Quantity = 50;
 
         //        context.Gadgets.Add(gadget);
