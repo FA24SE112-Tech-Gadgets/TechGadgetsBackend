@@ -84,6 +84,8 @@ public class CreateOrder : ControllerBase
         // Truy vấn để lấy seller từ giỏ hàng của user
         var sellers = await context.CartGadgets
             .Include(cg => cg.Gadget)
+                .ThenInclude(g => g.Seller)
+                .ThenInclude(s => s.User)
             .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
             .Select(cg => cg.Gadget.Seller)
             .ToListAsync();
