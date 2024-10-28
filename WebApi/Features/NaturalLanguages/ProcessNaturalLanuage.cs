@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Pgvector.EntityFrameworkCore;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Services.AI;
@@ -26,6 +24,7 @@ public class ProcessNaturalLanuage : ControllerBase
         }
     }
 
+    [Tags("Natural Language")]
     [HttpPost("natural-languages/process")]
     public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, AppDbContext context)
     {
@@ -35,18 +34,23 @@ public class ProcessNaturalLanuage : ControllerBase
             return Ok("natural language query is null");
         }
 
-        var gadgets = await context.Gadgets
-                                .OrderBy(g => g.NameVector.L2Distance(query.InputVector!))
-                                .Select(g => new
-                                {
-                                    g.Name
-                                })
-                                .Take(10)
-                                .ToListAsync();
+        //var category = await context.Categories.FirstOrDefaultAsync(c => c.Name.Equals(query.Categories[0], StringComparison.CurrentCultureIgnoreCase));
+
+        //var gadgets = await context.Gadgets
+        //                        .Where(g => g.Category == category)
+        //                        .OrderBy(g => g.NameVector.L2Distance(query.InputVector!))
+        //                        .Select(g => new
+        //                        {
+        //                            g.Name,
+        //                            Distance = g.NameVector.L2Distance(query.InputVector!)
+        //                        })
+        //                        .Take(10)
+        //                        .ToListAsync();
 
         var result = new
         {
-            query
+            query,
+            //gadgets
         };
         return Ok(result);
     }

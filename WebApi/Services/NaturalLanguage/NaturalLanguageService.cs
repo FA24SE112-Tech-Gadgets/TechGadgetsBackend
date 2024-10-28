@@ -15,6 +15,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
     public async Task<NaturalLanguageRequest?> GetRequestByUserInput(string input)
     {
+        input = input.Length > 256 ? input[0..255] : input;
+
         List<string> purposes =
         [
             "Học tập", "Làm việc", "Văn phòng", "Gaming", "Giải trí",
@@ -52,6 +54,12 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         List<string> origins = ["Việt Nam", "Trung Quốc"];
 
         List<string> colors = ["Xám", "Đen", "Xanh Đen", "Trắng", "Bạc", "Vàng", "Hồng"];
+
+        List<string> searchingSellerKeywords = ["Nơi bán", "Nhà phân phối", "Thương hiệu", "Người bán", "Shop", "Nhà cung cấp", "Nơi cung cấp", "Hãng cung cấp", "Người cung cấp"];
+
+        List<string> bestGadgetKeywords = ["Sản phẩm được nhiều người quan tâm", "Nhiều người mua nhất", "Bán chạy", "Sản phẩm bán chạy", "Nổi bật"];
+
+
 
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
@@ -156,6 +164,17 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         isSmartPhone can be true or false
         If user does not mention, give me false  
         
+
+        isSearchingSeller can be true or false, this field is true when user want to find seller not gadget
+        you can use this keywork array as a addition reference that results in isSearchingSeller is true: {string.Join(", ", searchingSellerKeywords)}
+        If user does not mention, give me false  
+
+
+        isBestGadget can be true or false, this field is true when user want to find the best gadget
+        you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", bestGadgetKeywords)}
+        If user does not mention, give me false
+        
+
         User's query: {input}
         ";
 
@@ -287,11 +306,18 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isSmartPhone": {
                             "type": "boolean"
+                        },
+                        "isSearchingSeller": {
+                            "type": "boolean"
+                        },
+                        "isBestGadget": {
+                            "type": "boolean"
                         }
                     },
                     "required": ["purposes","brands","categories","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen","isFoldable",
                                  "minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
-                                 "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone"],
+                                 "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone","isSearchingSeller",
+                                 "isBestGadget"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
@@ -320,7 +346,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
         }
-        catch (JsonException jsonEx)
+        catch (Exception jsonEx)
         {
             Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
         }

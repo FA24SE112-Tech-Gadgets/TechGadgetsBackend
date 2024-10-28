@@ -32,4 +32,6 @@ public class NaturalLanguageRequest
     public string MaxReleaseDate { get; set; } = default!;
     public List<string> Colors { get; set; } = [];
     public bool IsSmartPhone { get; set; }
+    public bool IsSearchingSeller { get; set; }
+    public bool IsBestGadget { get; set; }
 }
