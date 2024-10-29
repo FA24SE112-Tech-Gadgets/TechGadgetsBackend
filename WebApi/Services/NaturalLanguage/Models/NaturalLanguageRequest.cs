@@ -10,6 +10,8 @@ public class NaturalLanguageRequest
     public List<string> Purposes { get; set; } = [];
     public List<string> Brands { get; set; } = [];
     public List<string> Categories { get; set; } = [];
+    public int MinPrice { get; set; }
+    public int MaxPrice { get; set; }
     public bool IsFastCharge { get; set; }
     public bool IsGoodBatteryLife { get; set; }
     public float MinUsageTime { get; set; }
