@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Linq;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
@@ -88,6 +87,7 @@ public class CreateOrder : ControllerBase
                 .ThenInclude(s => s.User)
             .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
             .Select(cg => cg.Gadget.Seller)
+            .Distinct()
             .ToListAsync();
 
         // Lấy list cartGadget của user
