@@ -46,7 +46,7 @@ public class GetHotGadgets : ControllerBase
     public async Task<IActionResult> Handler([FromQuery] Request request, AppDbContext context)
     {
         bool isCategoryExist = await context.Categories.AnyAsync(c => c.Id == request.CategoryId);
-        if (isCategoryExist)
+        if (!isCategoryExist)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
