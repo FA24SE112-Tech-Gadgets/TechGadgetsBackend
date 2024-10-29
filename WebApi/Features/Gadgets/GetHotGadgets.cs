@@ -6,12 +6,29 @@ using WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Entities;
 using WebApi.Features.Gadgets.Models;
+using FluentValidation;
+using WebApi.Common.Filters;
 
 namespace WebApi.Features.Gadgets;
 
 [ApiController]
+[RequestValidation<Request>]
 public class GetHotGadgets : ControllerBase
 {
+    public new class Request : PagedRequest
+    {
+        public Guid CategoryId { get; set; }
+    }
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.CategoryId)
+                .NotEmpty()
+                .WithMessage("CategoryId không được để trống");
+        }
+    }
     [HttpGet("gadgets/hot")]
     [Tags("Gadgets")]
     [SwaggerOperation(
@@ -26,15 +43,23 @@ public class GetHotGadgets : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromQuery] PagedRequest request, AppDbContext context)
+    public async Task<IActionResult> Handler([FromQuery] Request request, AppDbContext context)
     {
+        bool isCategoryExist = await context.Categories.AnyAsync(c => c.Id == request.CategoryId);
+        if (isCategoryExist)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("category", $"Thể loại {request.CategoryId} không tồn tại.")
+            .Build();
+        }
         var gadgets = await context.Gadgets
             .Include(g => g.Seller)
                 .ThenInclude(s => s.User)
             .Include(g => g.FavoriteGadgets)
             .Include(g => g.SellerOrderItems)
                 .ThenInclude(soi => soi.SellerOrder)
-            .Where(g => g.Status == GadgetStatus.Active)
+            .Where(g => g.Status == GadgetStatus.Active && g.CategoryId == request.CategoryId)
             .OrderByDescending(g => g.SellerOrderItems
                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                 .Sum(soi => soi.GadgetQuantity))
