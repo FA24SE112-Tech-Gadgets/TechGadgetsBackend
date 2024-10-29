@@ -22,12 +22,16 @@ public class Gadget
 
     [Column(TypeName = "vector(384)")]
     public Vector NameVector { get; set; } = default!;
+
+    [Column(TypeName = "vector(1536)")]
+    public Vector? Vector { get; set; } = default!;
     public int Quantity { get; set; }
     public bool IsForSale { get; set; }
 
     public Seller Seller { get; set; } = default!;
     public Brand Brand { get; set; } = default!;
     public Category Category { get; set; } = default!;
+    public ICollection<GadgetDiscount> GadgetDiscounts { get; set; } = [];
     public ICollection<SellerOrderItem> SellerOrderItems { get; set; } = [];
     public ICollection<CartGadget> CartGadgets { get; set; } = [];
     public ICollection<GadgetDescription> GadgetDescriptions { get; set; } = [];

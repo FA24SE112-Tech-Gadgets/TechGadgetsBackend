@@ -19,6 +19,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<FavoriteGadget> FavoriteGadgets { get; set; }
     public DbSet<Gadget> Gadgets { get; set; }
     public DbSet<GadgetDescription> GadgetDescriptions { get; set; }
+    public DbSet<GadgetDiscount> GadgetDiscounts { get; set; }
     public DbSet<GadgetFilter> GadgetFilters { get; set; }
     public DbSet<GadgetHistory> GadgetHistories { get; set; }
     public DbSet<GadgetImage> GadgetImages { get; set; }
@@ -27,8 +28,6 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<Review> Reviews { get; set; }
-    public DbSet<SearchAI> SearchAIs { get; set; }
-    public DbSet<SearchAIVector> SearchAIVectors { get; set; }
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<SellerApplication> SellerApplications { get; set; }
     public DbSet<SellerInformation> SellerInformation { get; set; }
