@@ -34,4 +34,8 @@ public class NaturalLanguageRequest
     public bool IsSmartPhone { get; set; }
     public bool IsSearchingSeller { get; set; }
     public bool IsBestGadget { get; set; }
+    public bool IsHighRating { get; set; }
+    public bool IsPositiveReview { get; set; }
+    public bool IsEnergySaving { get; set; }
+
 }

@@ -59,6 +59,11 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> bestGadgetKeywords = ["Sản phẩm được nhiều người quan tâm", "Nhiều người mua nhất", "Bán chạy", "Sản phẩm bán chạy", "Nổi bật"];
 
+        List<string> highRatingKeywords = ["Đánh giá cao"];
+
+        List<string> positiveReviewKeywords = ["Tích cực", "Đánh giá tích cực"];
+
+        List<string> energySavingKeywords = ["Tiết kiệm điện", "Xài điện ít", "Tiêu thụ điện thấp"];
 
 
         string myPrompt = $@"
@@ -170,10 +175,25 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user does not mention, give me false  
 
 
-        isBestGadget can be true or false, this field is true when user want to find the best gadget
+        isBestGadget can be true or false, this field is true when user want to find best gadgets
         you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", bestGadgetKeywords)}
         If user does not mention, give me false
         
+
+        isHighRating can be true or false, this field is true when user want to find gadgets with high ratings
+        you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", highRatingKeywords)}
+        If user does not mention, give me false
+
+
+        isPositiveReview can be true or false, this field is true when user want to find gadgets with positive reviews
+        you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", positiveReviewKeywords)}
+        If user does not mention, give me false
+             
+
+        isEnergySaving can be true or false, this field is true when user want to find gadgets that are energy saving
+        you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", energySavingKeywords)}
+        If user does not mention, give me false
+
 
         User's query: {input}
         ";
@@ -183,7 +203,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             new UserChatMessage(myPrompt),
         ];
 
-        ChatClient client = new(_settings.Model, _settings.Key);
+        ChatClient client = new(_settings.StructuredOutputModel, _settings.Key);
 
         ChatCompletionOptions options = new()
         {
@@ -312,12 +332,21 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isBestGadget": {
                             "type": "boolean"
+                        },
+                        "isHighRating": {
+                            "type": "boolean"
+                        },
+                        "isPositiveReview": {
+                            "type": "boolean"
+                        },
+                        "isEnergySaving": {
+                            "type": "boolean"
                         }
                     },
                     "required": ["purposes","brands","categories","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen","isFoldable",
                                  "minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
                                  "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone","isSearchingSeller",
-                                 "isBestGadget"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
@@ -351,7 +380,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
         }
 
-        filter!.InputVector = await embeddingService.GetEmbedding(input);
+        //filter!.InputVector = await embeddingService.GetEmbedding(input);
+        //filter!.InputVector = await embeddingService.GetEmbeddingOpenAI(input);
+        //var list = await embeddingService.GetEmbeddingsOpenAI(["First text", "Second text", "Third text", "Fourth text"]);
 
         return filter;
     }
