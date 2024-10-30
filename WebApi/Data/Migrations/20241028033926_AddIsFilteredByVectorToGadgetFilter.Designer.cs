@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241028033926_AddIsFilteredByVectorToGadgetFilter")]
+    partial class AddIsFilteredByVectorToGadgetFilter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -311,9 +314,6 @@ namespace WebApi.Data.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Vector>("Vector")
-                        .HasColumnType("vector(1536)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -350,35 +350,6 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("GadgetId");
 
                     b.ToTable("GadgetDescriptions");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.GadgetDiscount", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("DiscountPercentage")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("ExpiredDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("GadgetId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GadgetId");
-
-                    b.ToTable("GadgetDiscounts");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetFilter", b =>
@@ -593,6 +564,51 @@ namespace WebApi.Data.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAI", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("CanAddMore")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SearchAIs");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAIVector", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SearchAIId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Vector>("Vector")
+                        .IsRequired()
+                        .HasColumnType("vector(384)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SearchAIId");
+
+                    b.ToTable("SearchAIVectors");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
                 {
                     b.Property<Guid>("Id")
@@ -770,9 +786,6 @@ namespace WebApi.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("GadgetDiscountId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("GadgetId")
                         .HasColumnType("uuid");
 
@@ -786,8 +799,6 @@ namespace WebApi.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GadgetDiscountId");
 
                     b.HasIndex("GadgetId");
 
@@ -1260,17 +1271,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("Gadget");
                 });
 
-            modelBuilder.Entity("WebApi.Data.Entities.GadgetDiscount", b =>
-                {
-                    b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
-                        .WithMany("GadgetDiscounts")
-                        .HasForeignKey("GadgetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gadget");
-                });
-
             modelBuilder.Entity("WebApi.Data.Entities.GadgetFilter", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.SpecificationKey", "SpecificationKey")
@@ -1381,6 +1381,17 @@ namespace WebApi.Data.Migrations
                     b.Navigation("SellerOrderItem");
                 });
 
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAIVector", b =>
+                {
+                    b.HasOne("WebApi.Data.Entities.SearchAI", "SearchAI")
+                        .WithMany("SearchAIVectors")
+                        .HasForeignKey("SearchAIId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SearchAI");
+                });
+
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
                 {
                     b.HasOne("WebApi.Data.Entities.User", "User")
@@ -1451,10 +1462,6 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerOrderItem", b =>
                 {
-                    b.HasOne("WebApi.Data.Entities.GadgetDiscount", "GadgetDiscount")
-                        .WithMany("SellerOrderItems")
-                        .HasForeignKey("GadgetDiscountId");
-
                     b.HasOne("WebApi.Data.Entities.Gadget", "Gadget")
                         .WithMany("SellerOrderItems")
                         .HasForeignKey("GadgetId")
@@ -1468,8 +1475,6 @@ namespace WebApi.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Gadget");
-
-                    b.Navigation("GadgetDiscount");
 
                     b.Navigation("SellerOrder");
                 });
@@ -1672,8 +1677,6 @@ namespace WebApi.Data.Migrations
 
                     b.Navigation("GadgetDescriptions");
 
-                    b.Navigation("GadgetDiscounts");
-
                     b.Navigation("GadgetHistories");
 
                     b.Navigation("GadgetImages");
@@ -1681,11 +1684,6 @@ namespace WebApi.Data.Migrations
                     b.Navigation("SellerOrderItems");
 
                     b.Navigation("SpecificationValues");
-                });
-
-            modelBuilder.Entity("WebApi.Data.Entities.GadgetDiscount", b =>
-                {
-                    b.Navigation("SellerOrderItems");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
@@ -1699,6 +1697,11 @@ namespace WebApi.Data.Migrations
             modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
                 {
                     b.Navigation("SellerReply");
+                });
+
+            modelBuilder.Entity("WebApi.Data.Entities.SearchAI", b =>
+                {
+                    b.Navigation("SearchAIVectors");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>

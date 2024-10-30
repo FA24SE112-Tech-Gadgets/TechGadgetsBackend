@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Data.Seeds;
 using WebApi.Services.Embedding;
 
@@ -48,7 +49,6 @@ public static class ApplyMigrationsExtensions
             }
             await context.SaveChangesAsync();
         }
-
 
         if (!await context.SellerApplications.AnyAsync())
         {
@@ -114,6 +114,29 @@ public static class ApplyMigrationsExtensions
             await context.SaveChangesAsync();
         }
 
+        if (!await context.GadgetFilters.AnyAsync())
+        {
+            foreach (var gadgetFilter in GadgetFilterSeed.Default)
+            {
+                gadgetFilter.Vector = await embeddingService.GetEmbedding(gadgetFilter.Value);
+                context.GadgetFilters.Add(gadgetFilter);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.GadgetDiscounts.AnyAsync() && await context.Gadgets.AnyAsync())
+        {
+            foreach (var gadgetDiscount in GadgetDiscountSeed.Default)
+            {
+                gadgetDiscount.ExpiredDate = DateTime.UtcNow.AddMonths(6);
+                gadgetDiscount.Status = GadgetDiscountStatus.Active;
+                gadgetDiscount.CreatedAt = DateTime.UtcNow;
+
+                context.GadgetDiscounts.Add(gadgetDiscount);
+            }
+            await context.SaveChangesAsync();
+        }
+
         //if (!await context.Gadgets.AnyAsync())
         //{
         //    // Create lists to hold the names and conditions
@@ -124,6 +147,7 @@ public static class ApplyMigrationsExtensions
         //    var nameVectors = await embeddingService.GetEmbeddings(names);
         //    var conditionVectors = await embeddingService.GetEmbeddings(conditions);
 
+        //    var now = DateTime.UtcNow;
         //    int index = 0;
         //    foreach (var gadget in GadgetSeed.Default)
         //    {
@@ -131,8 +155,8 @@ public static class ApplyMigrationsExtensions
         //        gadget.ConditionVector = conditionVectors[index];
         //        gadget.Status = GadgetStatus.Active;
         //        gadget.IsForSale = true;
-        //        gadget.CreatedAt = DateTime.UtcNow;
-        //        gadget.UpdatedAt = DateTime.UtcNow;
+        //        gadget.CreatedAt = now;
+        //        gadget.UpdatedAt = now;
         //        gadget.Quantity = 50;
 
         //        context.Gadgets.Add(gadget);

@@ -12,6 +12,7 @@ public static class OrderMapper
             {
                 GadgetPrice = gadget.Price,
                 GadgetId = gadget.Id,
+                GadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active),
             };
         }
         return null;

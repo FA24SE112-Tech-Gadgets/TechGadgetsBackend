@@ -14,7 +14,7 @@ namespace WebApi.Features.Carts;
 [JwtValidation]
 [RolesFilter(Role.Customer)]
 [RequestValidation<Request>]
-public class UpdateCartItem : ControllerBase
+public class RemoveGadgetOutOfCart : ControllerBase
 {
     public new class Request
     {
@@ -30,16 +30,18 @@ public class UpdateCartItem : ControllerBase
                 .NotEmpty()
                 .WithMessage("GadgetId không được để trống");
             RuleFor(sp => sp.Quantity)
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Số lượng không được nhỏ hơn 0");
+                .GreaterThan(0)
+                .WithMessage("Số lượng không được nhỏ hơn 1");
         }
     }
 
-    [HttpPut("cart/old")]
+    [HttpDelete("cart")]
     [Tags("Carts")]
     [SwaggerOperation(
-        Summary = "Update Cart Item",
-        Description = "This API is for update customer cart item."
+        Summary = "Remove Gadget Out Of Cart",
+        Description = "This API is for customer remove gadget out of cart. Note:" +
+                            "<br>&nbsp; - Quantity phải lớn hơn 1." +
+                            "<br>&nbsp; - Truyền bao nhiêu remove bấy nhiêu."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -76,24 +78,31 @@ public class UpdateCartItem : ControllerBase
         // Nếu không tìm thấy Gadget và số lượng > 0, thêm Gadget mới vào Cart
         if (existingCartGadget == null && request.Quantity > 0)
         {
-            var newCartGadget = new CartGadget
-            {
-                CartId = userCart!.Id,
-                GadgetId = request.GadgetId,
-                Quantity = request.Quantity
-            };
-            await context.CartGadgets.AddAsync(newCartGadget);
-        } else if (existingCartGadget != null) // Tìm thấy Gadget
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", $"Sản phẩm {request.GadgetId} không có trong giỏ hàng.")
+            .Build();
+        }
+        else if (existingCartGadget != null) // Tìm thấy Gadget
         {
-            if (request.Quantity == 0)
+            int newQuantity = existingCartGadget.Quantity - request.Quantity;
+            if (newQuantity == 0)
             {
                 context.CartGadgets.Remove(existingCartGadget);
+            }
+            else if (newQuantity > 0)
+            {
+                existingCartGadget.Quantity = newQuantity;
+                context.CartGadgets.Update(existingCartGadget);
             } else
             {
-                existingCartGadget.Quantity = request.Quantity;
-                context.CartGadgets.Update(existingCartGadget);
+                throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_00)
+                .AddReason("carts", "Số lượng muốn xóa vượt quá số sản phẩm có trong giỏ hàng.")
+                .Build();
             }
-        } else
+        }
+        else
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)

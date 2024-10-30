@@ -17,7 +17,7 @@ namespace WebApi.Features.Carts;
 [RolesFilter(Role.Customer)]
 public class GetCartItemsBySellerId : ControllerBase
 {
-    [HttpGet("carts/seller/{sellerId}")]
+    [HttpGet("cart/seller/{sellerId}")]
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Get Customer Cart Items By SellerId",
@@ -61,6 +61,8 @@ public class GetCartItemsBySellerId : ControllerBase
                 .ThenInclude(g => g.Brand)
             .Include(cg => cg.Gadget)
                 .ThenInclude(g => g.Category)
+            .Include(cg => cg.Gadget)
+                .ThenInclude(g => g.GadgetDiscounts)
             .Where(cg => cg.CartId == userCart.Id && cg.Gadget.SellerId == sellerId)
             .ToPagedListAsync(request);
 

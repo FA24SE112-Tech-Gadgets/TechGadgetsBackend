@@ -41,6 +41,7 @@ public class GetGadgets : ControllerBase
                             .Include(c => c.Seller)
                                 .ThenInclude(s => s.User)
                             .Include(c => c.FavoriteGadgets)
+                            .Include(g => g.GadgetDiscounts)
                             .AsQueryable();
 
         var user = await currentUserService.GetCurrentUser();
