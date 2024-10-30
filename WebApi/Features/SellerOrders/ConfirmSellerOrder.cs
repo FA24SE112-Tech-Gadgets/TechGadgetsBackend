@@ -33,6 +33,7 @@ public class ConfirmSellerOrder : ControllerBase
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.GadgetDiscount)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
         if (sellerOrder == null)
         {
@@ -76,7 +77,8 @@ public class ConfirmSellerOrder : ControllerBase
         var selelrOrderItems = sellerOrder.SellerOrderItems;
         foreach (var soi in selelrOrderItems)
         {
-            totalAmount += (soi.GadgetPrice * soi.GadgetQuantity);
+            int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
+            totalAmount += soi.GadgetQuantity * (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
         }
 
         walletTracking.Amount = totalAmount;

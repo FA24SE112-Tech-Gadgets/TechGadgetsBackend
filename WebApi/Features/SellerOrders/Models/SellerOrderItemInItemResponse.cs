@@ -6,6 +6,8 @@ public class SellerOrderItemInItemResponse
     public Guid GadgetId { get; set; }
     public string Name { get; set; } = default!;
     public int Price { get; set; } = default!;
+    public int DiscountPrice { get; set; } = default!;
+    public int DiscountPercentage { get; set; }
     public string ThumbnailUrl { get; set; } = default!;
     public int Quantity { get; set; } = default!;
 }
