@@ -46,6 +46,7 @@ public static class CartMapper
                 Price = gadget.Price,
                 DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
                 DiscountPercentage = discountPercentage,
+                DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Status = gadget.Status,
                 Condition = gadget.Condition,
