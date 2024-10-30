@@ -30,6 +30,14 @@ public class GetSellerDetail : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
+        if (currentUser!.Seller is null)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_03)
+                .AddReason("seller", "Seller chưa được kích hoạt")
+                .Build();
+        }
+
         var seller = await context.Sellers
             .Include(s => s.User)
             .Include(s => s.BillingMails)

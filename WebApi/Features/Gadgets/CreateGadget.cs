@@ -119,13 +119,13 @@ public class CreateGadget : ControllerBase
                 .ChildRules(discount =>
                 {
                     discount.RuleFor(d => d.DiscountPercentage)
-                        .NotNull().WithMessage("DiscountPercentage không được để trống")
-                        .GreaterThan(0).WithMessage("DiscountPercentage phải lớn hơn 0")
-                        .LessThanOrEqualTo(90).WithMessage("DiscountPercentage phải nhỏ hơn hoặc bằng 90");
+                        .NotNull().WithMessage("Phần trăm giảm giá không được để trống")
+                        .GreaterThan(0).WithMessage("Phần trăm giảm giá phải lớn hơn 0")
+                        .LessThanOrEqualTo(90).WithMessage("Phần trăm giảm giá phải nhỏ hơn hoặc bằng 90");
 
                     discount.RuleFor(d => d.DiscountExpiredDate)
-                        .NotNull().WithMessage("DiscountExpiredDate không được để trống")
-                        .Must(date => date > DateTime.UtcNow).WithMessage("DiscountExpiredDate phải lớn hơn thời gian hiện tại");
+                        .NotNull().WithMessage("Ngày hết hạn không được để trống")
+                        .Must(date => date > DateTime.UtcNow).WithMessage("Ngày hết hạn phải lớn hơn thời gian hiện tại");
                 });
         }
     }
