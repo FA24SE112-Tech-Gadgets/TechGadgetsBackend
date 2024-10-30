@@ -100,7 +100,7 @@ public class GetListSellerOrders : ControllerBase
             return Ok(orderDetailsResponseList);
         } else
         {
-            List<CustomerSellerOrderItemResponse> customerOrderDetailItemResponses = new List<CustomerSellerOrderItemResponse>()!;
+            List<CustomerSellerOrderItemResponse> customerSellerOrderItemResponses = new List<CustomerSellerOrderItemResponse>()!;
             foreach (var so in sellerOrders.Items) {
                 var sellerInfo = so.SellerInformation;
                 var csoir = so.ToCustomerSellerOrderItemResponse()!;
@@ -108,13 +108,13 @@ public class GetListSellerOrders : ControllerBase
                 int totalAmount = 0;
                 foreach (var g in csoir.Gadgets)
                 {
-                    totalAmount += (g.Price * g.Quantity);
+                    totalAmount += (g.DiscountPrice * g.Quantity);
                 }
                 csoir.Amount = totalAmount;
-                customerOrderDetailItemResponses.Add(csoir);
+                customerSellerOrderItemResponses.Add(csoir);
             }
             var orderDetailsResponseList = new PagedList<CustomerSellerOrderItemResponse>(
-                customerOrderDetailItemResponses,
+                customerSellerOrderItemResponses,
                 sellerOrders.Page,
                 sellerOrders.PageSize,
                 sellerOrders.TotalItems

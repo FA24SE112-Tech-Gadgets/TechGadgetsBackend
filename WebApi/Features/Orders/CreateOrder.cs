@@ -180,7 +180,7 @@ public class CreateOrder : ControllerBase
                     //Tính tổng giá tiền order
                     int discountPercentage = cartGadget.Gadget.GadgetDiscounts
                         .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active)?.DiscountPercentage ?? 0;
-                    totalAmount += (int)Math.Ceiling(cartGadget.Quantity * cartGadget.Gadget.Price * (1 - discountPercentage / 100.0));
+                    totalAmount += cartGadget.Quantity * (int)Math.Ceiling(cartGadget.Gadget.Price * (1 - discountPercentage / 100.0));
 
                     //Xóa gadget ra khỏi cart
                     context.CartGadgets.Remove(cartGadget);

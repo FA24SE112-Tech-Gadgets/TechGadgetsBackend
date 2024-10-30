@@ -167,7 +167,7 @@ public class CreateOrderNow : ControllerBase
             //Tính tổng giá tiền order
             int discountPercentage = gadgetItem.GadgetDiscounts
                 .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active)?.DiscountPercentage ?? 0;
-            totalAmount += (int)Math.Ceiling(request.Quantity * gadgetItem.Price * (1 - discountPercentage / 100.0));
+            totalAmount += request.Quantity * (int)Math.Ceiling(gadgetItem.Price * (1 - discountPercentage / 100.0));
         }
 
         sellerOrder.SellerOrderItems = sellerOrderItems;
