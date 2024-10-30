@@ -7,7 +7,7 @@ using WebApi.Features.Notifications.Models;
 
 namespace WebApi.Features.Notifications;
 
-//[Authorize]
+[Authorize]
 public class NotificationHub : Hub
 {
     private readonly AppDbContext _context;
@@ -19,17 +19,17 @@ public class NotificationHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        //var userInfoJson = Context.User.Claims.FirstOrDefault(c => c.Type == "UserInfo")?.Value;
+        var userInfoJson = Context.User.Claims.FirstOrDefault(c => c.Type == "UserInfo")?.Value;
 
-        //var userInfo = JsonConvert.DeserializeObject<TokenRequest>(userInfoJson!);
+        var userInfo = JsonConvert.DeserializeObject<TokenRequest>(userInfoJson!);
 
-        //var user = await _context.Users
-        //    .Include(u => u.Manager)
-        //    .Include(u => u.Admin)
-        //    .Include(u => u.Customer)
-        //    .Include(u => u.Seller)
-        //    .Include(u => u.Wallet)
-        //    .FirstOrDefaultAsync(x => x.Id == userInfo!.Id);
-        await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId} has joined");
+        var user = await _context.Users
+            .Include(u => u.Manager)
+            .Include(u => u.Admin)
+            .Include(u => u.Customer)
+            .Include(u => u.Seller)
+            .Include(u => u.Wallet)
+            .FirstOrDefaultAsync(x => x.Id == userInfo!.Id);
+        await Clients.All.SendAsync("ReceiveMessage", $"{user!.Customer!.FullName} has joined");
     }
 }
