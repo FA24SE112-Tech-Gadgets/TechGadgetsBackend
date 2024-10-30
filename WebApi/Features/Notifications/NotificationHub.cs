@@ -7,7 +7,7 @@ using WebApi.Features.Notifications.Models;
 
 namespace WebApi.Features.Notifications;
 
-[Authorize]
+//[Authorize]
 public class NotificationHub : Hub
 {
     private readonly AppDbContext _context;
