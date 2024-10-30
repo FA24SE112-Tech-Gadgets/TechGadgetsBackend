@@ -12,6 +12,8 @@ public class GadgetDetailResponse
     public BrandResponse Brand { get; set; } = default!;
     public string Name { get; set; } = default!;
     public int Price { get; set; }
+    public int DiscountPrice { get; set; } = default!;
+    public int DiscountPercentage { get; set; }
     public string ThumbnailUrl { get; set; } = default!;
     public GadgetStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -14,7 +14,7 @@ namespace WebApi.Features.Carts;
 [RolesFilter(Role.Customer)]
 public class DeleteCustomerCartItems : ControllerBase
 {
-    [HttpDelete("carts/clear")]
+    [HttpDelete("cart/clear")]
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Clear Customer Cart Items",
