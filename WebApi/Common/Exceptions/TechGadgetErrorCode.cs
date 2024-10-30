@@ -35,5 +35,5 @@ public class TechGadgetErrorCode
     public static readonly TechGadgetErrorCode WES_00 = new("WES_00", "Lỗi server", HttpStatusCode.InternalServerError);
 
     public static readonly TechGadgetErrorCode WEA_00 = new("WEA_00", "Lỗi xác thực", HttpStatusCode.Unauthorized);
-    public static readonly TechGadgetErrorCode WEA_01 = new("WEA_00", "Lỗi phân quyền", HttpStatusCode.Unauthorized);
+    public static readonly TechGadgetErrorCode WEA_01 = new("WEA_01", "Lỗi phân quyền", HttpStatusCode.Unauthorized);
 }

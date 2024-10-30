@@ -71,6 +71,14 @@ public class UpdateSellerInfo : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
+        if (currentUser!.Seller is null)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_03)
+                .AddReason("seller", "Seller chưa được kích hoạt")
+                .Build();
+        }
+
         // Lấy khách hàng từ database dựa trên user hiện tại
         var seller = await context.Sellers.FindAsync(currentUser!.Seller!.Id);
         if (seller == null)
