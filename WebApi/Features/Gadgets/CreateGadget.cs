@@ -32,6 +32,12 @@ public class CreateGadget : ControllerBase
         public string Value { get; set; } = default!;
     }
 
+    public class GadgetDiscountRequest
+    {
+        public int? DiscountPercentage { get; set; }
+        public DateTime? DiscountExpiredDate { get; set; }
+    }
+
     public new class Request
     {
         public Guid BrandId { get; set; } = default!;
@@ -41,6 +47,7 @@ public class CreateGadget : ControllerBase
         public Guid CategoryId { get; set; } = default!;
         public string Condition { get; set; } = default!;
         public int Quantity { get; set; }
+        public GadgetDiscountRequest Discount { get; set; }
         public ICollection<IFormFile> GadgetImages { get; set; } = [];
         public ICollection<GadgetDescriptionRequest> GadgetDescriptions { get; set; } = [];
         public ICollection<SpecificationValueRequest> SpecificationValues { get; set; } = [];
@@ -106,6 +113,20 @@ public class CreateGadget : ControllerBase
                     .WithMessage("Value không được để trống");
             });
 
+            RuleFor(r => r.Discount)
+                .Cascade(CascadeMode.Stop)
+                .NotNull().When(r => r.Discount != null) // Check if Discount is provided
+                .ChildRules(discount =>
+                {
+                    discount.RuleFor(d => d.DiscountPercentage)
+                        .NotNull().WithMessage("DiscountPercentage không được để trống")
+                        .GreaterThan(0).WithMessage("DiscountPercentage phải lớn hơn 0")
+                        .LessThanOrEqualTo(90).WithMessage("DiscountPercentage phải nhỏ hơn hoặc bằng 90");
+
+                    discount.RuleFor(d => d.DiscountExpiredDate)
+                        .NotNull().WithMessage("DiscountExpiredDate không được để trống")
+                        .Must(date => date > DateTime.UtcNow).WithMessage("DiscountExpiredDate phải lớn hơn thời gian hiện tại");
+                });
         }
     }
 
@@ -124,6 +145,11 @@ public class CreateGadget : ControllerBase
             - nếu **type** là image thì field **image** phải chứa file hình ảnh
             - nếu **type** không phải là image thì field **text** phải chứa text tương ứng
             - thứ tự của array sẽ được dùng để tạo index tương ứng, hãy lưu ý
+
+        - Discount:
+            - Có thể không cần truyền giảm giá ngay từ lúc create. Còn nếu truyền thì ""discountPercentage** và **discountExpiredDate** không được để trống
+            - ""discountPercentage** phải lớn hơn 0 và nhỏ hơn hoặc bẳng 90
+            - **discountExpiredDate** phải lớn hơn thời gian hiện tại
         """
     )]
     public async Task<IActionResult> Handler([FromForm] Request request,
@@ -302,6 +328,17 @@ public class CreateGadget : ControllerBase
                 Vector = await embeddingService.GetEmbedding(s.Value)
             }))
         };
+
+        if (request.Discount is { DiscountPercentage: int discountPercentage, DiscountExpiredDate: DateTime discountExpiredDate })
+        {
+            gadgetToCreate.GadgetDiscounts.Add(new GadgetDiscount
+            {
+                DiscountPercentage = discountPercentage,
+                ExpiredDate = discountExpiredDate,
+                Status = GadgetDiscountStatus.Active,
+                CreatedAt = DateTime.UtcNow,
+            });
+        }
 
         context.Gadgets.Add(gadgetToCreate);
         await context.SaveChangesAsync();

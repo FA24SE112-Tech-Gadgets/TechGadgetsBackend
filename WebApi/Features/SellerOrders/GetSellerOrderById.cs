@@ -36,6 +36,7 @@ public class GetSellerOrderById : ControllerBase
             .Include(so => so.Order)
                 .ThenInclude(o => o.WalletTracking)
             .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.GadgetDiscount)
             .Include(so => so.CustomerInformation)
             .Include(so => so.SellerInformation)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
@@ -61,8 +62,9 @@ public class GetSellerOrderById : ControllerBase
         int totalAmount = 0;
         foreach (var soi in sellerOrder.SellerOrderItems)
         {
+            int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
             totalQuantity += soi.GadgetQuantity;
-            totalAmount += (soi.GadgetQuantity * soi.GadgetPrice);
+            totalAmount += (int)Math.Ceiling(soi.GadgetQuantity * soi.GadgetPrice * (1 - discountPercentage / 100.0));
         }
 
         var walletTrackingCancel = await context.WalletTrackings.FirstOrDefaultAsync(wt => wt.Type == WalletTrackingType.Refund && wt.SellerOrderId == sellerOrderId);
