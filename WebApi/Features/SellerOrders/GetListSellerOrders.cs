@@ -35,9 +35,12 @@ public class GetListSellerOrders : ControllerBase
         Description = "API is for get list of seller orders." +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'" +
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
-                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách orderDetail của mình." +
-                            "<br>&nbsp; - Seller dùng API này để lấy ra những orderDetail liên quan đến mình." +
+                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách selelrOrder của mình." +
+                            "<br>&nbsp; - Seller dùng API này để lấy ra những selelrOrder liên quan đến mình." +
                             "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết." +
+                            "<br>&nbsp; - Price là giá gốc trước khi giảm." +
+                            "<br>&nbsp; - DiscountPrice là giá sau khi giảm." +
+                            "<br>&nbsp; - DiscountPercentage là phần trăm giảm của gadget." +
                             "<br>&nbsp; - LƯU Ý: Trong API này Gadgets chỉ lấy ra gadget đầu tiên, nên muốn xem danh sách gadget có trong order thì gọi API khác."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,6 +65,8 @@ public class GetListSellerOrders : ControllerBase
                 .Include(so => so.Seller)
                 .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.Gadget)
+                .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.GadgetDiscount)
                 .Include(so => so.SellerInformation)
                 .Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
         }
@@ -95,7 +100,7 @@ public class GetListSellerOrders : ControllerBase
             return Ok(orderDetailsResponseList);
         } else
         {
-            List<CustomerSellerOrderItemResponse> customerOrderDetailItemResponses = new List<CustomerSellerOrderItemResponse>()!;
+            List<CustomerSellerOrderItemResponse> customerSellerOrderItemResponses = new List<CustomerSellerOrderItemResponse>()!;
             foreach (var so in sellerOrders.Items) {
                 var sellerInfo = so.SellerInformation;
                 var csoir = so.ToCustomerSellerOrderItemResponse()!;
@@ -103,13 +108,13 @@ public class GetListSellerOrders : ControllerBase
                 int totalAmount = 0;
                 foreach (var g in csoir.Gadgets)
                 {
-                    totalAmount += (g.Price * g.Quantity);
+                    totalAmount += (g.DiscountPrice * g.Quantity);
                 }
                 csoir.Amount = totalAmount;
-                customerOrderDetailItemResponses.Add(csoir);
+                customerSellerOrderItemResponses.Add(csoir);
             }
             var orderDetailsResponseList = new PagedList<CustomerSellerOrderItemResponse>(
-                customerOrderDetailItemResponses,
+                customerSellerOrderItemResponses,
                 sellerOrders.Page,
                 sellerOrders.PageSize,
                 sellerOrders.TotalItems

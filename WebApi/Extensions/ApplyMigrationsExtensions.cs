@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Data.Seeds;
 using WebApi.Services.Embedding;
 
@@ -119,6 +120,19 @@ public static class ApplyMigrationsExtensions
             {
                 gadgetFilter.Vector = await embeddingService.GetEmbedding(gadgetFilter.Value);
                 context.GadgetFilters.Add(gadgetFilter);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        if (!await context.GadgetDiscounts.AnyAsync() && await context.Gadgets.AnyAsync())
+        {
+            foreach (var gadgetDiscount in GadgetDiscountSeed.Default)
+            {
+                gadgetDiscount.ExpiredDate = DateTime.UtcNow.AddMonths(6);
+                gadgetDiscount.Status = GadgetDiscountStatus.Active;
+                gadgetDiscount.CreatedAt = DateTime.UtcNow;
+
+                context.GadgetDiscounts.Add(gadgetDiscount);
             }
             await context.SaveChangesAsync();
         }

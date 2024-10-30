@@ -9,12 +9,15 @@ public static class SellerOrderMapper
     {
         if (sellerOrderItem != null)
         {
+            int discountPercentage = sellerOrderItem.GadgetDiscount != null && sellerOrderItem.GadgetDiscount.Status == GadgetDiscountStatus.Active ? sellerOrderItem.GadgetDiscount.DiscountPercentage : 0;
             return new SellerOrderItemInItemResponse
             {
                 SellerOrderItemId = sellerOrderItem.Id,
                 GadgetId = sellerOrderItem.GadgetId,
                 Name = sellerOrderItem.Gadget.Name,
                 Price = sellerOrderItem.GadgetPrice,
+                DiscountPrice = (int)Math.Ceiling(sellerOrderItem.GadgetPrice * (1 - discountPercentage / 100.0)),
+                DiscountPercentage = discountPercentage,
                 ThumbnailUrl = sellerOrderItem.Gadget.ThumbnailUrl,
                 Quantity = sellerOrderItem.GadgetQuantity,
             };
@@ -43,14 +46,19 @@ public static class SellerOrderMapper
         if (sellerOrderItems != null && sellerOrderItems.Count > 0)
         {
             return sellerOrderItems
-            .Select(soi => new SellerOrderItemInItemResponse
-            {
-                SellerOrderItemId = soi.Id,
-                GadgetId = soi.GadgetId,
-                Name = soi.Gadget.Name,
-                Price = soi.GadgetPrice,
-                ThumbnailUrl = soi.Gadget.ThumbnailUrl,
-                Quantity = soi.GadgetQuantity,
+            .Select(soi => {
+                int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
+                return new SellerOrderItemInItemResponse
+                {
+                    SellerOrderItemId = soi.Id,
+                    GadgetId = soi.GadgetId,
+                    Name = soi.Gadget.Name,
+                    Price = soi.GadgetPrice,
+                    DiscountPrice = (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0)),
+                    DiscountPercentage = discountPercentage,
+                    ThumbnailUrl = soi.Gadget.ThumbnailUrl,
+                    Quantity = soi.GadgetQuantity,
+                };
             })
             .ToList();
         }

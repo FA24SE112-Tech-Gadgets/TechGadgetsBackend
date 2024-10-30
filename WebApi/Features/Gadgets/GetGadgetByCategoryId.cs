@@ -32,6 +32,7 @@ public class GetGadgetByCategoryId : ControllerBase
             .Include(c => c.Seller)
                 .ThenInclude(s => s.User)
             .Include(c => c.FavoriteGadgets)
+            .Include(g => g.GadgetDiscounts)
             .Where(g => g.CategoryId == categoryId && g.Status == GadgetStatus.Active)
             .Select(c => c.ToGadgetResponse(currentUser != null ? currentUser.Customer!.Id : null))
             .ToPagedListAsync(request);

@@ -42,7 +42,7 @@ public class CreateOrder : ControllerBase
                             "<br>&nbsp; - Dùng API này để thanh toán đơn hàng(trừ tiền có sẵn trong ví)." +
                             "<br>&nbsp; - Sau khi gọi API này thì những gadget thanh toán, sẽ không còn nằm trong cart nữa." +
                             "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
-                            "<br>&nbsp; - Customer cần điền Address trước khi tiến hành tạo order (Trước khi gọi API)" +
+                            "<br>&nbsp; - Customer cần điền Address và PhoneNumber trước khi tiến hành tạo order (Trước khi gọi API)" +
                             "<br>&nbsp; - Không thể tạo đơn với những sản phẩm nằm ngoài giỏ hàng."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,6 +93,7 @@ public class CreateOrder : ControllerBase
         // Lấy list cartGadget của user
         var listCartGadgets = await context.CartGadgets
             .Include(cg => cg.Gadget)
+                .ThenInclude(g => g.GadgetDiscounts)
             .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
             .ToListAsync();
 
@@ -177,7 +178,9 @@ public class CreateOrder : ControllerBase
                     sellerOrderItems.Add(sellerOrderItem);
 
                     //Tính tổng giá tiền order
-                    totalAmount += (cartGadget.Quantity * cartGadget.Gadget.Price);
+                    int discountPercentage = cartGadget.Gadget.GadgetDiscounts
+                        .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active)?.DiscountPercentage ?? 0;
+                    totalAmount += cartGadget.Quantity * (int)Math.Ceiling(cartGadget.Gadget.Price * (1 - discountPercentage / 100.0));
 
                     //Xóa gadget ra khỏi cart
                     context.CartGadgets.Remove(cartGadget);
@@ -234,7 +237,8 @@ public class CreateOrder : ControllerBase
         if ((sellerOrders.Count > 0 && totalAmount > 0) || listCartGadgets.Count > 0)
         {
             await context.SaveChangesAsync();
-        } else
+        }
+        else
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)

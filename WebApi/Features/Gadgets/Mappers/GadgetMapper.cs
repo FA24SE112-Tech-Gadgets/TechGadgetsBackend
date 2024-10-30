@@ -12,11 +12,15 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active);
+            int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetResponse
             {
                 Id = gadget.Id,
                 Name = gadget.Name,
                 Price = gadget.Price,
+                DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
+                DiscountPercentage = discountPercentage,
                 SellerStatus = gadget.Seller.User.Status,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 IsForSale = gadget.IsForSale,
@@ -30,6 +34,8 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active);
+            int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetDetailResponse
             {
                 Id = gadget.Id,
@@ -37,6 +43,8 @@ public static class GadgetMapper
                 Brand = gadget.Brand.ToBrandResponse()!,
                 Name = gadget.Name,
                 Price = gadget.Price,
+                DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
+                DiscountPercentage = discountPercentage,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Status = gadget.Status,
                 CreatedAt = gadget.CreatedAt,
