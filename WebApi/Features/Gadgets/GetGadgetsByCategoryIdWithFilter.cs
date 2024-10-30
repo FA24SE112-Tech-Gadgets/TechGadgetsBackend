@@ -46,6 +46,7 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
             .Include(g => g.Seller)
                 .ThenInclude(s => s.User)
             .Include(g => g.FavoriteGadgets)
+            .Include(g => g.GadgetDiscounts)
             .Include(g => g.SpecificationValues)
             .Where(g => g.CategoryId == categoryId)
             .AsQueryable();

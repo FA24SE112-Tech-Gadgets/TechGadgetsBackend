@@ -14,7 +14,7 @@ namespace WebApi.Features.Carts;
 [JwtValidation]
 [RolesFilter(Role.Customer)]
 [RequestValidation<Request>]
-public class UpdateCartItem : ControllerBase
+public class AddGadgetToCart : ControllerBase
 {
     public new class Request
     {
@@ -30,18 +30,20 @@ public class UpdateCartItem : ControllerBase
                 .NotEmpty()
                 .WithMessage("GadgetId không được để trống");
             RuleFor(sp => sp.Quantity)
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Số lượng không được nhỏ hơn 0");
+                .GreaterThan(0)
+                .WithMessage("Số lượng không được nhỏ hơn 1");
         }
     }
 
-    [HttpPut("cart/old")]
+    [HttpPost("cart")]
     [Tags("Carts")]
     [SwaggerOperation(
-        Summary = "Update Cart Item",
-        Description = "This API is for update customer cart item."
+        Summary = "Add Gadget To Cart",
+        Description = "This API is for customer add gadget to cart. Note:" +
+                            "<br>&nbsp; - Quantity phải lớn hơn 1." +
+                            "<br>&nbsp; - Truyền bao nhiêu add bấy nhiêu."
     )]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
@@ -83,17 +85,13 @@ public class UpdateCartItem : ControllerBase
                 Quantity = request.Quantity
             };
             await context.CartGadgets.AddAsync(newCartGadget);
-        } else if (existingCartGadget != null) // Tìm thấy Gadget
+        }
+        else if (existingCartGadget != null) // Tìm thấy Gadget
         {
-            if (request.Quantity == 0)
-            {
-                context.CartGadgets.Remove(existingCartGadget);
-            } else
-            {
-                existingCartGadget.Quantity = request.Quantity;
-                context.CartGadgets.Update(existingCartGadget);
-            }
-        } else
+            existingCartGadget.Quantity += request.Quantity;
+            context.CartGadgets.Update(existingCartGadget);
+        }
+        else
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
@@ -104,6 +102,6 @@ public class UpdateCartItem : ControllerBase
         // Lưu thay đổi vào database
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Created();
     }
 }

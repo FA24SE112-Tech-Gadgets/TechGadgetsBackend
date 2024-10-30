@@ -8,8 +8,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Carts.Mappers;
 using WebApi.Features.Carts.Models;
-using WebApi.Features.GadgetHistories.Models;
-using WebApi.Features.Users.Mappers;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Carts;
@@ -19,7 +17,7 @@ namespace WebApi.Features.Carts;
 [RolesFilter(Role.Customer)]
 public class GetListSellerInCart : ControllerBase
 {
-    [HttpGet("carts/sellers")]
+    [HttpGet("cart/sellers")]
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Get List Sellers In Customer Cart",

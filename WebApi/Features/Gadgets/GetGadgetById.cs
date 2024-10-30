@@ -36,6 +36,7 @@ public class GetGadgetById : ControllerBase
                                     .Include(g => g.GadgetDescriptions)
                                     .Include(g => g.GadgetImages)
                                     .Include(g => g.FavoriteGadgets)
+                                    .Include(g => g.GadgetDiscounts)
                                     .FirstOrDefaultAsync(g => g.Id == id);
 
         if (gadget is null)

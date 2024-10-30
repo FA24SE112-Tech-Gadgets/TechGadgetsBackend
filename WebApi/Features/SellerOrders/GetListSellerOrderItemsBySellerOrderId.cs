@@ -24,7 +24,10 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
         Description = "API is for get list items in sellerOrder by sellerOrderId." +
                             "<br>&nbsp; - Customer dùng API này để xem danh sách gadgets có trong sellerOrder của mình." +
                             "<br>&nbsp; - Seller dùng API này để xem danh sách gadgets có trong sellerOrder liên quan đến mình." +
-                            "<br>&nbsp; - SellerOrderItemId khác với GadgetId."
+                            "<br>&nbsp; - SellerOrderItemId khác với GadgetId." +
+                            "<br>&nbsp; - Price là giá gốc trước khi giảm." +
+                            "<br>&nbsp; - DiscountPrice là giá sau khi giảm." +
+                            "<br>&nbsp; - DiscountPercentage là phần trăm giảm của gadget."
     )]
     [ProducesResponseType(typeof(PagedList<SellerOrderItemInItemResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -38,6 +41,8 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
             .Include(so => so.Order)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Gadget)
+            .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.GadgetDiscount)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
 
         if (sellerOrder == null)
