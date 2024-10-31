@@ -12,7 +12,7 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetResponse
             {
@@ -35,7 +35,7 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetDetailResponse
             {

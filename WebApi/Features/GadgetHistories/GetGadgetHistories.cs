@@ -74,9 +74,13 @@ public class GetGadgetHistories : ControllerBase
                 .ThenInclude(s => s.User)
             .Include(gh => gh.Gadget)
                 .ThenInclude(g => g.Category)
+            .Include(gh => gh.Gadget)
+                .ThenInclude(g => g.FavoriteGadgets)
+            .Include(gh => gh.Gadget)
+                .ThenInclude(g => g.GadgetDiscounts)
             .ToListAsync();
         var gadgetHistoryResponseList = new PagedList<GadgetHistoryResponse>(
-            gadgetHistories.Select(gh => gh.ToGadgetHistoryResponse()!).ToList(),
+            gadgetHistories.Select(gh => gh.ToGadgetHistoryResponse(currentUser.Customer.Id)!).ToList(),
             request.Page ?? 1,
             request.PageSize ?? 10,
             totalUniqueGadgets // Đếm tổng số bản ghi

@@ -51,6 +51,8 @@ public class GetCustomerFavoriteGadget : ControllerBase
                 .ThenInclude(g => g.Brand)
             .Include(fg => fg.Gadget)
                 .ThenInclude(g => g.Category)
+            .Include(fg => fg.Gadget)
+                .ThenInclude(g => g.GadgetDiscounts)
             .Where(fg => fg.CustomerId == currentUser!.Customer!.Id)
             .AsQueryable();
 

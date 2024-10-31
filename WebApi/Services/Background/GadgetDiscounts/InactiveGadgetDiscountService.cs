@@ -17,7 +17,7 @@ public class InactiveGadgetDiscountService(IServiceProvider serviceProvider) : B
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 var expiredGadgetDiscounts = await context.GadgetDiscounts
-                    .Where(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate == DateTime.UtcNow)
+                    .Where(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow)
                     .ToListAsync(stoppingToken);
 
                 foreach (var ex in expiredGadgetDiscounts)

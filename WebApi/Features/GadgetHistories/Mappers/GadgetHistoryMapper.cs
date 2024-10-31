@@ -64,20 +64,26 @@ public static class GadgetHistoryMapper
         return null;
     }
 
-    private static GadgetHistoryItemResponse? ToGadgetHistoryItemResponse(this Gadget gadget)
+    private static GadgetHistoryItemResponse? ToGadgetHistoryItemResponse(this Gadget gadget, Guid? customerId)
     {
         if (gadget != null)
         {
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
+            int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetHistoryItemResponse
             {
                 Id = gadget.Id,
                 Name = gadget.Name,
                 Price = gadget.Price,
+                DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
+                DiscountPercentage = discountPercentage,
+                DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 Status = gadget.Status,
                 Condition = gadget.Condition,
                 Quantity = gadget.Quantity,
                 IsForSale = gadget.IsForSale,
+                IsFavorite = gadget.FavoriteGadgets.Any(fg => fg.CustomerId == customerId),
                 Seller = gadget.Seller.ToSellerGadgetHistoryResponse()!,
                 Brand = gadget.Brand.ToBrandGadgetHistoryResponse()!,
                 Category = gadget.Category.ToCategoryGadgetHistoryResponse()!,
@@ -86,7 +92,7 @@ public static class GadgetHistoryMapper
         return null;
     }
 
-    public static GadgetHistoryResponse? ToGadgetHistoryResponse(this GadgetHistory gadgetHistory)
+    public static GadgetHistoryResponse? ToGadgetHistoryResponse(this GadgetHistory gadgetHistory, Guid? customerId)
     {
         if (gadgetHistory != null)
         {
@@ -94,7 +100,7 @@ public static class GadgetHistoryMapper
             {
                 Id = gadgetHistory.Id,
                 CreatedAt = gadgetHistory.CreatedAt,
-                Gadget = gadgetHistory.Gadget.ToGadgetHistoryItemResponse()!,
+                Gadget = gadgetHistory.Gadget.ToGadgetHistoryItemResponse(customerId)!,
             };
         }
         return null;
