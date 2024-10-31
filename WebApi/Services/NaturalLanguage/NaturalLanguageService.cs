@@ -85,8 +85,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         minPrice must be greater than or equal to 0
         If user does not mention, give me min value, which is 0
         
-        maxPrice must be less than or equal to 100000000
-        If user does not mention, give me max value, which is 100000000
+        maxPrice must be less than or equal to 150000000
+        If user does not mention, give me max value, which is 150000000
 
 
         isFastCharge can be true or false
