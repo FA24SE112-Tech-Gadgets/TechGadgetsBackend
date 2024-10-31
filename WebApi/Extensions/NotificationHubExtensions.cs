@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using WebApi.Common.Filters;
 using WebApi.Common.Settings;
 using WebApi.Features.Notifications;
+using WebApi.Services.Notification;
 
 namespace WebApi.Extensions;
 
@@ -56,6 +59,15 @@ public static class NotificationHubExtensions
 
     public static void AddAuthorizationForSignalR(this IServiceCollection services)
     {
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("RoleRestricted", policy =>
+                policy.Requirements.Add(new RoleRestrictHubRequirement()));
+        });
+    }
+
+    public static void AddSingletonForSignalR(this IServiceCollection services)
+    {
+        services.AddSingleton<IUserIdProvider, NotificationService>();
     }
 }

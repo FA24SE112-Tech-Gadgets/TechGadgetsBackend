@@ -19,6 +19,7 @@ builder.Services.AddDbContextConfiguration(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddCorsPolicy();
 builder.Services.AddConfigureApiBehavior();
+builder.Services.AddSingletonForSignalR();
 builder.Services.AddAuthenticationForSignalR(builder.Configuration);
 builder.Services.AddAuthorizationForSignalR();
 
