@@ -102,7 +102,7 @@ public class CancelSellerOrder : ControllerBase
         var selelrOrderItems = sellerOrder.SellerOrderItems;
         foreach (var soi in selelrOrderItems)
         {
-            int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
+            int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
             totalAmount += soi.GadgetQuantity * (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
             soi.Gadget.Quantity += soi.GadgetQuantity;
         }
