@@ -302,6 +302,7 @@ public class CreateGadget : ControllerBase
             }
         }
 
+        DateTime createdAt = DateTime.UtcNow;
         var gadgetToCreate = new Gadget
         {
             SellerId = user.Seller.Id,
@@ -311,8 +312,8 @@ public class CreateGadget : ControllerBase
             ThumbnailUrl = thumbnailUrl,
             CategoryId = request.CategoryId,
             Status = GadgetStatus.Active,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
+            UpdatedAt = createdAt,
             Condition = request.Condition,
             ConditionVector = await embeddingService.GetEmbedding(request.Condition),
             NameVector = await embeddingService.GetEmbedding(request.Name),
@@ -336,7 +337,7 @@ public class CreateGadget : ControllerBase
                 DiscountPercentage = discountPercentage,
                 ExpiredDate = discountExpiredDate,
                 Status = GadgetDiscountStatus.Active,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = createdAt,
             });
         }
 
