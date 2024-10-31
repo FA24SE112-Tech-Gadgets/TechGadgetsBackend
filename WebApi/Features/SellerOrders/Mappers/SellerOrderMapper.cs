@@ -9,7 +9,7 @@ public static class SellerOrderMapper
     {
         if (sellerOrderItem != null)
         {
-            int discountPercentage = sellerOrderItem.GadgetDiscount != null && sellerOrderItem.GadgetDiscount.Status == GadgetDiscountStatus.Active ? sellerOrderItem.GadgetDiscount.DiscountPercentage : 0;
+            int discountPercentage = sellerOrderItem.GadgetDiscount != null ? sellerOrderItem.GadgetDiscount.DiscountPercentage : 0;
             return new SellerOrderItemInItemResponse
             {
                 SellerOrderItemId = sellerOrderItem.Id,
@@ -47,7 +47,7 @@ public static class SellerOrderMapper
         {
             return sellerOrderItems
             .Select(soi => {
-                int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
+                int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
                 return new SellerOrderItemInItemResponse
                 {
                     SellerOrderItemId = soi.Id,

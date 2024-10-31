@@ -166,16 +166,16 @@ public class CreateOrderNow : ControllerBase
 
             //Tính tổng giá tiền order
             int discountPercentage = gadgetItem.GadgetDiscounts
-                .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active)?.DiscountPercentage ?? 0;
+                .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow)?.DiscountPercentage ?? 0;
             totalAmount += request.Quantity * (int)Math.Ceiling(gadgetItem.Price * (1 - discountPercentage / 100.0));
         }
 
         sellerOrder.SellerOrderItems = sellerOrderItems;
         sellerOrders.Add(sellerOrder);
 
-        // Tạo systemOrderDetailTracking để tracking orderDetail mới tạo
+        // Tạo systemSellerOrderTracking để tracking sellerOrder mới tạo
         createdAt = DateTime.UtcNow;
-        SystemSellerOrderTracking systemOrderDetailTracking = new SystemSellerOrderTracking()
+        SystemSellerOrderTracking systemSellerOrderTracking = new SystemSellerOrderTracking()
         {
             SystemWalletId = systemWallet!.Id,
             SellerOrder = sellerOrder,
@@ -185,7 +185,7 @@ public class CreateOrderNow : ControllerBase
             CreatedAt = createdAt,
             UpdatedAt = createdAt,
         }!;
-        await context.SystemSellerOrderTrackings.AddAsync(systemOrderDetailTracking);
+        await context.SystemSellerOrderTrackings.AddAsync(systemSellerOrderTracking);
 
         order.SellerOrders = sellerOrders;
 
