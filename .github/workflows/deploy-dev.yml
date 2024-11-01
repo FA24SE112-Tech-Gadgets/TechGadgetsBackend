@@ -36,4 +36,5 @@ jobs:
                     sudo docker stop techgadget-dev || true
                     sudo docker rm techgadget-dev || true
                     sudo docker run -e ASPNETCORE_ENVIRONMENT=Development -d --hostname host-techgadget-dev --name techgadget-dev --network my_network -p 5000:8080 techgadget/techgadget-dev
+                    sudo docker rmi $(sudo docker images -f "dangling=true" -q)
                   EOF
