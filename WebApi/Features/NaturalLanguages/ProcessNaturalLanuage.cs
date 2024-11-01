@@ -2,6 +2,7 @@
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Pgvector.EntityFrameworkCore;
+using System.Linq.Expressions;
 using WebApi.Common.Filters;
 using WebApi.Common.Utils;
 using WebApi.Data;
@@ -39,8 +40,30 @@ public class ProcessNaturalLanuage : ControllerBase
             return Ok("natural language query is null");
         }
 
+        DateTime currentDate = DateTime.UtcNow;
+
         var pricePredicate = PredicateBuilder.New<Gadget>(true);
-        pricePredicate = pricePredicate.Or(g => g.Price >= query.MinPrice && g.Price <= query.MaxPrice);
+
+        Expression<Func<Gadget, double>> effectivePrice = g =>
+                g.Price - g.GadgetDiscounts
+                .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
+                .Sum(d => g.Price / 100.0 * d.DiscountPercentage);
+
+        //pricePredicate = pricePredicate.Or(g =>
+        //    (g.Price - g.GadgetDiscounts
+        //        .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
+        //        .Sum(d => g.Price / 100.0 * d.DiscountPercentage) >= query.MinPrice) &&
+        //    (g.Price - g.GadgetDiscounts
+        //        .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
+        //        .Sum(d => g.Price / 100.0 * d.DiscountPercentage) <= query.MaxPrice));
+
+        pricePredicate = pricePredicate.Or(g =>
+            (g.Price - g.GadgetDiscounts
+                .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
+                .Sum(d => g.Price / 100.0 * d.DiscountPercentage) >= query.MinPrice) &&
+            (g.Price - g.GadgetDiscounts
+                .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
+                .Sum(d => g.Price / 100.0 * d.DiscountPercentage) <= query.MaxPrice));
 
         var categoryPredicate = PredicateBuilder.New<Gadget>(true);
         foreach (var category in query.Categories)
