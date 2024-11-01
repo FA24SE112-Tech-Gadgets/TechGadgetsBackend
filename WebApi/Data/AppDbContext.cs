@@ -16,6 +16,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<CategoryBrand> CategoryBrands { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<CustomerInformation> CustomerInformation { get; set; }
+    public DbSet<Device> Devices { get; set; }
     public DbSet<FavoriteGadget> FavoriteGadgets { get; set; }
     public DbSet<Gadget> Gadgets { get; set; }
     public DbSet<GadgetDescription> GadgetDescriptions { get; set; }
