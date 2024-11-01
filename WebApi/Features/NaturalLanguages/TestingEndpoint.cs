@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Services.Embedding;
 
 namespace WebApi.Features.NaturalLanguages;
@@ -11,11 +13,22 @@ public class TestingEndpoint : ControllerBase
     [HttpPost("natural-languages/test")]
     public async Task<IActionResult> Handler(AppDbContext context, EmbeddingService embeddingService)
     {
-        List<string> storageCapacitiesPhone = ["32GB", "64GB", "128GB", "256GB", "512GB", "1TB", "2TB"];
-        List<(int number, string)> list = storageCapacitiesPhone.Select(ExtractNumberAndString).ToList();
+        var gadgets = await context.Gadgets
+                            .Include(g => g.GadgetDiscounts
+                                                .Where(gd => gd.Status == GadgetDiscountStatus.Active))
+                            .ToListAsync();
 
+        var discountedGadgets = gadgets
+                                .Select(g => new
+                                {
+                                    g.Name,
+                                    g.Price,
+                                    DiscountedPrice = g.GadgetDiscounts.Any()
+                                        ? g.Price * (100 - g.GadgetDiscounts.ToList()[0].DiscountPercentage) / 100.0
+                                        : g.Price
+                                });
 
-        return Ok();
+        return Ok(discountedGadgets);
     }
 
     private static (int number, string text) ExtractNumberAndString(string input)

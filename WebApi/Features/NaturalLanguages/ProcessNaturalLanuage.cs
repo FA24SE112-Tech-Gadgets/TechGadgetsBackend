@@ -1,10 +1,9 @@
 ﻿using FluentValidation;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Pgvector;
 using Pgvector.EntityFrameworkCore;
 using WebApi.Common.Filters;
+using WebApi.Common.Utils;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.AI;
@@ -28,25 +27,6 @@ public class ProcessNaturalLanuage : ControllerBase
             RuleFor(r => r.Input)
                 .NotEmpty().WithMessage("Input không được để trống");
         }
-    }
-
-    private static (int number, string text) ExtractNumberAndString(string input)
-    {
-        // Find the index where the numeric part ends
-        int index = 0;
-        while (index < input.Length && char.IsDigit(input[index]))
-        {
-            index++;
-        }
-
-        // Extract the number and the string
-        string numberPart = input.Substring(0, index);
-        string stringPart = input.Substring(index);
-
-        // Convert the number part to an integer
-        int number = int.Parse(numberPart);
-
-        return (number, stringPart);
     }
 
     [Tags("Natural Language")]
@@ -143,7 +123,7 @@ public class ProcessNaturalLanuage : ControllerBase
         if (query.IsGoodBatteryLife)
         {
             goodBatteryLifePredicate = goodBatteryLifePredicate.Or(g => g.Category.Name.ToLower() != "điện thoại" ||
-                            g.SpecificationValues.Any(sv => sv.SpecificationKey.Name == "Dung lượng pin" && Convert.ToDouble(sv.Value) > 5000));
+                            g.SpecificationValues.Any(sv => sv.SpecificationKey.Name == "Dung lượng pin" && Convert.ToDouble(sv.Value) >= 5000));
         }
 
         var fastChargePredicate = PredicateBuilder.New<Gadget>(true);
@@ -224,10 +204,9 @@ public class ProcessNaturalLanuage : ControllerBase
         }
 
         var operatingSystemPredicate = PredicateBuilder.New<Gadget>(true);
-        List<Vector> operatingSystemVectors = [];
         if (query.OperatingSystems.Any())
         {
-            operatingSystemVectors = await embeddingService.GetEmbeddings(query.OperatingSystems);
+            var operatingSystemVectors = await embeddingService.GetEmbeddings(query.OperatingSystems);
             operatingSystemPredicate = operatingSystemPredicate.Or(g =>
                 g.Category.Name != "Laptop" ||
                 g.SpecificationValues.Any(sv =>
@@ -246,14 +225,111 @@ public class ProcessNaturalLanuage : ControllerBase
         var storageCapacityPhonePredicate = PredicateBuilder.New<Gadget>(true);
         if (query.StorageCapacitiesPhone.Any())
         {
-            List<(int number, string text)> extractedStoragePhone = query.StorageCapacitiesPhone.Select(ExtractNumberAndString).ToList();
+            var numbers = query.StorageCapacitiesPhone.Select(x => x.ExtractNumberAndString().number.ToString()).ToList();
+            var units = query.StorageCapacitiesPhone.Select(x => x.ExtractNumberAndString().text).ToList();
 
             storageCapacityPhonePredicate = storageCapacityPhonePredicate.Or(g =>
                 g.Category.Name != "Điện thoại" ||
                 g.SpecificationValues.Any(sv =>
                     sv.SpecificationKey.Name == "Dung lượng lưu trữ"
-                    && extractedStoragePhone.Any(item => sv.Value == item.number.ToString() && sv.SpecificationUnit.Name == item.text)
+                    && numbers.Contains(sv.Value)
+                    && units.Contains(sv.SpecificationUnit.Name)
             ));
+        }
+
+        var storageCapacityLaptopPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.StorageCapacitiesLaptop.Any())
+        {
+            var numbers = query.StorageCapacitiesLaptop.Select(x => x.ExtractNumberAndString().number.ToString()).ToList();
+            var units = query.StorageCapacitiesLaptop.Select(x => x.ExtractNumberAndString().text).ToList();
+
+            storageCapacityLaptopPredicate = storageCapacityLaptopPredicate.Or(g =>
+                g.Category.Name != "Laptop" ||
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "Ổ cứng SSD"
+                    && numbers.Contains(sv.Value)
+                    && units.Contains(sv.SpecificationUnit.Name)
+            ));
+        }
+
+        var ramPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Rams.Any())
+        {
+            var numbers = query.Rams.Select(x => x.ExtractNumberAndString().number.ToString()).ToList();
+            var units = query.Rams.Select(x => x.ExtractNumberAndString().text).ToList();
+
+            ramPredicate = ramPredicate.Or(g =>
+                g.Category.Name != "Laptop" ||
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "RAM"
+                    && numbers.Contains(sv.Value)
+                    && units.Contains(sv.SpecificationUnit.Name)
+            ));
+
+            ramPredicate = ramPredicate.And(g =>
+                g.Category.Name != "Điện thoại" ||
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "RAM"
+                    && numbers.Contains(sv.Value)
+                    && units.Contains(sv.SpecificationUnit.Name)
+            ));
+        }
+
+        var featurePredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Features.Any())
+        {
+            var featureVectors = await embeddingService.GetEmbeddings(query.Features);
+
+            featurePredicate = featurePredicate.Or(g =>
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "Tính năng"
+                    && featureVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.58)
+                )
+            );
+        }
+
+        var conditionPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Conditions.Any())
+        {
+            var conditionVectors = await embeddingService.GetEmbeddings(query.Conditions);
+
+            featurePredicate = featurePredicate.Or(g =>
+                conditionVectors.Any(vector => 1 - g.ConditionVector.CosineDistance(vector) >= 0.5)
+            );
+        }
+
+        var segmentationPredicate = PredicateBuilder.New<Gadget>(true);
+        foreach (var segmentation in query.Segmentations)
+        {
+            if (new List<string> { "Giá rẻ", "Giá tốt", "Giá sinh viên" }.Contains(segmentation))
+            {
+                segmentationPredicate = segmentationPredicate.Or(g =>
+                        (g.Category.Name == "Điện thoại" && g.Price <= 4_000_000)
+                        || (g.Category.Name == "Laptop" && g.Price <= 10_000_000)
+                        || (g.Category.Name == "Tai nghe" && g.Price <= 500_000)
+                        || (g.Category.Name == "Loa" && g.Price <= 2_000_000)
+                    );
+            }
+
+            if (new List<string> { "Tầm trung" }.Contains(segmentation))
+            {
+                segmentationPredicate = segmentationPredicate.Or(g =>
+                        (g.Category.Name == "Điện thoại" && 4_000_000 < g.Price && g.Price <= 13_000_000)
+                        || (g.Category.Name == "Laptop" && 10_000_000 < g.Price && g.Price <= 25_000_000)
+                        || (g.Category.Name == "Tai nghe" && 500_000 < g.Price && g.Price <= 2_000_000)
+                        || (g.Category.Name == "Loa" && 2_000_000 < g.Price && g.Price <= 7_000_000)
+                    );
+            }
+
+            if (new List<string> { "Cao cấp", "Hiện đại" }.Contains(segmentation))
+            {
+                segmentationPredicate = segmentationPredicate.Or(g =>
+                        (g.Category.Name == "Điện thoại" && g.Price > 13_000_000)
+                        || (g.Category.Name == "Laptop" && g.Price > 25_000_000)
+                        || (g.Category.Name == "Tai nghe" && g.Price > 2_000_000)
+                        || (g.Category.Name == "Loa" && g.Price > 7_000_000)
+                    );
+            }
         }
 
         //var category = await context.Categories.FirstOrDefaultAsync(c => c.Name.Equals(query.Categories[0], StringComparison.CurrentCultureIgnoreCase));
@@ -271,19 +347,23 @@ public class ProcessNaturalLanuage : ControllerBase
 
         var outerPredicate = PredicateBuilder.New<Gadget>(true);
         outerPredicate = outerPredicate
-                        .And(pricePredicate)
-                        .And(categoryPredicate)
-                        .And(brandPredicate)
-                        .And(purposePredicate)
-                        .And(goodBatteryLifePredicate)
-                        .And(fastChargePredicate)
-                        .And(wideScreenPredicate)
-                        .And(foldablePredicate)
-                        .And(inchPredicate)
-                        .And(highResolutionPredicate)
-                        .And(operatingSystemPredicate)
-                        //.And(storageCapacityPhonePredicate)
-                        ;
+                            .And(pricePredicate)
+                            .And(categoryPredicate)
+                            .And(brandPredicate)
+                            .And(purposePredicate)
+                            .And(goodBatteryLifePredicate)
+                            .And(fastChargePredicate)
+                            .And(wideScreenPredicate)
+                            .And(foldablePredicate)
+                            .And(inchPredicate)
+                            .And(highResolutionPredicate)
+                            .And(operatingSystemPredicate)
+                            .And(storageCapacityPhonePredicate)
+                            .And(storageCapacityLaptopPredicate)
+                            .And(ramPredicate)
+                            .And(featurePredicate)
+                            .And(segmentationPredicate)
+                            ;
 
         var gadgets = context.Gadgets
                                 .AsExpandable()

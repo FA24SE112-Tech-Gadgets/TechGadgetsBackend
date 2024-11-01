@@ -28,6 +28,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> categories = await context.Categories.Select(c => c.Name).ToListAsync();
 
+        List<string> fastChargeKeywords = ["Sạc nhanh", "Sạc pin nhanh"];
+
+        List<string> goodBatteryLifeKeywords = ["Pin trâu", "Pin khỏe", "Thời gian sử dụng cao", "Thời lượng pin trâu", "Dung lượng pin trâu", "Chiến game vô tư"];
+
         List<string> highResolutionKeywords = [
             "Full HD", "QQVGA", "QVGA", "2K", "1.5K", "Retina", "4k"
             ];
@@ -41,10 +45,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         List<string> RAMs = ["4GB", "8GB", "12GB", "16GB", "32GB", "64GB"];
 
         List<string> features = ["Quay góc rộng", "Chống nước", "Chống sốc", "Khóa vân tay", "Nhận diện khuôn mặt",
-                                 "Kháng nước", "Công nghệ NFC", "Ban đêm", "Camera chống rung",
+                                 "Kháng nước", "Công nghệ NFC", "Ban đêm", "Camera chống rung", "Bảo mật vân tay",
                                  "Hỗ trợ 5G", "Hỗ trợ 4G", "Sạc không dây", "Dành cho chơi game, lướt web, xem phim"];
 
-        List<string> conditions = ["Móp, méo", "Đã qua sử dụng", "Còn phiếu bảo hành", "Nguyên tem nguyên seal", "Vỡ màn hình",
+        List<string> conditions = ["Mới", "Móp, méo", "Đã qua sử dụng", "Còn phiếu bảo hành", "Nguyên tem nguyên seal", "Vỡ màn hình",
                                         "Lỗi phần cứng", "Pin 90%, 85%", "Hỏng màn hình", "Trầy xước", "Tình trạng còn zin"];
 
         List<string> segmentations = ["Giá rẻ", "Giá tốt", "Giá sinh viên", "Tầm trung", "Cao cấp", "Hiện đại"];
@@ -90,11 +94,13 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         isFastCharge can be true or false
-        If user does not mention, give me false
+        please use this keywork array as a addition reference that results in isFastCharge is true: {string.Join(", ", fastChargeKeywords)}
+        If user does not mention, give me false 
 
 
         isGoodBatteryLife can be true or false
-        If user does not mention, give me false
+        please use this keywork array as a addition reference that results in isGoodBatteryLife is true: {string.Join(", ", goodBatteryLifeKeywords)}
+        If user does not mention, give me false 
 
 
         UsageTime is in hours
