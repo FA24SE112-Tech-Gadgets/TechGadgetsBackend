@@ -58,12 +58,8 @@ public class ProcessNaturalLanuage : ControllerBase
         //        .Sum(d => g.Price / 100.0 * d.DiscountPercentage) <= query.MaxPrice));
 
         pricePredicate = pricePredicate.Or(g =>
-            (g.Price - g.GadgetDiscounts
-                .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
-                .Sum(d => g.Price / 100.0 * d.DiscountPercentage) >= query.MinPrice) &&
-            (g.Price - g.GadgetDiscounts
-                .Where(d => d.Status == GadgetDiscountStatus.Active && d.ExpiredDate > currentDate)
-                .Sum(d => g.Price / 100.0 * d.DiscountPercentage) <= query.MaxPrice));
+            (effectivePrice.Invoke(g) >= query.MinPrice) &&
+            (effectivePrice.Invoke(g) <= query.MaxPrice));
 
         var categoryPredicate = PredicateBuilder.New<Gadget>(true);
         foreach (var category in query.Categories)
