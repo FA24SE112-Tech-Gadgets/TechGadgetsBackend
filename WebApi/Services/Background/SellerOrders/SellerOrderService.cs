@@ -1,7 +1,6 @@
 ﻿using WebApi.Data.Entities;
 using WebApi.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 using WebApi.Services.Notifications;
 
 namespace WebApi.Services.Background.OrderDetails;
