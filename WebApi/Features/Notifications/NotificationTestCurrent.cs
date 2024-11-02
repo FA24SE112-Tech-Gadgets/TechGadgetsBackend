@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
-using WebApi.Common.Filters;
-using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Data;
 using WebApi.Services.Auth;
+using WebApi.Common.Filters;
+using WebApi.Services.Notifications;
 
 namespace WebApi.Features.Notifications;
 
@@ -14,24 +14,28 @@ namespace WebApi.Features.Notifications;
 [JwtValidation]
 [RolesFilter(Role.Customer, Role.Seller)]
 [RequestValidation<Request>]
-public class NotificationTestCurrent(IHubContext<NotificationHub> hub) : ControllerBase
+public class NotificationTestCurrent : ControllerBase
 {
     public new class Request
     {
-        public string TestMessasge { get; set; } = default!;
+        public string TestTitle { get; set; } = default!;
+        public string TestContent { get; set; } = default!;
     }
 
     public class Validator : AbstractValidator<Request>
     {
         public Validator()
         {
-            RuleFor(sp => sp.TestMessasge)
+            RuleFor(sp => sp.TestTitle)
                 .NotEmpty()
-                .WithMessage("Tin nhắn không được để trống");
+                .WithMessage("Tiêu đề không được để trống");
+            RuleFor(sp => sp.TestContent)
+                .NotEmpty()
+                .WithMessage("Nội dung không được để trống");
         }
     }
 
-    [HttpPost("notification/old/current")]
+    [HttpPost("notification/current")]
     [Tags("Test Notifications")]
     [SwaggerOperation(
         Summary = "Test Sending Personal Notification",
@@ -42,26 +46,30 @@ public class NotificationTestCurrent(IHubContext<NotificationHub> hub) : Control
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
-        switch (currentUser!.Role)
+        try
         {
-            case Role.Admin:
-            case Role.Manager:
-                throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEA_01)
-                .AddReason("notification", "Admin và Manager không có gửi notification.")
-                .Build();
-            case Role.Customer:
-            case Role.Seller:
-                await hub.Clients.User(currentUser.Id.ToString()).SendAsync("PersonalMethod", request.TestMessasge);
-                break;
-            default:
-                break;
+            List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+            if (deviceTokens.Count > 0) {
+                await fcmNotificationService.SendMultibleNotificationAsync(deviceTokens, request.TestTitle, request.TestContent, new Dictionary<string, string>()
+                {
+                    { "testData1", "testValue" },
+                    { "testData2", "200" },
+                });
+            }
+
+        }
+        catch (Exception ex)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_02)
+            .AddReason("notification", ex.Message)
+            .Build();
         }
 
-        return Ok();
+        return Ok("Send Success");
     }
 }
