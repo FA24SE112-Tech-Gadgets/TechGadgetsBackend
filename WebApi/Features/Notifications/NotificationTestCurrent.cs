@@ -31,7 +31,7 @@ public class NotificationTestCurrent(IHubContext<NotificationHub> hub) : Control
         }
     }
 
-    [HttpPost("notification/current")]
+    [HttpPost("notification/old/current")]
     [Tags("Test Notifications")]
     [SwaggerOperation(
         Summary = "Test Sending Personal Notification",

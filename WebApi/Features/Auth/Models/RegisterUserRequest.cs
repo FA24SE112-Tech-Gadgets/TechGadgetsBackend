@@ -10,4 +10,5 @@ public class RegisterUserRequest
     public Role Role { get; set; }
     public LoginMethod LoginMethod { get; set; }
     public UserStatus Status { get; set; }
+    public ICollection<Device> Devices { get; set; } = [];
 }
