@@ -62,7 +62,7 @@ public class GetSellerOrderById : ControllerBase
         int totalAmount = 0;
         foreach (var soi in sellerOrder.SellerOrderItems)
         {
-            int discountPercentage = soi.GadgetDiscount != null && soi.GadgetDiscount.Status == GadgetDiscountStatus.Active ? soi.GadgetDiscount.DiscountPercentage : 0;
+            int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
             totalQuantity += soi.GadgetQuantity;
             totalAmount += soi.GadgetQuantity * (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
         }

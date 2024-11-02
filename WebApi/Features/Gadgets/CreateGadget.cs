@@ -119,13 +119,13 @@ public class CreateGadget : ControllerBase
                 .ChildRules(discount =>
                 {
                     discount.RuleFor(d => d.DiscountPercentage)
-                        .NotNull().WithMessage("DiscountPercentage không được để trống")
-                        .GreaterThan(0).WithMessage("DiscountPercentage phải lớn hơn 0")
-                        .LessThanOrEqualTo(90).WithMessage("DiscountPercentage phải nhỏ hơn hoặc bằng 90");
+                        .NotNull().WithMessage("Phần trăm giảm giá không được để trống")
+                        .GreaterThan(0).WithMessage("Phần trăm giảm giá phải lớn hơn 0")
+                        .LessThanOrEqualTo(90).WithMessage("Phần trăm giảm giá phải nhỏ hơn hoặc bằng 90");
 
                     discount.RuleFor(d => d.DiscountExpiredDate)
-                        .NotNull().WithMessage("DiscountExpiredDate không được để trống")
-                        .Must(date => date > DateTime.UtcNow).WithMessage("DiscountExpiredDate phải lớn hơn thời gian hiện tại");
+                        .NotNull().WithMessage("Ngày hết hạn không được để trống")
+                        .Must(date => date > DateTime.UtcNow).WithMessage("Ngày hết hạn phải lớn hơn thời gian hiện tại");
                 });
         }
     }
@@ -302,6 +302,7 @@ public class CreateGadget : ControllerBase
             }
         }
 
+        DateTime createdAt = DateTime.UtcNow;
         var gadgetToCreate = new Gadget
         {
             SellerId = user.Seller.Id,
@@ -311,8 +312,8 @@ public class CreateGadget : ControllerBase
             ThumbnailUrl = thumbnailUrl,
             CategoryId = request.CategoryId,
             Status = GadgetStatus.Active,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
+            UpdatedAt = createdAt,
             Condition = request.Condition,
             ConditionVector = await embeddingService.GetEmbedding(request.Condition),
             NameVector = await embeddingService.GetEmbedding(request.Name),
@@ -336,7 +337,7 @@ public class CreateGadget : ControllerBase
                 DiscountPercentage = discountPercentage,
                 ExpiredDate = discountExpiredDate,
                 Status = GadgetDiscountStatus.Active,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = createdAt,
             });
         }
 

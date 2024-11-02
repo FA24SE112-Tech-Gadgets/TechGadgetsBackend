@@ -8,7 +8,6 @@ using WebApi.Features.Gadgets.Models;
 using WebApi.Services.Auth;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Features.Gadgets.Mappers;
-using Pgvector.EntityFrameworkCore;
 
 namespace WebApi.Features.Gadgets;
 
