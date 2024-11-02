@@ -8,6 +8,7 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Wallets.Models;
 using WebApi.Services.Auth;
+using WebApi.Services.Notifications;
 using WebApi.Services.Payment;
 using WebApi.Services.Payment.Models;
 
@@ -66,7 +67,8 @@ public class CreateWalletDeposit : ControllerBase
         [FromServices] CurrentUserService currentUserService,
         [FromServices] MomoPaymentService momoPaymentService,
         [FromServices] VnPayPaymentService vnPayPaymentService,
-        [FromServices] PayOSPaymentSerivce payOSPaymentSerivce)
+        [FromServices] PayOSPaymentSerivce payOSPaymentSerivce,
+        [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
@@ -89,14 +91,17 @@ public class CreateWalletDeposit : ControllerBase
             .Build();
         }
 
+        DateTime createdAt = DateTime.UtcNow;
+        Guid walletTrackingId = Guid.NewGuid();
         WalletTracking walletTracking = new WalletTracking()
         {
+            Id = walletTrackingId,
             WalletId = userWallet!.Id,
             PaymentMethod = request.PaymentMethod,
             Amount = request.Amount,
             Type = WalletTrackingType.Deposit,
             Status = WalletTrackingStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
         }!;
 
         DepositResponse depositResponse = new DepositResponse()!;
@@ -182,6 +187,37 @@ public class CreateWalletDeposit : ControllerBase
         }
         await context.WalletTrackings.AddAsync(walletTracking);
         await context.SaveChangesAsync();
+
+        try
+        {
+            List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+            if (deviceTokens.Count > 0)
+            {
+                await fcmNotificationService.SendMultibleNotificationAsync(
+                    deviceTokens,
+                    "Nạp ví TechGadget",
+                    "Bạn vừa tạo giao dịch nạp tiền vào ví TechGadget. Vui lòng thanh toán trước thời hạn.", 
+                    new Dictionary<string, string>()
+                    {
+                        { "walletTrackingId", walletTrackingId.ToString() },
+                    }
+                );
+            }
+            await context.Notifications.AddAsync(new Notification
+            {
+                UserId = currentUser!.Id,
+                Title = "Nạp ví TechGadget",
+                Content = "Bạn vừa tạo giao dịch nạp tiền vào ví TechGadget. Vui lòng thanh toán trước thời hạn.",
+                CreatedAt = createdAt,
+                IsRead = false,
+                Type = NotificationType.WalletTracking
+            });
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
 
         return Ok(depositResponse);
     }

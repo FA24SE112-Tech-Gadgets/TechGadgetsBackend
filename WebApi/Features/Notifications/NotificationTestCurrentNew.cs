@@ -56,8 +56,8 @@ public class NotificationTestCurrentNew : ControllerBase
             if (deviceTokens.Count > 0) {
                 await fcmNotificationService.SendMultibleNotificationAsync(deviceTokens, request.TestTitle, request.TestContent, new Dictionary<string, string>()
                 {
-                    { "score", "850" },
-                    { "time", "2:45" },
+                    { "testData1", "testValue" },
+                    { "testData2", "200" },
                 });
             }
 
