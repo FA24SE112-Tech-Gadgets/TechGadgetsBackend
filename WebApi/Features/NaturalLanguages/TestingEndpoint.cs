@@ -13,51 +13,53 @@ public class TestingEndpoint : ControllerBase
     public async Task<IActionResult> Handler(AppDbContext context, EmbeddingService embeddingService)
     {
         var gadgets = await context.Gadgets
-                            .Include(g => g.GadgetDiscounts)
-                            .Where(g => g.GadgetDiscounts.Count != 0)
-                            .ToListAsync();
+                                    .Include(g => g.SpecificationValues)
+                                        .ThenInclude(sv => sv.SpecificationKey)
+                                        .ThenInclude(sv => sv.SpecificationUnits)
+                                    .Include(g => g.Brand)
+                                    .Include(g => g.Category)
+                                    .ToListAsync();
 
-        var discountedGadgets = gadgets
-                                .Select(g => new
-                                {
-                                    g.Name,
-                                    g.Price,
-                                    DiscountedPrice = g.GadgetDiscounts.Any()
-                                        ? g.Price * ((100 - g.GadgetDiscounts.ToList()[0].DiscountPercentage) / 100.0)
-                                        : g.Price
-                                });
 
-        return Ok(discountedGadgets);
-    }
+        List<string> list = [];
 
-    private static (int number, string text) ExtractNumberAndString(string input)
-    {
-        // Find the index where the numeric part ends
-        int index = 0;
-        while (index < input.Length && char.IsDigit(input[index]))
+        foreach (var gadget in gadgets)
         {
-            index++;
+            var gadgetAttribute = $"Tên sản phẩm: {gadget.Name}; Thể loại sản phẩm: {gadget.Category.Name}; Thương hiệu sản phẩm: {gadget.Brand.Name}; Thông số kỹ thuật: ";
+
+            Dictionary<string, List<string>> specValueDictionary = [];
+            foreach (var specValue in gadget.SpecificationValues)
+            {
+                if (!specValueDictionary.ContainsKey(specValue.SpecificationKey.Name))
+                {
+                    specValueDictionary[specValue.SpecificationKey.Name] = [];
+                }
+                if (specValue.SpecificationUnit != null)
+                {
+                    specValueDictionary[specValue.SpecificationKey.Name].Add($"{specValue.Value} {specValue.SpecificationUnit.Name}");
+                }
+                else
+                {
+                    specValueDictionary[specValue.SpecificationKey.Name].Add($"{specValue.Value}");
+                }
+            }
+
+            foreach (var kvp in specValueDictionary)
+            {
+                var key = kvp.Key;
+                var values = kvp.Value;
+                gadgetAttribute += $"{key}: {string.Join(", ", values)}, ";
+            }
+
+            gadgetAttribute = gadgetAttribute.Length > 3000 ? gadgetAttribute[0..3000] : gadgetAttribute;
+
+            list.Add(gadgetAttribute);
         }
 
-        // Extract the number and the string
-        string numberPart = input.Substring(0, index);
-        string stringPart = input.Substring(index);
-
-        // Convert the number part to an integer
-        int number = int.Parse(numberPart);
-
-        return (number, stringPart);
+        return Ok(new
+        {
+            Max = list.Max(s => s.Length),
+            Value = list.OrderByDescending(s => s.Length).FirstOrDefault()
+        });
     }
-
-    public static void Main()
-    {
-        string input = "122310ababcbc";
-        var result = ExtractNumberAndString(input);
-        Console.WriteLine($"Number: {result.number}, String: {result.text}");
-
-        input = "0904904dlkejfmwp";
-        result = ExtractNumberAndString(input);
-        Console.WriteLine($"Number: {result.number}, String: {result.text}");
-    }
-
 }
