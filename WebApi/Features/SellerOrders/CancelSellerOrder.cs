@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MailKit.Search;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -6,6 +8,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Auth;
+using WebApi.Services.Notifications;
 
 namespace WebApi.Features.SellerOrders;
 
@@ -32,17 +35,24 @@ public class CancelSellerOrder : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.Order)
                 .ThenInclude(o => o.WalletTracking)
+            .Include(so => so.Order)
+                .ThenInclude(o => o.Customer)
+                .ThenInclude(c => c.User)
+                .ThenInclude(u => u.Devices)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(gi => gi.Gadget)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.GadgetDiscount)
+            .Include(so => so.Seller)
+                .ThenInclude(s => s.User)
+                .ThenInclude(u => u.Devices)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
         if (sellerOrder == null)
         {
@@ -73,19 +83,21 @@ public class CancelSellerOrder : ControllerBase
         var customerWallet = await context.Wallets.FirstOrDefaultAsync(w => w.Id == sellerOrder.Order.WalletTracking.WalletId);
 
         int totalAmount = 0;
+        DateTime createdAt = DateTime.UtcNow;
         WalletTracking walletTracking = new WalletTracking()
         {
             WalletId = customerWallet!.Id,
             SellerOrderId = sellerOrderId,
             Type = WalletTrackingType.Refund,
             Status = WalletTrackingStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
         }!;
 
         if (currentUser!.Role == Role.Customer)
         {
             walletTracking.Reason = "Khách hàng yêu cầu hủy đơn";
-        } else
+        }
+        else
         {
             if (request.Reason == null)
             {
@@ -111,6 +123,120 @@ public class CancelSellerOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
         await context.SaveChangesAsync();
 
-        return Ok();
+        try
+        {
+            string customerTitle = currentUser!.Role == Role.Customer ? $"Hủy đơn hàng {sellerOrderId} thành công" : $"Đơn hàng {sellerOrderId} đã bị hủy";
+            string customerContent = currentUser!.Role == Role.Customer ? $"Bạn vừa hủy đơn hàng {sellerOrderId} thành công." : $"Đơn hàng {sellerOrderId} đã bị cửa hàng từ chối tiếp nhận";
+            string sellerTitle = currentUser!.Role != Role.Customer ? $"Từ chối đơn hàng {sellerOrderId} thành công" : $"Đơn hàng {sellerOrderId} đã bị hủy";
+            string sellerContent = currentUser!.Role != Role.Customer ? $"Bạn đã từ chối đơn hàng {sellerOrderId} thành công" : $"Khách hàng không muốn mua dơn hàng {sellerOrderId} này nữa";
+
+            if (currentUser!.Role == Role.Customer)
+            {
+                //Tạo thông báo cho customer
+                List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+                if (deviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        deviceTokens,
+                        customerTitle,
+                        customerContent,
+                        new Dictionary<string, string>()
+                        {
+                            { "sellerOrderId", sellerOrderId.ToString() },
+                        }
+                    );
+                }
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = currentUser!.Id,
+                    Title = customerTitle,
+                    Content = customerContent,
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.WalletTracking
+                });
+
+                //Tạo thông báo cho seller
+                deviceTokens = sellerOrder.Seller.User.Devices.Select(d => d.Token).ToList();
+                if (deviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        deviceTokens,
+                        sellerTitle,
+                        sellerContent,
+                        new Dictionary<string, string>()
+                        {
+                            { "sellerOrderId", sellerOrderId.ToString() },
+                        }
+                    );
+                }
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = sellerOrder.Seller.User.Id,
+                    Title = sellerTitle,
+                    Content = sellerContent,
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.SellerOrder
+                });
+            }
+            else
+            {
+                //Tạo thông báo cho seller
+                List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+                if (deviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        deviceTokens,
+                        sellerTitle,
+                        sellerContent,
+                        new Dictionary<string, string>()
+                        {
+                            { "sellerOrderId", sellerOrderId.ToString() },
+                        }
+                    );
+                }
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = currentUser!.Id,
+                    Title = sellerTitle,
+                    Content = sellerContent,
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.SellerOrder
+                });
+
+                //Tạo thông báo cho customer
+                deviceTokens = sellerOrder.Order.Customer.User.Devices.Select(d => d.Token).ToList();
+                if (deviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        deviceTokens,
+                        customerTitle,
+                        customerContent,
+                        new Dictionary<string, string>()
+                        {
+                            { "sellerOrderId", sellerOrderId.ToString() },
+                        }
+                    );
+                }
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = currentUser!.Id,
+                    Title = customerTitle,
+                    Content = customerContent,
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.SellerOrder
+                });
+            }
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return Ok("Hủy thành công");
     }
 }

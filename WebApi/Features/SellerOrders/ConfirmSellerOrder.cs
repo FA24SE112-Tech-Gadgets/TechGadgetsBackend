@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -6,6 +7,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Auth;
+using WebApi.Services.Notifications;
 
 namespace WebApi.Features.SellerOrders;
 
@@ -27,13 +29,20 @@ public class ConfirmSellerOrder : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.GadgetDiscount)
+            .Include(so => so.Order)
+                .ThenInclude(o => o.Customer)
+                .ThenInclude(c => c.User)
+                .ThenInclude(u => u.Devices)
+            .Include(so => so.Seller)
+                .ThenInclude(s => s.User)
+                .ThenInclude(u => u.Devices)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
         if (sellerOrder == null)
         {
@@ -64,13 +73,14 @@ public class ConfirmSellerOrder : ControllerBase
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
 
         int totalAmount = 0;
+        DateTime createdAt = DateTime.UtcNow;
         WalletTracking walletTracking = new WalletTracking()
         {
             WalletId = userWallet!.Id,
             SellerOrderId = sellerOrderId,
             Type = WalletTrackingType.SellerTransfer,
             Status = WalletTrackingStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAt = createdAt,
         }!;
 
         //Tính tổng cho Wallettracking
@@ -86,6 +96,67 @@ public class ConfirmSellerOrder : ControllerBase
         await context.WalletTrackings.AddAsync(walletTracking);
         await context.SaveChangesAsync();
 
-        return Ok();
+        try
+        {
+            string customerTitle = $"Đơn hàng {sellerOrderId} đã giao thành công";
+            string customerContent = $"Đơn hàng {sellerOrderId} đã giao thành công. Vui lòng đánh giá sản phẩm";
+            string sellerTitle = $"Đơn hàng {sellerOrderId} đã giao thành công";
+            string sellerContent = $"Đơn hàng {sellerOrderId} đã giao thành công. Hệ thống sẽ tiến hành chuyền tiền vào ví của bạn.";
+
+            //Tạo thông báo cho seller
+            List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+            if (deviceTokens.Count > 0)
+            {
+                await fcmNotificationService.SendMultibleNotificationAsync(
+                    deviceTokens,
+                    sellerTitle,
+                    sellerContent,
+                    new Dictionary<string, string>()
+                    {
+                        { "sellerOrderId", sellerOrderId.ToString() },
+                    }
+                );
+            }
+            await context.Notifications.AddAsync(new Notification
+            {
+                UserId = currentUser!.Id,
+                Title = sellerTitle,
+                Content = sellerContent,
+                CreatedAt = createdAt,
+                IsRead = false,
+                Type = NotificationType.SellerOrder
+            });
+
+            //Tạo thông báo cho customer
+            deviceTokens = sellerOrder.Order.Customer.User.Devices.Select(d => d.Token).ToList();
+            if (deviceTokens.Count > 0)
+            {
+                await fcmNotificationService.SendMultibleNotificationAsync(
+                    deviceTokens,
+                    customerTitle,
+                    customerContent,
+                    new Dictionary<string, string>()
+                    {
+                        { "sellerOrderId", sellerOrderId.ToString() },
+                    }
+                );
+            }
+            await context.Notifications.AddAsync(new Notification
+            {
+                UserId = currentUser!.Id,
+                Title = customerTitle,
+                Content = customerContent,
+                CreatedAt = createdAt,
+                IsRead = false,
+                Type = NotificationType.SellerOrder
+            });
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return Ok("Xác nhận thành công");
     }
 }
