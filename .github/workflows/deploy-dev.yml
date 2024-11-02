@@ -32,8 +32,17 @@ jobs:
             - name: Deploy to EC2 (Deploy Server)
               run: |
                   ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_IP_DEV }} << EOF
+                  
+                     # Pull the latest image
                     sudo docker pull techgadget/techgadget-dev
+
+                    # Stop and remove existing container if it exists
                     sudo docker stop techgadget-dev || true
                     sudo docker rm techgadget-dev || true
+
+                    # Run the new container
                     sudo docker run -e ASPNETCORE_ENVIRONMENT=Development -d --hostname host-techgadget-dev --name techgadget-dev --network my_network -p 5000:8080 techgadget/techgadget-dev
+
+                    # Clean up dangling images
+                    sudo docker image prune -af
                   EOF

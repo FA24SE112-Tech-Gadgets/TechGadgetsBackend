@@ -14,6 +14,7 @@ public class User
     public Manager? Manager { get; set; }
     public Admin? Admin { get; set; }
     public Wallet? Wallet { get; set; }
+    public ICollection<Device> Devices { get; set; } = [];
     public ICollection<UserVerify> UserVerifies { get; set; } = [];
     public ICollection<SellerApplication> SellerApplications { get; set; } = [];
     public ICollection<Notification> Notifications { get; set; } = [];
