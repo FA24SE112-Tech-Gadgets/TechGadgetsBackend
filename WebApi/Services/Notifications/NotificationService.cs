@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using WebApi.Services.Notification.Models;
 
-namespace WebApi.Services.Notification;
+namespace WebApi.Services.Notifications;
 
 public class NotificationService : IUserIdProvider
 {
