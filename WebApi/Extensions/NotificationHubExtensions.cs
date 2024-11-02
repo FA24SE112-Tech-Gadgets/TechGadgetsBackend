@@ -5,7 +5,7 @@ using System.Text;
 using WebApi.Common.Filters;
 using WebApi.Common.Settings;
 using WebApi.Features.Notifications;
-using WebApi.Services.Notification;
+using WebApi.Services.Notifications;
 
 namespace WebApi.Extensions;
 
