@@ -21,7 +21,8 @@ public static class GoogleLoginMapper
             {
                 FullName = registerUserRequest.FullName,
                 AvatarUrl = registerUserRequest.AvatarUrl,
-            }
+            },
+            Devices = registerUserRequest.Devices,
         };
     }
 }

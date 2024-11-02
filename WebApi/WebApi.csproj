@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="FirebaseAdmin" Version="3.0.1" />
 	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
 	  <PackageReference Include="FuzzySharp" Version="2.0.2" />
 	  <PackageReference Include="Google.Cloud.Storage.V1" Version="4.10.0" />
