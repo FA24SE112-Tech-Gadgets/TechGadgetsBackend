@@ -55,9 +55,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> locations = ["Hà Nội", "Hồ Chí Minh", "Cần Thơ", "Đà Nẵng", "Quy Nhơn"];
 
-        List<string> origins = ["Việt Nam", "Trung Quốc"];
+        List<string> origins = ["Việt Nam", "Trung Quốc", "Mỹ", "Nhật Bản", "Hàn Quốc"];
 
-        List<string> colors = ["Xám", "Đen", "Xanh Đen", "Trắng", "Bạc", "Vàng", "Hồng"];
+        List<string> colors = ["Xám", "Xanh Đen", "Bạc", "Vàng",
+        "Đen", "Xanh lá", "Xanh dương", "Titan tự nhiên", "Titan Sa Mạc", "Titan Trắng", "Titan Đen", "Xanh Lưu Ly", "Hồng", "Xanh Mòng Két", "Trắng", "Trắng ngọc trai"];
 
         List<string> searchingSellerKeywords = ["Nơi bán", "Nhà phân phối", "Thương hiệu", "Người bán", "Shop", "Nhà cung cấp", "Nơi cung cấp", "Hãng cung cấp", "Người cung cấp"];
 
@@ -157,7 +158,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         segmentations are: {string.Join(", ", segmentations)}
-        If user query not mention, give me empty array
+        If user query not mention anything in the array above, give me empty array
 
 
         locations are: {string.Join(", ", locations)}
@@ -207,6 +208,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         isEnergySaving can be true or false, this field is true when user want to find gadgets that are energy saving
         you can use this keywork array as a addition reference that results in isBestGadget is true: {string.Join(", ", energySavingKeywords)}
         If user does not mention, give me false
+
+
+        isDiscounted can be true or false
+        If user does not mention, give me false        
 
 
         User's query: {input}
@@ -361,12 +366,15 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isEnergySaving": {
                             "type": "boolean"
+                        },
+                        "isDiscounted": {
+                            "type": "boolean"
                         }
                     },
                     "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
                                  "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),

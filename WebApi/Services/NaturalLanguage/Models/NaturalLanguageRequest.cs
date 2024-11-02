@@ -39,5 +39,5 @@ public class NaturalLanguageRequest
     public bool IsHighRating { get; set; }
     public bool IsPositiveReview { get; set; }
     public bool IsEnergySaving { get; set; }
-
+    public bool IsDiscounted { get; set; }
 }

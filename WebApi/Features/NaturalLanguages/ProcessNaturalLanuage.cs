@@ -58,8 +58,8 @@ public class ProcessNaturalLanuage : ControllerBase
         //        .Sum(d => g.Price / 100.0 * d.DiscountPercentage) <= query.MaxPrice));
 
         pricePredicate = pricePredicate.Or(g =>
-            (effectivePrice.Invoke(g) >= query.MinPrice) &&
-            (effectivePrice.Invoke(g) <= query.MaxPrice));
+            effectivePrice.Invoke(g) >= query.MinPrice &&
+            effectivePrice.Invoke(g) <= query.MaxPrice);
 
         var categoryPredicate = PredicateBuilder.New<Gadget>(true);
         foreach (var category in query.Categories)
@@ -323,32 +323,127 @@ public class ProcessNaturalLanuage : ControllerBase
             if (new List<string> { "Giá rẻ", "Giá tốt", "Giá sinh viên" }.Contains(segmentation))
             {
                 segmentationPredicate = segmentationPredicate.Or(g =>
-                        (g.Category.Name == "Điện thoại" && g.Price <= 4_000_000)
-                        || (g.Category.Name == "Laptop" && g.Price <= 10_000_000)
-                        || (g.Category.Name == "Tai nghe" && g.Price <= 500_000)
-                        || (g.Category.Name == "Loa" && g.Price <= 2_000_000)
+                        (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) <= 4_000_000)
+                        || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) <= 10_000_000)
+                        || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) <= 500_000)
+                        || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) <= 2_000_000)
                     );
             }
 
             if (new List<string> { "Tầm trung" }.Contains(segmentation))
             {
                 segmentationPredicate = segmentationPredicate.Or(g =>
-                        (g.Category.Name == "Điện thoại" && 4_000_000 < g.Price && g.Price <= 13_000_000)
-                        || (g.Category.Name == "Laptop" && 10_000_000 < g.Price && g.Price <= 25_000_000)
-                        || (g.Category.Name == "Tai nghe" && 500_000 < g.Price && g.Price <= 2_000_000)
-                        || (g.Category.Name == "Loa" && 2_000_000 < g.Price && g.Price <= 7_000_000)
+                        (g.Category.Name == "Điện thoại" && 4_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 13_000_000)
+                        || (g.Category.Name == "Laptop" && 10_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 25_000_000)
+                        || (g.Category.Name == "Tai nghe" && 500_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 2_000_000)
+                        || (g.Category.Name == "Loa" && 2_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 7_000_000)
                     );
             }
 
             if (new List<string> { "Cao cấp", "Hiện đại" }.Contains(segmentation))
             {
                 segmentationPredicate = segmentationPredicate.Or(g =>
-                        (g.Category.Name == "Điện thoại" && g.Price > 13_000_000)
-                        || (g.Category.Name == "Laptop" && g.Price > 25_000_000)
-                        || (g.Category.Name == "Tai nghe" && g.Price > 2_000_000)
-                        || (g.Category.Name == "Loa" && g.Price > 7_000_000)
+                        (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) > 13_000_000)
+                        || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) > 25_000_000)
+                        || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) > 2_000_000)
+                        || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) > 7_000_000)
                     );
             }
+        }
+
+        var locationPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Locations.Any())
+        {
+            var locationVectors = await embeddingService.GetEmbeddings(query.Locations);
+
+            locationPredicate = locationPredicate.Or(g =>
+                locationVectors.Any(vector => 1 - g.Seller.AddressVector.CosineDistance(vector) >= 0.5)
+            );
+        }
+
+        var originPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Origins.Any())
+        {
+            var originVectors = await embeddingService.GetEmbeddings(query.Origins);
+
+            originPredicate = originPredicate.Or(g =>
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "Xuất xứ"
+                    && originVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                )
+            );
+        }
+
+        var colorPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.Colors.Any())
+        {
+            var colorVectors = await embeddingService.GetEmbeddings(query.Colors);
+
+            colorPredicate = colorPredicate.Or(g =>
+                g.SpecificationValues.Any(sv =>
+                    sv.SpecificationKey.Name == "Màu sắc"
+                    && colorVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                )
+            );
+        }
+
+        var smartPhonePredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsSmartPhone)
+        {
+            smartPhonePredicate = smartPhonePredicate.Or(g =>
+                g.Category.Name != "Điện thoại" ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("thông minh")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("ai")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("trí tuệ nhân tạo")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("smart"))
+            );
+        }
+
+        var energySavingPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsEnergySaving)
+        {
+            energySavingPredicate = energySavingPredicate.Or(g =>
+                g.Name.ToLower().Contains("tiết kiệm điện") ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("tiêu thụ điện thấp")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("điện năng thấp")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("tiết kiệm điện")) ||
+                g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("ít điện"))
+            );
+        }
+
+        var discountedPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsDiscounted)
+        {
+            discountedPredicate = discountedPredicate.Or(g =>
+                g.GadgetDiscounts.Any(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > currentDate)
+            );
+        }
+
+        var highRatingPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsHighRating)
+        {
+            highRatingPredicate = highRatingPredicate.Or(g =>
+                g.SellerOrderItems.Where(soi => soi.Review != null)
+                                  .Average(soi => soi.Review!.Rating) >= 4
+            );
+        }
+
+        var positiveReviewPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsPositiveReview)
+        {
+            positiveReviewPredicate = positiveReviewPredicate.Or(g =>
+               g.SellerOrderItems.Count(so => so.Review!.IsPositive == true) >
+               g.SellerOrderItems.Count(so => so.Review!.IsPositive == false)
+            );
+        }
+
+        var bestGadgetPredicate = PredicateBuilder.New<Gadget>(true);
+        if (query.IsBestGadget)
+        {
+            bestGadgetPredicate = bestGadgetPredicate.Or(g =>
+               g.SellerOrderItems.Count(so => so.Review!.IsPositive == true) >
+               g.SellerOrderItems.Count(so => so.Review!.IsPositive == false)
+            );
         }
 
         //var category = await context.Categories.FirstOrDefaultAsync(c => c.Name.Equals(query.Categories[0], StringComparison.CurrentCultureIgnoreCase));
@@ -382,18 +477,30 @@ public class ProcessNaturalLanuage : ControllerBase
                             .And(ramPredicate)
                             .And(featurePredicate)
                             .And(segmentationPredicate)
+                            .And(locationPredicate)
+                            .And(originPredicate)
+                            .And(colorPredicate)
+                            .And(smartPhonePredicate)
+                            .And(energySavingPredicate)
+                            .And(discountedPredicate)
+                            .And(highRatingPredicate)
+                            .And(positiveReviewPredicate)
                             ;
 
-        var gadgets = context.Gadgets
-                                .AsExpandable()
-                                .Where(outerPredicate)
-                                .Select(g => new
-                                {
-                                    g.Id,
-                                    g.Name,
-                                })
-                                .Take(500)
-                                .ToList();
+        var gadgets = context.Gadgets.AsExpandable()
+                                    .Where(outerPredicate)
+                                    .OrderByDescending(g => query.IsBestGadget
+                                        ? g.SellerOrderItems
+                                            .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+                                            .Sum(soi => soi.GadgetQuantity)
+                                        : 0)
+                                    .Select(g => new
+                                    {
+                                        g.Id,
+                                        g.Name,
+                                    })
+                                    .Take(500)
+                                    .ToList();
 
         var result = new
         {
