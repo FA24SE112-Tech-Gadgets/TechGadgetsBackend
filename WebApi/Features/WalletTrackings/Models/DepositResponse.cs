@@ -3,4 +3,5 @@
 public class DepositResponse
 {
     public string DepositUrl { get; set; }
+    public Guid WalletTrackingId { get; set; }
 }
