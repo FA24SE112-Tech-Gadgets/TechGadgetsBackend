@@ -5,6 +5,7 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.Auth;
 
 namespace WebApi.Features.Gadgets;
 
@@ -17,14 +18,25 @@ public class ActivateGadget : ControllerBase
     [Tags("Gadgets")]
     [SwaggerOperation(
         Summary = "Activate Gadget",
-        Description = "API for Manager to activate gadget."
+        Description = "API for Manager to activate gadget. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì không active gadget được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler(Guid id, AppDbContext context)
+    public async Task<IActionResult> Handler([FromRoute] Guid id, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var gadget = await context.Gadgets.FirstOrDefaultAsync(g => g.Id == id);
         if (gadget is null)
         {
@@ -46,6 +58,6 @@ public class ActivateGadget : ControllerBase
 
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Kích hoạt sản phẩm thành công");
     }
 }

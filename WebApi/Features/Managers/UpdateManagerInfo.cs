@@ -37,7 +37,8 @@ public class UpdateManagerInfo : ControllerBase
         Summary = "Update Manager Info",
         Description = "This API is for update manager info. Note:" +
                             "<br>&nbsp; - Truyền field nào update field đó." +
-                            "<br>&nbsp; - Chỉ có FullName có thể được update."
+                            "<br>&nbsp; - Chỉ có FullName có thể được update." +
+                            "<br>&nbsp; - User bị Inactive thì cập nhật thông tin được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -46,6 +47,14 @@ public class UpdateManagerInfo : ControllerBase
     public async Task<IActionResult> Handler([FromForm] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         // Lấy khách hàng từ database dựa trên user hiện tại
         var manager = await context.Managers.FindAsync(currentUser!.Manager!.Id);
@@ -67,6 +76,6 @@ public class UpdateManagerInfo : ControllerBase
         context.Managers.Update(manager);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật thành công");
     }
 }

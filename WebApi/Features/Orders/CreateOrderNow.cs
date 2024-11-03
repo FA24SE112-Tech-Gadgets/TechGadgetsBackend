@@ -43,7 +43,8 @@ public class CreateOrderNow : ControllerBase
                             "<br>&nbsp; - API này không tác động gì đến cart hết." +
                             "<br>&nbsp; - Tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
                             "<br>&nbsp; - Customer cần điền Address và PhoneNumber trước khi tiến hành tạo order (Trước khi gọi API)" +
-                            "<br>&nbsp; - Default quantity = 1 nếu không truyền."
+                            "<br>&nbsp; - Default quantity = 1 nếu không truyền." +
+                            "<br>&nbsp; - User bị Inactive thì không mua hàng được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -51,6 +52,16 @@ public class CreateOrderNow : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var gadgetItem = await context.Gadgets
             .Include(g => g.GadgetDiscounts)
             .FirstOrDefaultAsync(g => g.Id == request.GadgetId);
@@ -63,7 +74,6 @@ public class CreateOrderNow : ControllerBase
             .Build();
         }
 
-        var currentUser = await currentUserService.GetCurrentUser();
 
         if (currentUser!.Customer!.Address == null)
         {

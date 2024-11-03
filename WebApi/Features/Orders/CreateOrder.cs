@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using MailKit.Search;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -46,7 +44,8 @@ public class CreateOrder : ControllerBase
                             "<br>&nbsp; - Sau khi gọi API này thì những gadget thanh toán, sẽ không còn nằm trong cart nữa." +
                             "<br>&nbsp; - Đồng thời tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
                             "<br>&nbsp; - Customer cần điền Address và PhoneNumber trước khi tiến hành tạo order (Trước khi gọi API)" +
-                            "<br>&nbsp; - Không thể tạo đơn với những sản phẩm nằm ngoài giỏ hàng."
+                            "<br>&nbsp; - Không thể tạo đơn với những sản phẩm nằm ngoài giỏ hàng." +
+                            "<br>&nbsp; - User bị Inactive thì không mua hàng được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -55,6 +54,14 @@ public class CreateOrder : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         if (currentUser!.Customer!.Address == null)
         {

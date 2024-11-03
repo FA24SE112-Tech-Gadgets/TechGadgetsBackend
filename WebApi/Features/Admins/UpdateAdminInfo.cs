@@ -37,7 +37,8 @@ public class UpdateAdminInfo : ControllerBase
         Summary = "Update Admin Info",
         Description = "This API is for update admin info. Note:" +
                             "<br>&nbsp; - Truyền field nào update field đó." +
-                            "<br>&nbsp; - Chỉ có FullName có thể được update."
+                            "<br>&nbsp; - Chỉ có FullName có thể được update." +
+                            "<br>&nbsp; - Không thể cập nhật info nếu User bị Inactive."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -57,16 +58,26 @@ public class UpdateAdminInfo : ControllerBase
             .Build();
         }
 
+        if (admin.User.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         // Cập nhật các trường nếu chúng được truyền
         if (!string.IsNullOrEmpty(request.FullName))
         {
             admin.FullName = request.FullName;
+
+            // Lưu thay đổi vào database
+            context.Admins.Update(admin);
+            await context.SaveChangesAsync();
+
+            return Ok("Cập nhật thông tin thành công");
         }
 
-        // Lưu thay đổi vào database
-        context.Admins.Update(admin);
-        await context.SaveChangesAsync();
-
-        return Ok();
+        return Ok("Không có trường dữ liệu nào được cập nhật.");
     }
 }

@@ -47,7 +47,8 @@ public class UpdateReviewByReviewId : ControllerBase
                             "<br>&nbsp; - Nội dung không được để trống." +
                             "<br>&nbsp; - Truyền field nào update field đó." +
                             "<br>&nbsp; - Chỉ được thay đổi đánh giá 1 lần." +
-                            "<br>&nbsp; - Chỉ được cập nhật đánh giá của bản thân."
+                            "<br>&nbsp; - Chỉ được cập nhật đánh giá của bản thân." +
+                            "<br>&nbsp; - User bị Inactive thì không sửa review được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -56,6 +57,14 @@ public class UpdateReviewByReviewId : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid reviewId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var review = await context.Reviews
             .FirstOrDefaultAsync(r => r.Id == reviewId);
@@ -126,6 +135,6 @@ public class UpdateReviewByReviewId : ControllerBase
         context.Reviews.Update(review);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Đã sửa đánh giá thành công");
     }
 }

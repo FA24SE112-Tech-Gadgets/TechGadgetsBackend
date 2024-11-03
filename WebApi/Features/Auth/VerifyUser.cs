@@ -44,7 +44,8 @@ public class VerifyUserController : ControllerBase
                             "<br>&nbsp; - deviceToken: Dùng để gửi notification (mỗi 1 máy chỉ có duy nhất 1 deviceToken)." +
                             "<br>&nbsp; - 1 acc thì có thể được đăng nhập bằng nhiều thiết bị (điện thoại, laptop)." +
                             "<br>&nbsp; - deviceToken: Không gửi hoặc để trống cũng được, nhưng tức là thiết bị đó sẽ không nhận được notification thông qua FCM." +
-                            "<br>&nbsp; - Hoặc sẽ nhận được notification nếu acc này đã lưu những deviceToken trước đó thì sẽ sẽ gửi noti đến những device đã đk vs acc này."
+                            "<br>&nbsp; - Hoặc sẽ nhận được notification nếu acc này đã lưu những deviceToken trước đó thì sẽ sẽ gửi noti đến những device đã đk vs acc này." +
+                            "<br>&nbsp; - User bị Inactive thì vẫn Verify được (Vì liên quan đến tiền trong ví)."
     )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> Handler([FromBody] Request request,

@@ -19,7 +19,8 @@ public class DeleteCartItemBySellerId : ControllerBase
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Delete Customer Cart Items By SellerId",
-        Description = "This API is for delete customer cart items by sellerId."
+        Description = "This API is for delete customer cart items by sellerId." +
+                            "<br>&nbsp; - User bị Inactive thì không delete customer cart được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -28,6 +29,15 @@ public class DeleteCartItemBySellerId : ControllerBase
     public async Task<IActionResult> Handler([FromRoute] Guid sellerId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -65,6 +75,6 @@ public class DeleteCartItemBySellerId : ControllerBase
         context.CartGadgets.RemoveRange(cartGadgetsToDelete);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Xóa thành công");
     }
 }

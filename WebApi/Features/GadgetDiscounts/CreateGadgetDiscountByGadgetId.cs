@@ -120,6 +120,6 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         context.GadgetDiscounts.Add(gadgetDiscount);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Thêm giảm giá thành công");
     }
 }

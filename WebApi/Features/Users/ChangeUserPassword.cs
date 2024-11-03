@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Users;
@@ -43,7 +44,11 @@ public class ChangeUserPassword : ControllerBase
 
     [HttpPut("user/change-password")]
     [Tags("Users")]
-    [SwaggerOperation(Summary = "Change User Password", Description = "This API is for change user password")]
+    [SwaggerOperation(
+        Summary = "Change User Password",
+        Description = "This API is for change user password" +
+                            "<br>&nbsp; - User bị Inactive thì không thể đổi mật khẩu được."
+    )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -51,6 +56,15 @@ public class ChangeUserPassword : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         if (!VerifyHashedPassword(currentUser!.Password!, request.OldPassword))
         {
             throw TechGadgetException.NewBuilder()
@@ -69,7 +83,7 @@ public class ChangeUserPassword : ControllerBase
         currentUser.Password = HashPassword(request.NewPassword);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Đổi mật khẩu thành công");
     }
 
     private static bool VerifyHashedPassword(string hashedPassword, string passwordToCheck)

@@ -1,6 +1,4 @@
-﻿using MailKit.Search;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -29,7 +27,8 @@ public class CancelSellerOrder : ControllerBase
         Description = "API is for cancel seller order by sellerOrderId." +
                             "<br>&nbsp; - Customer chỉ được cancel sellerOrder trước khi Seller confirm" +
                             "<br>&nbsp; - Seller và Customer không thể cancel sellerOrder khi đơn đã hoàn thành." +
-                            "<br>&nbsp; - Sau khi sellerOrder canceled success thì hệ thống sẽ tự động hoàn tiền sau 1 phút."
+                            "<br>&nbsp; - Sau khi sellerOrder canceled success thì hệ thống sẽ tự động hoàn tiền sau 1 phút." +
+                            "<br>&nbsp; - User bị Inactive thì không cancel seller order được, hệ thống tự cancel và hoàn tiền cho (Nếu là customer, còn seller thì không hoàn tiền)."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -38,6 +37,14 @@ public class CancelSellerOrder : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.Order)

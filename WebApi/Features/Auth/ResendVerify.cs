@@ -29,8 +29,15 @@ public class ResendVerifyController : ControllerBase
 
     [HttpPost("auth/resend")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Resend Verify Code", Description = "This API is for resending the verify code")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [SwaggerOperation(
+        Summary = "Resend Verify Code",
+        Description = "This API is for resending the verify code. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn resend verify code được (Vì liên quan đến tiền trong ví)."
+    )]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] VerifyCodeService verifyCodeService)
     {
         var user = await context.Users.FirstOrDefaultAsync(user => user.Email == request.Email);
@@ -45,6 +52,6 @@ public class ResendVerifyController : ControllerBase
 
         await verifyCodeService.ResendVerifyCodeAsync(user);
 
-        return NoContent();
+        return Ok("Đã gửi lại mã thành công.");
     }
 }
