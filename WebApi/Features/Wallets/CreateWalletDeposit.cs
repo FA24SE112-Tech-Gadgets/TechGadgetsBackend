@@ -113,7 +113,10 @@ public class CreateWalletDeposit : ControllerBase
             CreatedAt = createdAt,
         }!;
 
-        DepositResponse depositResponse = new DepositResponse()!;
+        DepositResponse depositResponse = new DepositResponse
+        { 
+            WalletTrackingId = walletTrackingId,
+        };
 
         switch (request.PaymentMethod)
         {
