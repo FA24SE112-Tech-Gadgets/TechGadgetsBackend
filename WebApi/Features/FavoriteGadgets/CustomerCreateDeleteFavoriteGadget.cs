@@ -19,7 +19,8 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
     [Tags("Favorite Gadgets")]
     [SwaggerOperation(
         Summary = "Customer Create/Delete Favorite Gadget",
-        Description = "This API is for customer create/delete favorite gadget"
+        Description = "This API is for customer create/delete favorite gadget. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì không create/delete favorite gadget được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -28,6 +29,14 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
     public async Task<IActionResult> Handler([FromRoute] Guid gadgetId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var isGadgetExist = await context.Gadgets
             .AnyAsync(g => g.Id == gadgetId);
@@ -57,6 +66,6 @@ public class CustomerCreateDeleteFavoriteGadget : ControllerBase
         }
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Thêm/Xóa thành công");
     }
 }

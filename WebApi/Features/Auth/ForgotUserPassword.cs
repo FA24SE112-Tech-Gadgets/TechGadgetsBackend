@@ -45,7 +45,11 @@ public class ForgotUserPassword : ControllerBase
 
     [HttpPost("auth/forgot-password")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Forgot User Password", Description = "This API is for users that forgot password to change their password")]
+    [SwaggerOperation(
+        Summary = "Forgot User Password", 
+        Description = "This API is for users that forgot password to change their password. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn forgot password được (Vì liên quan đến tiền trong ví)."
+    )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
@@ -65,7 +69,7 @@ public class ForgotUserPassword : ControllerBase
         user.Password = HashPassword(request.NewPassword);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật mật khẩu thành công!");
     }
 
     private static string HashPassword(string password)

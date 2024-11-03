@@ -22,7 +22,8 @@ public class UpdateNotificationIsRead : ControllerBase
         Summary = "Update Notification IsRead To True By NotificationId",
         Description = "API is for update notificaiton isRead to true by notificationId. Note:" +
                             "<br>&nbsp; - Dùng API này để đổi trạng thái thành đã xem." +
-                            "<br>&nbsp; - Customer hay Seller cho dù bị khóa acc thì vẫn có thể dùng API này."
+                            "<br>&nbsp; - Customer hay Seller cho dù bị khóa acc thì vẫn có thể dùng API này." +
+                            "<br>&nbsp; - User bị Inactive thì vẫn có thể xem(cập nhật isRead) thông báo được."
     )]
     [ProducesResponseType(typeof(PagedList<NotificationResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]

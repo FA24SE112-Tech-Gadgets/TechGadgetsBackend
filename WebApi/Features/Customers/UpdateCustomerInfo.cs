@@ -89,7 +89,8 @@ public class UpdateCustomerInfo : ControllerBase
                             "<br>&nbsp; - Truyền field nào update field đó." +
                             "<br>&nbsp; - CCCD chỉ yêu cầu đủ 12 kí tự và không chứa chữ cái hay ký tự đặc biệt." +
                             "<br>&nbsp; - Ngày sinh phải lớn hơn 18 tuổi. Format YYYY-MM-DD." +
-                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt."
+                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt." +
+                            "<br>&nbsp; - User bị Inactive thì không update info được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -100,12 +101,21 @@ public class UpdateCustomerInfo : ControllerBase
         var currentUser = await currentUserService.GetCurrentUser();
 
         // Lấy khách hàng từ database dựa trên user hiện tại
-        var customer = await context.Customers.FindAsync(currentUser!.Customer!.Id);
+        var customer = currentUser!.Customer;
+
         if (customer == null)
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)
             .AddReason("customer", "Không tìm thấy thông tin khách hàng.")
+            .Build();
+        }
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
             .Build();
         }
 
@@ -161,10 +171,22 @@ public class UpdateCustomerInfo : ControllerBase
             customer.PhoneNumber = request.PhoneNumber;
         }
 
+        if (!string.IsNullOrEmpty(request.FullName) || !string.IsNullOrEmpty(request.Address) || !string.IsNullOrEmpty(request.PhoneNumber))
+        {
+            await context.CustomerInformation.AddAsync(new CustomerInformation
+            {
+                FullName = string.IsNullOrEmpty(request.FullName) ? customer.FullName : request.FullName,
+                Address = string.IsNullOrEmpty(request.Address) ? customer.Address! : request.Address,
+                PhoneNumber = string.IsNullOrEmpty(request.PhoneNumber) ? customer.PhoneNumber! : request.PhoneNumber,
+                CreatedAt = DateTime.UtcNow,
+                CustomerId = customer.Id,
+            });
+        }
+
         // Lưu thay đổi vào database
         context.Customers.Update(customer);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật thành công");
     }
 }

@@ -23,7 +23,8 @@ public class ConfirmSellerOrder : ControllerBase
         Description = "API is for cancel selelr order by sellerOrderId." +
                             "<br>&nbsp; - Seller chỉ được confirm selelrOrder mà liên quan đến bản thân" +
                             "<br>&nbsp; - Không thể confirm những selelrOrder đã Canceled." +
-                            "<br>&nbsp; - Sau khi selelrOrder confirm success thì hệ thống sẽ tự động sẽ tự động chuyển tiền vào ví Seller."
+                            "<br>&nbsp; - Sau khi selelrOrder confirm success thì hệ thống sẽ tự động sẽ tự động chuyển tiền vào ví Seller." +
+                            "<br>&nbsp; - User bị Inactive thì không thể confirm đơn được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -32,6 +33,14 @@ public class ConfirmSellerOrder : ControllerBase
     public async Task<IActionResult> Handler([FromRoute] Guid sellerOrderId, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var sellerOrder = await context.SellerOrders
             .Include(so => so.SellerOrderItems)

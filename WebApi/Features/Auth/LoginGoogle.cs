@@ -22,9 +22,13 @@ public class LoginGoogleController : ControllerBase
     [Tags("Auth")]
     [SwaggerOperation(
         Summary = "Google login user", 
-        Description = "This API is for user login with Google"
+        Description = "This API is for user login with Google. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn Login GG vô được (Vì liên quan đến tiền trong ví)."
     )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] string accessToken, AppDbContext context, [FromServices] TokenService tokenService)
     {
         try

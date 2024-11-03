@@ -18,7 +18,8 @@ public class SetGadgetForSale : ControllerBase
     [Tags("Gadgets")]
     [SwaggerOperation(
         Summary = "Set Gadget To For Sale",
-        Description = "API for Seller to set gadget to for sale."
+        Description = "API for Seller to set gadget to for sale. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì thể cập nhật for sale được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -26,6 +27,16 @@ public class SetGadgetForSale : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler(Guid id, AppDbContext context, CurrentUserService currentUserService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var gadget = await context.Gadgets.FirstOrDefaultAsync(g => g.Id == id);
         if (gadget is null)
         {
@@ -35,7 +46,6 @@ public class SetGadgetForSale : ControllerBase
                         .Build();
         }
 
-        var currentUser = await currentUserService.GetCurrentUser();
         if (gadget.SellerId != currentUser!.Seller!.Id)
         {
             throw TechGadgetException.NewBuilder()
@@ -64,6 +74,6 @@ public class SetGadgetForSale : ControllerBase
 
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật thành công");
     }
 }
