@@ -41,7 +41,8 @@ public class AddGadgetToCart : ControllerBase
         Summary = "Add Gadget To Cart",
         Description = "This API is for customer add gadget to cart. Note:" +
                             "<br>&nbsp; - Quantity phải lớn hơn 1." +
-                            "<br>&nbsp; - Truyền bao nhiêu add bấy nhiêu."
+                            "<br>&nbsp; - Truyền bao nhiêu add bấy nhiêu." +
+                            "<br>&nbsp; - User bị Inactive thì add to cart được."
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -50,8 +51,18 @@ public class AddGadgetToCart : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
+
 
         if (userCart == null)
         {

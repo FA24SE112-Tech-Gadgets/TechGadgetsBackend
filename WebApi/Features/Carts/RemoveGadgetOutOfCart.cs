@@ -41,7 +41,8 @@ public class RemoveGadgetOutOfCart : ControllerBase
         Summary = "Remove Gadget Out Of Cart",
         Description = "This API is for customer remove gadget out of cart. Note:" +
                             "<br>&nbsp; - Quantity phải lớn hơn 1." +
-                            "<br>&nbsp; - Truyền bao nhiêu remove bấy nhiêu."
+                            "<br>&nbsp; - Truyền bao nhiêu remove bấy nhiêu." +
+                            "<br>&nbsp; - User bị Inactive thì không remove gadget được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -50,6 +51,15 @@ public class RemoveGadgetOutOfCart : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -113,6 +123,6 @@ public class RemoveGadgetOutOfCart : ControllerBase
         // Lưu thay đổi vào database
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Xóa thành công");
     }
 }

@@ -39,7 +39,8 @@ public class UpdateCartItem : ControllerBase
     [Tags("Carts")]
     [SwaggerOperation(
         Summary = "Update Cart Item",
-        Description = "This API is for update customer cart item."
+        Description = "This API is for update customer cart item. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn update cart được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -48,6 +49,15 @@ public class UpdateCartItem : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var userCart = await context.Carts
             .FirstOrDefaultAsync(c => c.CustomerId == currentUser!.Customer!.Id);
 
@@ -104,6 +114,6 @@ public class UpdateCartItem : ControllerBase
         // Lưu thay đổi vào database
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật thành công");
     }
 }

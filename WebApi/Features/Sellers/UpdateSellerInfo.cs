@@ -61,7 +61,8 @@ public class UpdateSellerInfo : ControllerBase
         Description = "This API is for update seller info. Note:" +
                             "<br>&nbsp; - Truyền field nào update field đó." +
                             "<br>&nbsp; - Chỉ được update: CompanyName, ShopName, ShopAddress và PhoneNumber." +
-                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt."
+                            "<br>&nbsp; - Số điện thoại có độ dài từ 10 - 11, không có chữ hay ký tự đặc biệt." +
+                            "<br>&nbsp; - User bị Inactive thì không cập nhật thông tin được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -70,6 +71,14 @@ public class UpdateSellerInfo : ControllerBase
     public async Task<IActionResult> Handler([FromForm] Request request, AppDbContext context, [FromServices] EmbeddingService embeddingService, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         if (currentUser!.Seller is null)
         {
@@ -80,7 +89,7 @@ public class UpdateSellerInfo : ControllerBase
         }
 
         // Lấy khách hàng từ database dựa trên user hiện tại
-        var seller = await context.Sellers.FindAsync(currentUser!.Seller!.Id);
+        var seller = currentUser.Seller;
         if (seller == null)
         {
             throw TechGadgetException.NewBuilder()
@@ -111,10 +120,22 @@ public class UpdateSellerInfo : ControllerBase
             seller.PhoneNumber = request.PhoneNumber;
         }
 
+        if (!string.IsNullOrEmpty(request.ShopName) || !string.IsNullOrEmpty(request.ShopAddress) || !string.IsNullOrEmpty(request.PhoneNumber))
+        {
+            await context.SellerInformation.AddAsync(new SellerInformation
+            {
+                ShopName = string.IsNullOrEmpty(request.ShopName) ? seller.ShopName : request.ShopName,
+                Address = string.IsNullOrEmpty(request.ShopAddress) ? seller.ShopAddress : request.ShopAddress,
+                PhoneNumber = string.IsNullOrEmpty(request.PhoneNumber) ? seller.PhoneNumber : request.PhoneNumber,
+                CreatedAt = DateTime.UtcNow,
+                SellerId = seller.Id
+            });
+        }
+
         // Lưu thay đổi vào database
         context.Sellers.Update(seller);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Cập nhật thông tin thành công");
     }
 }

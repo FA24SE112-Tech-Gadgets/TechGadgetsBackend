@@ -15,5 +15,5 @@ public class Notification
 
 public enum NotificationType
 {
-    WalletTracking, SellerOrder
+    WalletTracking, SellerOrder, User
 }

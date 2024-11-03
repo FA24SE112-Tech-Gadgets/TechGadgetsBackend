@@ -5,6 +5,7 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.Auth;
 
 namespace WebApi.Features.Gadgets;
 
@@ -23,8 +24,18 @@ public class DeactivateGadget : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler(Guid id, AppDbContext context)
+    public async Task<IActionResult> Handler([FromRoute] Guid id, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var gadget = await context.Gadgets.FirstOrDefaultAsync(g => g.Id == id);
         if (gadget is null)
         {
@@ -47,6 +58,6 @@ public class DeactivateGadget : ControllerBase
 
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Khóa sản phẩm thành công");
     }
 }
