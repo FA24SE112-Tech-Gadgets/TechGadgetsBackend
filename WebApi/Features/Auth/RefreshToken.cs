@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Features.Auth.Mappers;
@@ -27,8 +28,15 @@ public class RefreshTokenController : ControllerBase
 
     [HttpPost("auth/refresh")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Refresh Token", Description = "This API is for refreshing a new token")]
+    [SwaggerOperation(
+        Summary = "Refresh Token", 
+        Description = "This API is for refreshing a new token. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn gửi refreshToken được (Vì liên quan đến tiền trong ví)."
+    )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] TokenService tokenService)
     {
         var userInfo = await tokenService.ValidateRefreshToken(request.RefreshToken, context);

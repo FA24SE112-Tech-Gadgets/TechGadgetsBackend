@@ -55,7 +55,8 @@ public class CreateWalletDeposit : ControllerBase
                             "<br>&nbsp; - PaymentMethod: VnPay, Momo, PayOS." +
                             "<br>&nbsp; - Amount phải tối thiểu là 2,000 và tối đa 50,000,000." +
                             "<br>&nbsp; - Return Url là web của FE." +
-                            "<br>&nbsp; - Nếu đang có 1 giao dịch Pending thì cần phải Cancel hoặc Success giao dịch đó trước khi tiến hành tạo giao dịch mới"
+                            "<br>&nbsp; - Nếu đang có 1 giao dịch Pending thì cần phải Cancel hoặc Success giao dịch đó trước khi tiến hành tạo giao dịch mới" +
+                            "<br>&nbsp; - User bị Inactive thì nạp tiền vào ví được."
     )]
     [ProducesResponseType(typeof(DepositResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -71,6 +72,14 @@ public class CreateWalletDeposit : ControllerBase
         [FromServices] FCMNotificationService fcmNotificationService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
 
