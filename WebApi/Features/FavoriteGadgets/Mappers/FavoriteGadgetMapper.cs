@@ -22,7 +22,7 @@ public static class FavoriteGadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new FavoriteGadgetItemResponse
             {

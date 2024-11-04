@@ -12,7 +12,7 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetResponse
             {
@@ -23,6 +23,7 @@ public static class GadgetMapper
                 DiscountPercentage = discountPercentage,
                 DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
                 SellerStatus = gadget.Seller.User.Status,
+                GadgetStatus = gadget.Status,
                 ThumbnailUrl = gadget.ThumbnailUrl,
                 IsForSale = gadget.IsForSale,
                 IsFavorite = gadget.FavoriteGadgets.Any(fg => fg.CustomerId == customerId),
@@ -35,13 +36,14 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetRelatedToSellerResponse
             {
                 Id = gadget.Id,
                 Name = gadget.Name,
                 Price = gadget.Price,
+                Quantity = gadget.Quantity,
                 DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
                 DiscountPercentage = discountPercentage,
                 DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
@@ -57,7 +59,7 @@ public static class GadgetMapper
     {
         if (gadget != null)
         {
-            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow);
+            var gadgetDiscount = gadget.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > DateTime.UtcNow);
             int discountPercentage = gadget.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
             return new GadgetDetailResponse
             {

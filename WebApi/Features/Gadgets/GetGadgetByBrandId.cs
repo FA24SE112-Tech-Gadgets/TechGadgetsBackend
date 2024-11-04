@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Paginations;
-using WebApi.Data.Entities;
 using WebApi.Data;
+using WebApi.Data.Entities;
+using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.Gadgets.Models;
 using WebApi.Services.Auth;
-using Microsoft.EntityFrameworkCore;
-using WebApi.Features.Gadgets.Mappers;
 
 namespace WebApi.Features.Gadgets;
 
@@ -33,7 +33,7 @@ public class GetGadgetByBrandId : ControllerBase
                 .ThenInclude(s => s.User)
             .Include(c => c.FavoriteGadgets)
             .Include(g => g.GadgetDiscounts)
-            .Where(g => g.BrandId == brandId && g.Status == GadgetStatus.Active)
+            .Where(g => g.BrandId == brandId && g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
             .Select(c => c.ToGadgetResponse(currentUser != null ? currentUser.Customer!.Id : null))
             .ToPagedListAsync(request);
 

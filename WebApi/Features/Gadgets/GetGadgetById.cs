@@ -58,6 +58,7 @@ public class GetGadgetById : ControllerBase
             });
             await context.SaveChangesAsync();
         }
+
         var customerId = user?.Customer?.Id;
 
         return Ok(gadget.ToGadgetDetailResponse(customerId));
