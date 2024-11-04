@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using OpenAI.Embeddings;
 using Pgvector;
 using System.Text;
 using System.Text.Json;
@@ -16,9 +17,10 @@ public class EmbeddingBatchResponse
     public float[][] Embeddings { get; set; } = [];
 }
 
-public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings)
+public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings, IOptions<OpenAIClientSettings> options)
 {
     private readonly EmbeddingServerSettings _embeddingServerSettings = embeddingServerSettings.Value;
+    private readonly OpenAIClientSettings _openAISettings = options.Value;
 
     public async Task<Vector> GetEmbedding(string text)
     {
@@ -98,5 +100,21 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<Emb
         {
             throw new Exception("Error calling the embedding service.", ex);
         }
+    }
+
+    public async Task<Vector> GetEmbeddingOpenAI(string text, int dimensions = 1536)
+    {
+        EmbeddingClient client = new(_openAISettings.EmbeddingModel, _openAISettings.Key);
+        OpenAIEmbedding embedding = await client.GenerateEmbeddingAsync(text, new EmbeddingGenerationOptions { Dimensions = dimensions });
+
+        return new Vector(embedding.ToFloats());
+    }
+
+    public async Task<List<Vector>> GetEmbeddingsOpenAI(List<string> texts)
+    {
+        EmbeddingClient client = new(_openAISettings.EmbeddingModel, _openAISettings.Key);
+        OpenAIEmbeddingCollection collection = await client.GenerateEmbeddingsAsync(texts);
+
+        return collection.Select(e => new Vector(e.ToFloats())).ToList();
     }
 }

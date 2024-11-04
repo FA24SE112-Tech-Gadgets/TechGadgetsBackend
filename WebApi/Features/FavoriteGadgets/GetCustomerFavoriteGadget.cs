@@ -8,7 +8,6 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.FavoriteGadgets.Mappers;
 using WebApi.Features.FavoriteGadgets.Models;
-using WebApi.Features.SellerApplications.Models;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.FavoriteGadgets;
@@ -35,7 +34,7 @@ public class GetCustomerFavoriteGadget : ControllerBase
         Description = "This API is for get list of customer favorite gadgets." +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'"
     )]
-    [ProducesResponseType(typeof(SellerApplicationDetailResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedList<FavoriteGadgetResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]

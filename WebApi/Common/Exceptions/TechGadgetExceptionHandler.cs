@@ -4,7 +4,7 @@ namespace WebApi.Common.Exceptions;
 
 public class TechGadgetExceptionHandler(RequestDelegate next)
 {
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ILogger<TechGadgetExceptionHandler> logger)
     {
         try
         {
@@ -12,11 +12,11 @@ public class TechGadgetExceptionHandler(RequestDelegate next)
         }
         catch (Exception ex)
         {
-            await HandleExceptionAsync(ex, context);
+            await HandleExceptionAsync(ex, context, logger);
         }
     }
 
-    private static async Task HandleExceptionAsync(Exception ex, HttpContext context)
+    private static async Task HandleExceptionAsync(Exception ex, HttpContext context, ILogger logger)
     {
         if (ex is TechGadgetException techGadgetException)
         {
@@ -58,6 +58,8 @@ public class TechGadgetExceptionHandler(RequestDelegate next)
         }
         else
         {
+            logger.LogError(ex.Message);
+
             var errorResponse = new TechGadgetErrorResponse
             {
                 Code = TechGadgetErrorCode.WES_00.Code,
