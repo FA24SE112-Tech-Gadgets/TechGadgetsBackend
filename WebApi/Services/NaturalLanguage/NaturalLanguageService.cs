@@ -4,12 +4,12 @@ using OpenAI.Chat;
 using System.Text.Json;
 using WebApi.Common.Settings;
 using WebApi.Data;
-using WebApi.Services.Embedding;
+using WebApi.Services.Cryption;
 using WebApi.Services.NaturalLanguage.Models;
 
 namespace WebApi.Services.AI;
 
-public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppDbContext context, EmbeddingService embeddingService)
+public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppDbContext context, AesEncryptionService aesEncryptionService)
 {
     private readonly OpenAIClientSettings _settings = options.Value;
 
@@ -228,7 +228,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             new UserChatMessage(myPrompt),
         ];
 
-        ChatClient client = new(_settings.StructuredOutputModel, _settings.Key);
+        var apiKey = aesEncryptionService.Decrypt(_settings.EncryptedKey);
+        ChatClient client = new(_settings.StructuredOutputModel, apiKey);
 
         ChatCompletionOptions options = new()
         {

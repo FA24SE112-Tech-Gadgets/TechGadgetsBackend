@@ -6,5 +6,5 @@ public class OpenAIClientSettings
 
     public string StructuredOutputModel { get; set; } = default!;
     public string EmbeddingModel { get; set; } = default!;
-    public string Key { get; set; } = default!;
+    public string EncryptedKey { get; set; } = default!;
 }
