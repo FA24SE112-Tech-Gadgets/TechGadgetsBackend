@@ -259,6 +259,7 @@ public class ProcessNaturalLanguage : ControllerBase
 
             var sellers = await context.Sellers.AsExpandable()
                                  .Where(outerPredicate)
+                                 .Where(s => s.User.Status == UserStatus.Active)
                                  .OrderByDescending(s => query.IsBestSeller
                                             ? s.SellerOrders
                                                 .Where(so => so.Status == SellerOrderStatus.Success)
@@ -709,6 +710,7 @@ public class ProcessNaturalLanguage : ControllerBase
                                         .Include(c => c.FavoriteGadgets)
                                         .Include(g => g.GadgetDiscounts)
                                         .Where(outerPredicate)
+                                        .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
                                         .OrderByDescending(g => query.IsBestGadget
                                             ? g.SellerOrderItems
                                                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
