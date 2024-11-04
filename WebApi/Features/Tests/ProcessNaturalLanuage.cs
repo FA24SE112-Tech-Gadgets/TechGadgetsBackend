@@ -3,6 +3,7 @@ using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Linq.Expressions;
 using WebApi.Common.Filters;
 using WebApi.Common.Utils;
@@ -11,7 +12,7 @@ using WebApi.Data.Entities;
 using WebApi.Services.AI;
 using WebApi.Services.Embedding;
 
-namespace WebApi.Features.NaturalLanguages;
+namespace WebApi.Features.Tests;
 
 [ApiController]
 [RequestValidation<Request>]
@@ -31,14 +32,19 @@ public class ProcessNaturalLanuage : ControllerBase
         }
     }
 
-    [Tags("Natural Language")]
-    [HttpPost("natural-languages/process")]
+    [Tags("Tests")]
+    [HttpPost("tests/natural-languages/search")]
+    [SwaggerOperation(Summary = "Search With Natural Language",
+        Description = """
+        This API is for searching with natural language
+        """
+    )]
     public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, EmbeddingService embeddingService, AppDbContext context)
     {
         var query = await naturalLanguageService.GetRequestByUserInput(request.Input);
         if (query == null)
         {
-            return Ok("natural language query is null");
+            return StatusCode(500, "Lỗi khi xử lí lệnh ngôn ngữ tự nhiên.");
         }
 
         DateTime currentDate = DateTime.UtcNow;
@@ -147,30 +153,30 @@ public class ProcessNaturalLanuage : ControllerBase
                 if (new List<string> { "Giá rẻ", "Giá tốt", "Giá sinh viên" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(s => s.Gadgets.Any(g =>
-                            (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) <= 4_000_000)
-                            || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) <= 10_000_000)
-                            || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) <= 500_000)
-                            || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) <= 2_000_000)
+                            g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) <= 4_000_000
+                            || g.Category.Name == "Laptop" && effectivePrice.Invoke(g) <= 10_000_000
+                            || g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) <= 500_000
+                            || g.Category.Name == "Loa" && effectivePrice.Invoke(g) <= 2_000_000
                         ));
                 }
 
                 if (new List<string> { "Tầm trung" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(s => s.Gadgets.Any(g =>
-                            (g.Category.Name == "Điện thoại" && 4_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 13_000_000)
-                            || (g.Category.Name == "Laptop" && 10_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 25_000_000)
-                            || (g.Category.Name == "Tai nghe" && 500_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 2_000_000)
-                            || (g.Category.Name == "Loa" && 2_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 7_000_000)
+                            g.Category.Name == "Điện thoại" && 4_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 13_000_000
+                            || g.Category.Name == "Laptop" && 10_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 25_000_000
+                            || g.Category.Name == "Tai nghe" && 500_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 2_000_000
+                            || g.Category.Name == "Loa" && 2_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 7_000_000
                         ));
                 }
 
                 if (new List<string> { "Cao cấp", "Hiện đại" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(s => s.Gadgets.Any(g =>
-                            (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) > 13_000_000)
-                            || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) > 25_000_000)
-                            || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) > 2_000_000)
-                            || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) > 7_000_000)
+                            g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) > 13_000_000
+                            || g.Category.Name == "Laptop" && effectivePrice.Invoke(g) > 25_000_000
+                            || g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) > 2_000_000
+                            || g.Category.Name == "Loa" && effectivePrice.Invoke(g) > 7_000_000
                         ));
                 }
             }
@@ -259,6 +265,7 @@ public class ProcessNaturalLanuage : ControllerBase
                                      s.Id,
                                      s.ShopName
                                  })
+                                 .Take(200)
                                  .ToListAsync();
 
             var result = new
@@ -367,7 +374,7 @@ public class ProcessNaturalLanuage : ControllerBase
                 var fastChargeVector = await embeddingService.GetEmbedding("sạc nhanh");
 
                 fastChargePredicate = fastChargePredicate.Or(g => g.SpecificationValues.Any(sv => sv.SpecificationKey.Name == "Tính năng" &&
-                                        (1 - sv.Vector.CosineDistance(fastChargeVector)) > 0.7));
+                                        1 - sv.Vector.CosineDistance(fastChargeVector) > 0.7));
             }
 
             var wideScreenPredicate = PredicateBuilder.New<Gadget>(true);
@@ -423,7 +430,7 @@ public class ProcessNaturalLanuage : ControllerBase
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Độ phân giải màn hình"
                         && phoneHighResolutionVectors.Any(vector =>
-                                (1 - sv.Vector.CosineDistance(vector)) >= 0.5)
+                                1 - sv.Vector.CosineDistance(vector) >= 0.5)
                         ));
             }
             if (query.IsHighResolution && query.Categories.Contains("Laptop"))
@@ -434,7 +441,7 @@ public class ProcessNaturalLanuage : ControllerBase
                     g.Category.Name != "Laptop" ||
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Độ phân giải"
-                        && laptopHighResolutionVectors.Any(vector => (1 - sv.Vector.CosineDistance(vector)) >= 0.5)
+                        && laptopHighResolutionVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.5)
                         ));
             }
 
@@ -446,14 +453,14 @@ public class ProcessNaturalLanuage : ControllerBase
                     g.Category.Name != "Laptop" ||
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && operatingSystemVectors.Any(vector => (1 - sv.Vector.CosineDistance(vector)) >= 0.6)
+                        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
                 ));
 
                 operatingSystemPredicate = operatingSystemPredicate.And(g =>
                     g.Category.Name != "Điện thoại" ||
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && operatingSystemVectors.Any(vector => (1 - sv.Vector.CosineDistance(vector)) >= 0.6)
+                        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
                 ));
             }
 
@@ -539,30 +546,30 @@ public class ProcessNaturalLanuage : ControllerBase
                 if (new List<string> { "Giá rẻ", "Giá tốt", "Giá sinh viên" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(g =>
-                            (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) <= 4_000_000)
-                            || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) <= 10_000_000)
-                            || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) <= 500_000)
-                            || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) <= 2_000_000)
+                            g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) <= 4_000_000
+                            || g.Category.Name == "Laptop" && effectivePrice.Invoke(g) <= 10_000_000
+                            || g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) <= 500_000
+                            || g.Category.Name == "Loa" && effectivePrice.Invoke(g) <= 2_000_000
                         );
                 }
 
                 if (new List<string> { "Tầm trung" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(g =>
-                            (g.Category.Name == "Điện thoại" && 4_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 13_000_000)
-                            || (g.Category.Name == "Laptop" && 10_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 25_000_000)
-                            || (g.Category.Name == "Tai nghe" && 500_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 2_000_000)
-                            || (g.Category.Name == "Loa" && 2_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 7_000_000)
+                            g.Category.Name == "Điện thoại" && 4_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 13_000_000
+                            || g.Category.Name == "Laptop" && 10_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 25_000_000
+                            || g.Category.Name == "Tai nghe" && 500_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 2_000_000
+                            || g.Category.Name == "Loa" && 2_000_000 < effectivePrice.Invoke(g) && effectivePrice.Invoke(g) <= 7_000_000
                         );
                 }
 
                 if (new List<string> { "Cao cấp", "Hiện đại" }.Contains(segmentation))
                 {
                     segmentationPredicate = segmentationPredicate.Or(g =>
-                            (g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) > 13_000_000)
-                            || (g.Category.Name == "Laptop" && effectivePrice.Invoke(g) > 25_000_000)
-                            || (g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) > 2_000_000)
-                            || (g.Category.Name == "Loa" && effectivePrice.Invoke(g) > 7_000_000)
+                            g.Category.Name == "Điện thoại" && effectivePrice.Invoke(g) > 13_000_000
+                            || g.Category.Name == "Laptop" && effectivePrice.Invoke(g) > 25_000_000
+                            || g.Category.Name == "Tai nghe" && effectivePrice.Invoke(g) > 2_000_000
+                            || g.Category.Name == "Loa" && effectivePrice.Invoke(g) > 7_000_000
                         );
                 }
             }

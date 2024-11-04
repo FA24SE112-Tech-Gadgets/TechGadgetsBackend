@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApi.Common.Filters;
 using WebApi.Services.Embedding;
 
-namespace WebApi.Features.NaturalLanguages;
+namespace WebApi.Features.Tests;
 
 [ApiController]
 [RequestValidation<Request>]
@@ -27,8 +27,8 @@ public class CompareEmbedding : ControllerBase
         }
     }
 
-    [Tags("Natural Language")]
-    [HttpPost("natural-languages/compare/embeddings")]
+    [Tags("Tests")]
+    [HttpPost("tests/natural-languages/compare/embeddings")]
     public async Task<IActionResult> Handler(Request request, EmbeddingService embeddingService)
     {
         var vec1 = await embeddingService.GetEmbedding(request.Text1);

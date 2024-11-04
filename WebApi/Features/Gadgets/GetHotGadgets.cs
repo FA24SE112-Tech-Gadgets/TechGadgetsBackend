@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
+using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
-using Microsoft.EntityFrameworkCore;
 using WebApi.Data.Entities;
 using WebApi.Features.Gadgets.Models;
-using FluentValidation;
-using WebApi.Common.Filters;
 
 namespace WebApi.Features.Gadgets;
 
@@ -59,7 +59,7 @@ public class GetHotGadgets : ControllerBase
             .Include(g => g.FavoriteGadgets)
             .Include(g => g.SellerOrderItems)
                 .ThenInclude(soi => soi.SellerOrder)
-            .Where(g => g.Status == GadgetStatus.Active && g.CategoryId == request.CategoryId)
+            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.CategoryId == request.CategoryId)
             .OrderByDescending(g => g.SellerOrderItems
                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                 .Sum(soi => soi.GadgetQuantity))

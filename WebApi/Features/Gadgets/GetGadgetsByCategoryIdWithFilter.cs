@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Paginations;
-using WebApi.Data.Entities;
 using WebApi.Data;
+using WebApi.Data.Entities;
+using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.Gadgets.Models;
 using WebApi.Services.Auth;
-using Microsoft.EntityFrameworkCore;
-using WebApi.Features.Gadgets.Mappers;
 
 namespace WebApi.Features.Gadgets;
 
@@ -47,7 +47,7 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
             .Include(g => g.FavoriteGadgets)
             .Include(g => g.GadgetDiscounts)
             .Include(g => g.SpecificationValues)
-            .Where(g => g.CategoryId == categoryId)
+            .Where(g => g.CategoryId == categoryId && g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
             .AsQueryable();
 
         if (request.GadgetStatus.HasValue)

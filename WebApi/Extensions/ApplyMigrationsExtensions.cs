@@ -19,110 +19,110 @@ public static class ApplyMigrationsExtensions
         }
         var embeddingService = services.GetRequiredService<EmbeddingService>();
 
-        if (!await context.Users.AnyAsync())
-        {
-            foreach (var user in UserSeed.Default)
-            {
-                if (user.Seller != null)
-                {
-                    user.Seller.AddressVector = await embeddingService.GetEmbedding(user.Seller.ShopAddress);
-                }
-                context.Users.Add(user);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.Users.AnyAsync())
+        //{
+        //    foreach (var user in UserSeed.Default)
+        //    {
+        //        if (user.Seller != null)
+        //        {
+        //            user.Seller.AddressVector = await embeddingService.GetEmbedding(user.Seller.ShopAddress);
+        //        }
+        //        context.Users.Add(user);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.CustomerInformation.AnyAsync())
-        {
-            foreach (var customerInformation in CustomerInformationSeed.Default)
-            {
-                context.CustomerInformation.Add(customerInformation);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.CustomerInformation.AnyAsync())
+        //{
+        //    foreach (var customerInformation in CustomerInformationSeed.Default)
+        //    {
+        //        context.CustomerInformation.Add(customerInformation);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.SellerInformation.AnyAsync())
-        {
-            foreach (var sellerInformation in SellerInformationSeed.Default)
-            {
-                context.SellerInformation.Add(sellerInformation);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.SellerInformation.AnyAsync())
+        //{
+        //    foreach (var sellerInformation in SellerInformationSeed.Default)
+        //    {
+        //        context.SellerInformation.Add(sellerInformation);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.SellerApplications.AnyAsync())
-        {
-            foreach (var application in SellerApplicationSeed.Default)
-            {
-                application.CreatedAt = DateTime.UtcNow;
-                context.SellerApplications.Add(application);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.SellerApplications.AnyAsync())
+        //{
+        //    foreach (var application in SellerApplicationSeed.Default)
+        //    {
+        //        application.CreatedAt = DateTime.UtcNow;
+        //        context.SellerApplications.Add(application);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.Brands.AnyAsync())
-        {
-            foreach (var brand in BrandSeed.Default)
-            {
-                context.Brands.Add(brand);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.Brands.AnyAsync())
+        //{
+        //    foreach (var brand in BrandSeed.Default)
+        //    {
+        //        context.Brands.Add(brand);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.Categories.AnyAsync())
-        {
-            foreach (var category in CategorySeed.Default)
-            {
-                context.Categories.Add(category);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.Categories.AnyAsync())
+        //{
+        //    foreach (var category in CategorySeed.Default)
+        //    {
+        //        context.Categories.Add(category);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.CategoryBrands.AnyAsync())
-        {
-            foreach (var categoryBrand in CategoryBrandSeed.Default)
-            {
-                context.CategoryBrands.Add(categoryBrand);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.CategoryBrands.AnyAsync())
+        //{
+        //    foreach (var categoryBrand in CategoryBrandSeed.Default)
+        //    {
+        //        context.CategoryBrands.Add(categoryBrand);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.SystemWallets.AnyAsync())
-        {
-            foreach (var systemWallet in SystemWalletSeed.Default)
-            {
-                context.SystemWallets.Add(systemWallet);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.SystemWallets.AnyAsync())
+        //{
+        //    foreach (var systemWallet in SystemWalletSeed.Default)
+        //    {
+        //        context.SystemWallets.Add(systemWallet);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.SpecificationKeys.AnyAsync())
-        {
-            foreach (var specificationKey in SpecificationKeySeed.Default)
-            {
-                context.SpecificationKeys.Add(specificationKey);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.SpecificationKeys.AnyAsync())
+        //{
+        //    foreach (var specificationKey in SpecificationKeySeed.Default)
+        //    {
+        //        context.SpecificationKeys.Add(specificationKey);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.SpecificationUnits.AnyAsync())
-        {
-            foreach (var specificationUnit in SpecificationUnitSeed.Default)
-            {
-                context.SpecificationUnits.Add(specificationUnit);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.SpecificationUnits.AnyAsync())
+        //{
+        //    foreach (var specificationUnit in SpecificationUnitSeed.Default)
+        //    {
+        //        context.SpecificationUnits.Add(specificationUnit);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
-        if (!await context.GadgetFilters.AnyAsync())
-        {
-            foreach (var gadgetFilter in GadgetFilterSeed.Default)
-            {
-                gadgetFilter.Vector = await embeddingService.GetEmbedding(gadgetFilter.Value);
-                context.GadgetFilters.Add(gadgetFilter);
-            }
-            await context.SaveChangesAsync();
-        }
+        //if (!await context.GadgetFilters.AnyAsync())
+        //{
+        //    foreach (var gadgetFilter in GadgetFilterSeed.Default)
+        //    {
+        //        gadgetFilter.Vector = await embeddingService.GetEmbedding(gadgetFilter.Value);
+        //        context.GadgetFilters.Add(gadgetFilter);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
 
         //await InitGadgets(context, embeddingService);
         //await InitGadgetDiscounts(context);

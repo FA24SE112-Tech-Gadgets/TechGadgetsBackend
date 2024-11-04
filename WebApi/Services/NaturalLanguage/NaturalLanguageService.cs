@@ -420,4 +420,69 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         return filter;
     }
+
+    //public async Task<bool> IsPositiveContent(string content)
+    //{
+    //    content = content.Length > 512 ? content[0..512] : content;
+
+    //    string myPrompt = $@"
+    //    I need you to see if this content is positive or not:
+
+    //    Content: {content}
+    //    ";
+
+    //    List<ChatMessage> messages =
+    //    [
+    //        new UserChatMessage(myPrompt),
+    //    ];
+
+    //    ChatClient client = new(_settings.StructuredOutputModel, _settings.Key);
+
+    //    ChatCompletionOptions options = new()
+    //    {
+    //        ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
+    //        jsonSchemaFormatName: "gadget_filter",
+    //        jsonSchema: BinaryData.FromBytes("""
+    //            {
+    //                "type": "object",
+    //                "properties": {
+
+    //                    "isBestSeller": {
+    //                        "type": "boolean"
+    //                    }
+    //                },
+    //                "required": ["isPositive"],
+    //                "additionalProperties": false
+    //            }
+    //            """u8.ToArray()),
+    //        jsonSchemaIsStrict: true)
+    //    };
+
+    //    ChatCompletion? completion = null;
+    //    try
+    //    {
+    //        completion = await client.CompleteChatAsync(messages, options);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Console.WriteLine($"Chat complete error: {ex.Message}");
+    //        return null;
+    //    }
+
+    //    using JsonDocument structuredJson = JsonDocument.Parse(completion!.Content[0].Text);
+    //    JsonElement root = structuredJson.RootElement;
+
+    //    NaturalLanguageRequest? filter = null;
+    //    try
+    //    {
+    //        filter = JsonSerializer.Deserialize<NaturalLanguageRequest>(completion.Content[0].Text, new JsonSerializerOptions
+    //        {
+    //            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    //        });
+    //    }
+    //    catch (Exception jsonEx)
+    //    {
+    //        Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
+    //    }
+    //}
 }
