@@ -4,6 +4,7 @@ using Pgvector;
 using System.Text;
 using System.Text.Json;
 using WebApi.Common.Settings;
+using WebApi.Services.Cryption;
 
 namespace WebApi.Services.Embedding;
 
@@ -17,7 +18,8 @@ public class EmbeddingBatchResponse
     public float[][] Embeddings { get; set; } = [];
 }
 
-public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings, IOptions<OpenAIClientSettings> options)
+public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<EmbeddingServerSettings> embeddingServerSettings,
+    IOptions<OpenAIClientSettings> options, AesEncryptionService aesEncryptionService)
 {
     private readonly EmbeddingServerSettings _embeddingServerSettings = embeddingServerSettings.Value;
     private readonly OpenAIClientSettings _openAISettings = options.Value;
@@ -104,7 +106,8 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<Emb
 
     public async Task<Vector> GetEmbeddingOpenAI(string text, int dimensions = 1536)
     {
-        EmbeddingClient client = new(_openAISettings.EmbeddingModel, _openAISettings.Key);
+        var apiKey = aesEncryptionService.Decrypt(_openAISettings.EncryptedKey);
+        EmbeddingClient client = new(_openAISettings.EmbeddingModel, apiKey);
         OpenAIEmbedding embedding = await client.GenerateEmbeddingAsync(text, new EmbeddingGenerationOptions { Dimensions = dimensions });
 
         return new Vector(embedding.ToFloats());
@@ -112,7 +115,8 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<Emb
 
     public async Task<List<Vector>> GetEmbeddingsOpenAI(List<string> texts)
     {
-        EmbeddingClient client = new(_openAISettings.EmbeddingModel, _openAISettings.Key);
+        var apiKey = aesEncryptionService.Decrypt(_openAISettings.EncryptedKey);
+        EmbeddingClient client = new(_openAISettings.EmbeddingModel, apiKey);
         OpenAIEmbeddingCollection collection = await client.GenerateEmbeddingsAsync(texts);
 
         return collection.Select(e => new Vector(e.ToFloats())).ToList();

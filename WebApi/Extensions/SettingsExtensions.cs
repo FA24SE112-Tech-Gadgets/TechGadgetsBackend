@@ -15,5 +15,6 @@ public static class SettingsExtensions
         services.Configure<ScrapeDataSettings>(configuration.GetSection(ScrapeDataSettings.Section));
         services.Configure<EmbeddingServerSettings>(configuration.GetSection(EmbeddingServerSettings.Section));
         services.Configure<OpenAIClientSettings>(configuration.GetSection(OpenAIClientSettings.Section));
+        services.Configure<AesEncryptionSettings>(configuration.GetSection(AesEncryptionSettings.Section));
     }
 }

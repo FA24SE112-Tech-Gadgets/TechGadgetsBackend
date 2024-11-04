@@ -1,5 +1,6 @@
 ﻿using WebApi.Services.AI;
 using WebApi.Services.Auth;
+using WebApi.Services.Cryption;
 using WebApi.Services.Embedding;
 using WebApi.Services.Mail;
 using WebApi.Services.Notifications;
@@ -26,5 +27,6 @@ public static class ServicesExtensions
         services.AddScoped<EmbeddingService>();
         services.AddScoped<FCMNotificationService>();
         services.AddScoped<NaturalLanguageService>();
+        services.AddScoped<AesEncryptionService>();
     }
 }
