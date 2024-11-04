@@ -14,4 +14,5 @@ public class GadgetResponse
     public bool IsForSale { get; set; }
     public bool IsFavorite { get; set; }
     public UserStatus SellerStatus { get; set; }
+    public GadgetStatus GadgetStatus { get; set; }
 }
