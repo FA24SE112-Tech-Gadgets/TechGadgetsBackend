@@ -42,6 +42,7 @@ public static class GadgetMapper
                 Id = gadget.Id,
                 Name = gadget.Name,
                 Price = gadget.Price,
+                Quantity = gadget.Quantity,
                 DiscountPrice = (int)Math.Ceiling(gadget.Price * (1 - discountPercentage / 100.0)),
                 DiscountPercentage = discountPercentage,
                 DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
