@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Http.Headers;
@@ -15,11 +16,20 @@ namespace WebApi.Features.Auth;
 [ApiController]
 public class LoginGoogleController : ControllerBase
 {
+    public new record Request(string? DeviceToken);
+
     [HttpPost("auth/google/{accessToken}")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Google login user", Description = "This API is for user login with Google")]
+    [SwaggerOperation(
+        Summary = "Google login user", 
+        Description = "This API is for user login with Google. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn Login GG vô được (Vì liên quan đến tiền trong ví)."
+    )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Handler([FromRoute] string accessToken, AppDbContext context, [FromServices] TokenService tokenService)
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] string accessToken, AppDbContext context, [FromServices] TokenService tokenService)
     {
         try
         {
@@ -56,6 +66,13 @@ public class LoginGoogleController : ControllerBase
                         LoginMethod = LoginMethod.Google,
                         Status = UserStatus.Active
                     };
+                    if (!request.DeviceToken.IsNullOrEmpty())
+                    {
+                        registerUserRequest.Devices.Add(new Device
+                        {
+                            Token = request.DeviceToken!,
+                        });
+                    }
                     context.Users.Add(registerUserRequest.ToUserRequest()!);
                     await context.SaveChangesAsync();
 
@@ -93,6 +110,16 @@ public class LoginGoogleController : ControllerBase
                     .FirstOrDefaultAsync();
                 if (user != null)
                 {
+                    if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
+                    {
+                        context.Devices.Add(new Device
+                        {
+                            UserId = user.Id,
+                            Token = request.DeviceToken!,
+                        });
+                        await context.SaveChangesAsync();
+                    }
+
                     var tokenInfo = user.ToTokenRequest();
                     string token = tokenService.CreateToken(tokenInfo!);
                     string rfToken = tokenService.CreateRefreshToken(tokenInfo!);

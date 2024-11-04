@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
@@ -17,7 +18,7 @@ namespace WebApi.Features.Auth;
 [RequestValidation<Request>]
 public class VerifyUserController : ControllerBase
 {
-    public new record Request(string Email, string Code);
+    public new record Request(string Email, string Code, string? DeviceToken);
 
     public class Validator : AbstractValidator<Request>
     {
@@ -37,12 +38,22 @@ public class VerifyUserController : ControllerBase
 
     [HttpPost("auth/verify")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Verify User", Description = "This API is for verifying a user")]
+    [SwaggerOperation(
+        Summary = "Verify User", 
+        Description = "This API is for verifying a user. Note:" +
+                            "<br>&nbsp; - deviceToken: Dùng để gửi notification (mỗi 1 máy chỉ có duy nhất 1 deviceToken)." +
+                            "<br>&nbsp; - 1 acc thì có thể được đăng nhập bằng nhiều thiết bị (điện thoại, laptop)." +
+                            "<br>&nbsp; - deviceToken: Không gửi hoặc để trống cũng được, nhưng tức là thiết bị đó sẽ không nhận được notification thông qua FCM." +
+                            "<br>&nbsp; - Hoặc sẽ nhận được notification nếu acc này đã lưu những deviceToken trước đó thì sẽ sẽ gửi noti đến những device đã đk vs acc này." +
+                            "<br>&nbsp; - User bị Inactive thì vẫn Verify được (Vì liên quan đến tiền trong ví)."
+    )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> Handler([FromBody] Request request,
         [FromServices] AppDbContext context, [FromServices] VerifyCodeService verifyCodeService, [FromServices] TokenService tokenService)
     {
-        var user = await context.Users.FirstOrDefaultAsync(user => user.Email == request.Email);
+        var user = await context.Users
+            .Include(u => u.Devices)
+            .FirstOrDefaultAsync(user => user.Email == request.Email);
         if (user == null)
         {
             throw TechGadgetException.NewBuilder()
@@ -60,6 +71,16 @@ public class VerifyUserController : ControllerBase
                 Amount = 0
             };
             await context.Wallets.AddAsync(wallet);
+            await context.SaveChangesAsync();
+        }
+
+        if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
+        {
+            context.Devices.Add(new Device
+            {
+                UserId = user.Id,
+                Token = request.DeviceToken!,
+            });
             await context.SaveChangesAsync();
         }
 

@@ -19,7 +19,8 @@ public class CancelTransaction : ControllerBase
     [SwaggerOperation(
         Summary = "Cancel Wallet Deposit",
         Description = "This API is for cancel wallet deposit. Note: " +
-                            "<br>&nbsp; - Giao dịch không thể hủy có thể là do đã Success hoặc Expired hoặc Canceled hoặc Failed hoặc khác WalletTrackingType"
+                            "<br>&nbsp; - Giao dịch không thể hủy có thể là do đã Success hoặc Expired hoặc Canceled hoặc Failed hoặc khác WalletTrackingType" +
+                            "<br>&nbsp; - User bị Inactive thì vẫn có thể cancel transaction được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -72,6 +73,6 @@ public class CancelTransaction : ControllerBase
         walletTrackingDetail.Status = WalletTrackingStatus.Cancelled;
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Đã hủy giao dịch thành công");
     }
 }

@@ -8,6 +8,7 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Orders.Mappers;
 using WebApi.Services.Auth;
+using WebApi.Services.Notifications;
 
 namespace WebApi.Features.Orders;
 
@@ -42,14 +43,25 @@ public class CreateOrderNow : ControllerBase
                             "<br>&nbsp; - API này không tác động gì đến cart hết." +
                             "<br>&nbsp; - Tạo đơn thanh toán cho chúng. Cũng như là trừ tiền trong ví" +
                             "<br>&nbsp; - Customer cần điền Address và PhoneNumber trước khi tiến hành tạo order (Trước khi gọi API)" +
-                            "<br>&nbsp; - Default quantity = 1 nếu không truyền."
+                            "<br>&nbsp; - Default quantity = 1 nếu không truyền." +
+                            "<br>&nbsp; - User bị Inactive thì không mua hàng được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromBody] Request request, AppDbContext context, [FromServices] CurrentUserService currentUserService, [FromServices] FCMNotificationService fcmNotificationService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var gadgetItem = await context.Gadgets
             .Include(g => g.GadgetDiscounts)
             .FirstOrDefaultAsync(g => g.Id == request.GadgetId);
@@ -62,7 +74,6 @@ public class CreateOrderNow : ControllerBase
             .Build();
         }
 
-        var currentUser = await currentUserService.GetCurrentUser();
 
         if (currentUser!.Customer!.Address == null)
         {
@@ -93,8 +104,10 @@ public class CreateOrderNow : ControllerBase
 
         int totalAmount = 0;
 
+        Guid orderId = Guid.NewGuid();
         Order order = new Order()
         {
+            Id = orderId,
             CustomerId = currentUser!.Customer!.Id,
         }!;
 
@@ -221,6 +234,37 @@ public class CreateOrderNow : ControllerBase
         if ((sellerOrders.Count > 0 && totalAmount > 0) || request.Quantity > 0)
         {
             await context.SaveChangesAsync();
+            try
+            {
+                List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
+                if (deviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        deviceTokens,
+                        "Đặt hàng thành công",
+                        $"Bạn vừa thanh toán cho đơn hàng {orderId} thành công.",
+                        new Dictionary<string, string>()
+                        {
+                            { "orderId", orderId.ToString() },
+                        }
+                    );
+                }
+                //Tạo thông báo
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = currentUser!.Id,
+                    Title = "Đặt hàng thành công",
+                    Content = $"Bạn vừa thanh toán cho đơn hàng {orderId} thành công.",
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.SellerOrder
+                });
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
         else
         {
@@ -230,6 +274,6 @@ public class CreateOrderNow : ControllerBase
             .Build();
         }
 
-        return Ok();
+        return Ok("Tạo đơn thành công");
     }
 }

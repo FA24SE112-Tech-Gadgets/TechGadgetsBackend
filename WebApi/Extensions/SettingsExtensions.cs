@@ -12,7 +12,6 @@ public static class SettingsExtensions
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.Section));
         services.Configure<MailSettings>(configuration.GetSection(MailSettings.Section));
         services.Configure<PayOSSettings>(configuration.GetSection(PayOSSettings.Section));
-        services.Configure<RabbitMQSettings>(configuration.GetSection(RabbitMQSettings.Section));
         services.Configure<ScrapeDataSettings>(configuration.GetSection(ScrapeDataSettings.Section));
         services.Configure<EmbeddingServerSettings>(configuration.GetSection(EmbeddingServerSettings.Section));
         services.Configure<OpenAIClientSettings>(configuration.GetSection(OpenAIClientSettings.Section));

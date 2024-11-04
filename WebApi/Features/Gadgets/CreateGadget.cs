@@ -47,7 +47,7 @@ public class CreateGadget : ControllerBase
         public Guid CategoryId { get; set; } = default!;
         public string Condition { get; set; } = default!;
         public int Quantity { get; set; }
-        public GadgetDiscountRequest Discount { get; set; }
+        public GadgetDiscountRequest Discount { get; set; } = default!;
         public ICollection<IFormFile> GadgetImages { get; set; } = [];
         public ICollection<GadgetDescriptionRequest> GadgetDescriptions { get; set; } = [];
         public ICollection<SpecificationValueRequest> SpecificationValues { get; set; } = [];

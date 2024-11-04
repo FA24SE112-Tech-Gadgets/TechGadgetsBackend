@@ -6,6 +6,7 @@ using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.SellerApplications.Mappers;
+using WebApi.Services.Auth;
 using WebApi.Services.Embedding;
 
 namespace WebApi.Features.SellerApplications;
@@ -19,14 +20,25 @@ public class ApproveSellerApplication : ControllerBase
     [Tags("Seller Applications")]
     [SwaggerOperation(
         Summary = "Approve Seller Application",
-        Description = "API is for Manager approve seller application."
+        Description = "API is for Manager approve seller application. Note:" +
+                            "<br>&nbsp; - User bị Inactive thì không thể duyệt đơn được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context, [FromServices] EmbeddingService embeddingService)
+    public async Task<IActionResult> Handler([FromRoute] Guid sellerApplicationId, AppDbContext context, [FromServices] EmbeddingService embeddingService, [FromServices] CurrentUserService currentUserService)
     {
+        var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
+
         var sellerApplication = await context.SellerApplications
             .Include(sa => sa.BillingMailApplications)
             .FirstOrDefaultAsync(sa => sa.Id == sellerApplicationId) ?? throw TechGadgetException.NewBuilder()
@@ -67,6 +79,6 @@ public class ApproveSellerApplication : ControllerBase
         await context.Sellers.AddAsync(seller);
         await context.SaveChangesAsync();
 
-        return Ok();
+        return Ok("Duyệt đơn thành công");
     }
 }

@@ -2,6 +2,7 @@
 using WebApi.Services.Auth;
 using WebApi.Services.Embedding;
 using WebApi.Services.Mail;
+using WebApi.Services.Notifications;
 using WebApi.Services.Payment;
 using WebApi.Services.Server;
 using WebApi.Services.Storage;
@@ -23,6 +24,7 @@ public static class ServicesExtensions
         services.AddScoped<MomoPaymentService>();
         services.AddScoped<PayOSPaymentSerivce>();
         services.AddScoped<EmbeddingService>();
+        services.AddScoped<FCMNotificationService>();
         services.AddScoped<NaturalLanguageService>();
     }
 }

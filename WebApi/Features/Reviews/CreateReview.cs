@@ -48,7 +48,8 @@ public class CreateReview : ControllerBase
                             "<br>&nbsp; - Customer chỉ có thể đánh giá đơn của mình thôi" +
                             "<br>&nbsp; - Đánh giá gadget theo đơn. Tức là chỉ cần truyền sellerOrderItemId của gadget trong đơn đó." +
                             "<br>&nbsp; - Cho dù gadget Status = Inactive hay gadget Quantity = 0 thì đều review được." +
-                            "<br>&nbsp; - Không thể review những item đã quá 10 phút."
+                            "<br>&nbsp; - Không thể review những item đã quá 10 phút." +
+                            "<br>&nbsp; - User bị Inactive thì không đánh giá được."
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -57,6 +58,14 @@ public class CreateReview : ControllerBase
     public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderItemId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (currentUser!.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_03)
+            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+            .Build();
+        }
 
         var sellerOrderItem = await context.SellerOrderItems
             .Include(soi => soi.SellerOrder)

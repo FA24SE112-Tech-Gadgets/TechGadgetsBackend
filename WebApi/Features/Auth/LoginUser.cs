@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Cryptography;
 using WebApi.Common.Exceptions;
@@ -21,7 +22,7 @@ public class LoginUserController : ControllerBase
     private const int KeySize = 32;  // 256 bit
     private const int Iterations = 10000; // Number of PBKDF2 iterations
 
-    public new record Request(string Email, string Password);
+    public new record Request(string Email, string Password, string? DeviceToken);
     public class Validator : AbstractValidator<Request>
     {
         public Validator()
@@ -41,8 +42,19 @@ public class LoginUserController : ControllerBase
 
     [HttpPost("auth/login")]
     [Tags("Auth")]
-    [SwaggerOperation(Summary = "Login User", Description = "This API is for user login")]
+    [SwaggerOperation(
+        Summary = "Login User", 
+        Description = "This API is for user login. Note:" +
+                            "<br>&nbsp; - deviceToken: Dùng để gửi notification (mỗi 1 máy chỉ có duy nhất 1 deviceToken)." +
+                            "<br>&nbsp; - 1 acc thì có thể được đăng nhập bằng nhiều thiết bị (điện thoại, laptop)." +
+                            "<br>&nbsp; - deviceToken: Không gửi hoặc để trống cũng được, nhưng tức là thiết bị đó sẽ không nhận được notification thông qua FCM." +
+                            "<br>&nbsp; - Hoặc sẽ nhận được notification nếu acc này đã lưu những deviceToken trước đó thì sẽ sẽ gửi noti đến những device đã đk vs acc này." +
+                            "<br>&nbsp; - User bị Inactive thì vẫn Login vô được (Vì liên quan đến tiền trong ví)."
+    )]
     [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] TokenService tokenService)
     {
         var user = await context.Users.FirstOrDefaultAsync(user => user.Email == request.Email);
@@ -77,6 +89,16 @@ public class LoginUserController : ControllerBase
                 .WithCode(TechGadgetErrorCode.WEB_02)
                 .AddReason("user", "Tài khoản này đăng nhập bằng Google")
                 .Build();
+        }
+
+        if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
+        {
+            context.Devices.Add(new Device
+            {
+                UserId = user.Id,
+                Token = request.DeviceToken!,
+            });
+            await context.SaveChangesAsync();
         }
 
         var tokenInfo = user.ToTokenRequest();
