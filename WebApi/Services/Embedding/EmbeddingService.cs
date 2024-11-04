@@ -102,10 +102,10 @@ public class EmbeddingService(IHttpClientFactory httpClientFactory, IOptions<Emb
         }
     }
 
-    public async Task<Vector> GetEmbeddingOpenAI(string text)
+    public async Task<Vector> GetEmbeddingOpenAI(string text, int dimensions = 1536)
     {
         EmbeddingClient client = new(_openAISettings.EmbeddingModel, _openAISettings.Key);
-        OpenAIEmbedding embedding = await client.GenerateEmbeddingAsync(text);
+        OpenAIEmbedding embedding = await client.GenerateEmbeddingAsync(text, new EmbeddingGenerationOptions { Dimensions = dimensions });
 
         return new Vector(embedding.ToFloats());
     }

@@ -30,8 +30,7 @@ public class NaturalLanguageRequest
     public List<string> Segmentations { get; set; } = [];
     public List<string> Locations { get; set; } = [];
     public List<string> Origins { get; set; } = [];
-    public string MinReleaseDate { get; set; } = default!;
-    public string MaxReleaseDate { get; set; } = default!;
+    public string ReleaseDate { get; set; } = default!;
     public List<string> Colors { get; set; } = [];
     public bool IsSmartPhone { get; set; }
     public bool IsSearchingSeller { get; set; }
@@ -40,4 +39,5 @@ public class NaturalLanguageRequest
     public bool IsPositiveReview { get; set; }
     public bool IsEnergySaving { get; set; }
     public bool IsDiscounted { get; set; }
+    public bool IsBestSeller { get; set; }
 }

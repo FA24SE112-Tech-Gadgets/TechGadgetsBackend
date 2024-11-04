@@ -60,7 +60,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         List<string> colors = ["Xám", "Xanh Đen", "Bạc", "Vàng",
         "Đen", "Xanh lá", "Xanh dương", "Titan tự nhiên", "Titan Sa Mạc", "Titan Trắng", "Titan Đen", "Xanh Lưu Ly", "Hồng", "Xanh Mòng Két", "Trắng", "Trắng ngọc trai"];
 
-        List<string> searchingSellerKeywords = ["Nơi bán", "Nhà phân phối", "Thương hiệu", "Người bán", "Shop", "Nhà cung cấp", "Nơi cung cấp", "Hãng cung cấp", "Người cung cấp"];
+        List<string> searchingSellerKeywords = ["Cửa hàng", "Nơi bán", "Nhà phân phối", "Thương hiệu", "Người bán", "Shop", "Nhà cung cấp", "Nơi cung cấp", "Hãng cung cấp", "Người cung cấp"];
 
         List<string> bestGadgetKeywords = ["Sản phẩm được nhiều người quan tâm", "Nhiều người mua nhất", "Bán chạy", "Sản phẩm bán chạy", "Nổi bật"];
 
@@ -70,6 +70,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> energySavingKeywords = ["Tiết kiệm điện", "Xài điện ít", "Tiêu thụ điện thấp"];
 
+        List<string> discountKeywords = ["Giảm giá", "Khuyến mãi"];
+
+        List<string> bestSellerKeywords = ["Cửa hàng nổi bật", "bán chạy", "Nhiều người quan tâm"];
 
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
@@ -158,7 +161,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         segmentations are: {string.Join(", ", segmentations)}
-        If user query not mention anything in the array above, give me empty array
+        Only give me items in the array above, if user query not mention anything in the array above, give me empty array
 
 
         locations are: {string.Join(", ", locations)}
@@ -169,12 +172,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user query not mention, give me empty array
 
         
-        ReleaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY 
-        minReleaseDate must be after than or equal to 01/1990
-        If user does not mention, give me min value, which is 01/1990
-        
-        maxReleaseDate must be before than or equal to 12/2025
-        If user does not mention, give me max value, which is 12/2025
+        ReleaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
+        if user does not mention, give me empty string
         
 
         colors are: {string.Join(", ", colors)}
@@ -182,11 +181,12 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         isSmartPhone can be true or false
+        ONLY true if user does mention about 'smart' in the query
         If user does not mention, give me false  
         
 
         isSearchingSeller can be true or false, this field is true when user want to find seller not gadget
-        you can use this keywork array as a addition reference that results in isSearchingSeller is true: {string.Join(", ", searchingSellerKeywords)}
+        please use this keywork array as a reference that results in isSearchingSeller is true: {string.Join(", ", searchingSellerKeywords)}
         If user does not mention, give me false  
 
 
@@ -211,7 +211,13 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         isDiscounted can be true or false
+        you can use this keywork array as a addition reference that results in isDiscounted is true: {string.Join(", ", discountKeywords)}
         If user does not mention, give me false        
+
+
+        isBestSeller can be true or false
+        you can use this keywork array as a addition reference that results in isBestSeller is true: {string.Join(", ", bestSellerKeywords)}
+        If user does not mention, give me false  
 
 
         User's query: {input}
@@ -337,10 +343,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                                 "type": "string"
                             }
                         },
-                        "minReleaseDate": {
-                            "type": "string"
-                        },
-                        "maxReleaseDate": {
+                        "releaseDate": {
                             "type": "string"
                         },
                         "colors": {
@@ -369,12 +372,15 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isDiscounted": {
                             "type": "boolean"
+                        },
+                        "isBestSeller": {
+                            "type": "boolean"
                         }
                     },
                     "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
-                                 "conditions","segmentations","locations","origins","minReleaseDate","maxReleaseDate","colors","isSmartPhone","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted"],
+                                 "conditions","segmentations","locations","origins","releaseDate","colors","isSmartPhone","isSearchingSeller",
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
