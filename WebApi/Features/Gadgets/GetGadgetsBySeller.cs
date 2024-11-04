@@ -49,8 +49,6 @@ public class GetGadgetsBySeller : ControllerBase
         }
 
         var query = context.Gadgets
-            .Include(g => g.Seller)
-                .ThenInclude(s => s.User)
             .Include(g => g.FavoriteGadgets)
             .Include(g => g.GadgetDiscounts)
             .AsQueryable();
@@ -60,7 +58,7 @@ public class GetGadgetsBySeller : ControllerBase
         var response = await query
             .Where(g => g.Name.Contains(request.Name ?? ""))
             .Where(g => g.SellerId == user!.Seller!.Id && g.CategoryId == categoryId)
-            .Select(g => g.ToGadgetResponse(null))
+            .Select(g => g.ToGadgetRelatedToSellerResponse())
             .ToPagedListAsync(request);
 
         return Ok(response);
