@@ -93,6 +93,7 @@ public static class SellerOrderMapper
             return new SellerOrderResponse
             {
                 Id = sellerOrder.Id,
+                Customer = sellerOrder.CustomerInformation.ToCustomerInfoResponse()!,
                 Amount = totalAmount,
                 Status = sellerOrder.Status,
                 CreatedAt = sellerOrder.CreatedAt,
