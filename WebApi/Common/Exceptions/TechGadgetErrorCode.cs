@@ -36,4 +36,5 @@ public class TechGadgetErrorCode
 
     public static readonly TechGadgetErrorCode WEA_00 = new("WEA_00", "Lỗi xác thực", HttpStatusCode.Unauthorized);
     public static readonly TechGadgetErrorCode WEA_01 = new("WEA_01", "Lỗi phân quyền", HttpStatusCode.Unauthorized);
+    public static readonly TechGadgetErrorCode WEA_02 = new("WEA_02", "Lỗi vượt quá request cho phép", HttpStatusCode.TooManyRequests);
 }

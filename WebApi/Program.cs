@@ -18,16 +18,18 @@ builder.Services.AddDbContextConfiguration(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddCorsPolicy();
 builder.Services.AddConfigureApiBehavior();
+builder.Services.AddTechGadgetRateLimiter();
 
 var app = builder.Build();
 
+app.UseTechGadgetsExceptionHandler();
+app.UseTechGadgetRateLimiter();
 app.UseCors();
 app.UseSwaggerServices();
-app.UseTechGadgetsExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.ApplyMigrations();
 
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("concurrency");
 
 app.Run();
