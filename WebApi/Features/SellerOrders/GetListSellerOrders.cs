@@ -57,6 +57,7 @@ public class GetListSellerOrders : ControllerBase
         {
             query = query
                 .Include(so => so.SellerOrderItems)
+                .Include(so => so.CustomerInformation)
                 .Where(od => od.SellerId == currentUser.Seller!.Id);
         } else
         {
