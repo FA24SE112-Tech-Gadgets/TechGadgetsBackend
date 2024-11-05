@@ -415,75 +415,74 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
             Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
         }
 
-        //filter!.InputVector = await embeddingService.GetEmbedding(input);
-        //filter!.InputVector = await embeddingService.GetEmbeddingOpenAI(input);
-        //var list = await embeddingService.GetEmbeddingsOpenAI(["First text", "Second text", "Third text", "Fourth text"]);
-
         return filter;
     }
 
-    //public async Task<bool> IsPositiveContent(string content)
-    //{
-    //    content = content.Length > 512 ? content[0..512] : content;
+    public async Task<bool?> IsPositiveContent(string content)
+    {
+        content = content.Length > 512 ? content[0..512] : content;
 
-    //    string myPrompt = $@"
-    //    I need you to see if this content is positive or not:
+        string myPrompt = $@"
+        I need you to check if this content is positive or not, this is content of product review:
 
-    //    Content: {content}
-    //    ";
+        Content: {content}
+        ";
 
-    //    List<ChatMessage> messages =
-    //    [
-    //        new UserChatMessage(myPrompt),
-    //    ];
+        List<ChatMessage> messages =
+        [
+            new UserChatMessage(myPrompt),
+        ];
 
-    //    ChatClient client = new(_settings.StructuredOutputModel, _settings.Key);
+        var apiKey = aesEncryptionService.Decrypt(_settings.EncryptedKey);
+        ChatClient client = new(_settings.StructuredOutputModel, apiKey);
 
-    //    ChatCompletionOptions options = new()
-    //    {
-    //        ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
-    //        jsonSchemaFormatName: "gadget_filter",
-    //        jsonSchema: BinaryData.FromBytes("""
-    //            {
-    //                "type": "object",
-    //                "properties": {
+        ChatCompletionOptions options = new()
+        {
+            ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
+            jsonSchemaFormatName: "is_positive",
+            jsonSchema: BinaryData.FromBytes("""
+                {
+                    "type": "object",
+                    "properties": {
 
-    //                    "isBestSeller": {
-    //                        "type": "boolean"
-    //                    }
-    //                },
-    //                "required": ["isPositive"],
-    //                "additionalProperties": false
-    //            }
-    //            """u8.ToArray()),
-    //        jsonSchemaIsStrict: true)
-    //    };
+                        "isPositive": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["isPositive"],
+                    "additionalProperties": false
+                }
+                """u8.ToArray()),
+            jsonSchemaIsStrict: true)
+        };
 
-    //    ChatCompletion? completion = null;
-    //    try
-    //    {
-    //        completion = await client.CompleteChatAsync(messages, options);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine($"Chat complete error: {ex.Message}");
-    //        return null;
-    //    }
+        ChatCompletion? completion = null;
+        try
+        {
+            completion = await client.CompleteChatAsync(messages, options);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Chat complete error: {ex.Message}");
+            return null;
+        }
 
-    //    using JsonDocument structuredJson = JsonDocument.Parse(completion!.Content[0].Text);
-    //    JsonElement root = structuredJson.RootElement;
+        using JsonDocument structuredJson = JsonDocument.Parse(completion!.Content[0].Text);
+        JsonElement root = structuredJson.RootElement;
 
-    //    NaturalLanguageRequest? filter = null;
-    //    try
-    //    {
-    //        filter = JsonSerializer.Deserialize<NaturalLanguageRequest>(completion.Content[0].Text, new JsonSerializerOptions
-    //        {
-    //            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    //        });
-    //    }
-    //    catch (Exception jsonEx)
-    //    {
-    //        Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
-    //    }
-    //}
+        IsPositiveRequest? res = null;
+        try
+        {
+            res = JsonSerializer.Deserialize<IsPositiveRequest>(completion.Content[0].Text, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
+        catch (Exception jsonEx)
+        {
+            Console.WriteLine($"JSON parsing error: {jsonEx.Message}");
+        }
+
+        return res!.IsPositive;
+    }
 }

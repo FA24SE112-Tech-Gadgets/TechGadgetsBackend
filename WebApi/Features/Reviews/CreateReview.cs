@@ -6,6 +6,7 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Services.AI;
 using WebApi.Services.Auth;
 
 namespace WebApi.Features.Reviews;
@@ -55,7 +56,8 @@ public class CreateReview : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderItemId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromBody] Request request, [FromRoute] Guid sellerOrderItemId,
+        AppDbContext context, [FromServices] CurrentUserService currentUserService, NaturalLanguageService naturalLanguageService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
@@ -114,7 +116,15 @@ public class CreateReview : ControllerBase
         }
 
         bool isPositive = false;
-        if (request.Rating >= 3)
+        bool? isPositiveContent = await naturalLanguageService.IsPositiveContent(request.Content);
+        if (isPositiveContent == null)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WES_00)
+            .AddReason("review", $"Có lỗi xảy ra trong lúc xử lý đánh giá.")
+            .Build();
+        }
+        if (request.Rating >= 3 && isPositive)
         {
             isPositive = true;
         }
