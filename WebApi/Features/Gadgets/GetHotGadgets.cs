@@ -35,7 +35,7 @@ public class GetHotGadgets : ControllerBase
         Summary = "Get List Of Hot Gadgets",
         Description = "API is for get list of hot gadgets. Note:" +
                             "<br>&nbsp; - Dùng API này để lấy danh sách sản phẩm có lượng người mua cao nhất." +
-                            "<br>&nbsp; - Chỉ lấy ra nhưng Gadget nào Status = Active." +
+                            "<br>&nbsp; - Chỉ lấy ra nhưng Gadget nào Status = Active và Seller Status = Active" +
                             "<br>&nbsp; - Chỉ tính Quantity những SellerOrder nào Status = Success." +
                             "<br>&nbsp; - API cũng đã sort theo thứ tự từ cao đến thấp, chỉ cần gọi ra dùng thôi (Nên gọi vài page đầu là đủ dùng rồi)."
     )]
