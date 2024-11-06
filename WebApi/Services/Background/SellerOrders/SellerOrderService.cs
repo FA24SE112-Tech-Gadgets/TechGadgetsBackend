@@ -134,6 +134,9 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                     .Include(ssot => ssot.SellerOrder)
                         .ThenInclude(so => so.SellerOrderItems)
                             .ThenInclude(soi => soi.Gadget)
+                    .Include(ssot => ssot.SellerOrder)
+                        .ThenInclude(so => so.Seller)
+                            .ThenInclude(s => s.User)
                     .Where(ssot => ssot.CreatedAt <= DateTime.UtcNow.AddMinutes(-5) && ssot.Status == SystemSellerOrderTrackingStatus.Pending)
                     .ToListAsync(stoppingToken);
 
