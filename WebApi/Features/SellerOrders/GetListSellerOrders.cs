@@ -36,8 +36,8 @@ public class GetListSellerOrders : ControllerBase
         Description = "API is for get list of seller orders." +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'" +
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
-                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách selelrOrder của mình." +
-                            "<br>&nbsp; - Seller dùng API này để lấy ra những selelrOrder liên quan đến mình." +
+                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách sellerOrder của mình." +
+                            "<br>&nbsp; - Seller dùng API này để lấy ra những sellerOrder liên quan đến mình." +
                             "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết." +
                             "<br>&nbsp; - Price là giá gốc trước khi giảm." +
                             "<br>&nbsp; - DiscountPrice là giá sau khi giảm." +

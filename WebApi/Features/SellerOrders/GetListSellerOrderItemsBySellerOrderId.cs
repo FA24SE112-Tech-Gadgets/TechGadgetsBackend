@@ -41,8 +41,6 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
             .Include(so => so.Order)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Gadget)
-            .Include(so => so.SellerOrderItems)
-                    .ThenInclude(soi => soi.GadgetDiscount)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
 
         if (sellerOrder == null)
@@ -62,6 +60,7 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
         }
 
         var gadgetInformations = await context.SellerOrderItems
+            .Include(soi => soi.GadgetDiscount)
             .Where(gi => gi.SellerOrderId == sellerOrderId)
             .ToPagedListAsync(pagedRequest);
 
