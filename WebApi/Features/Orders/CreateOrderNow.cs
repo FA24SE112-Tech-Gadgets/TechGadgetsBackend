@@ -179,8 +179,15 @@ public class CreateOrderNow : ControllerBase
 
             //Tính tổng giá tiền order
             int discountPercentage = gadgetItem.GadgetDiscounts
-                .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate < DateTime.UtcNow)?.DiscountPercentage ?? 0;
+                .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow)?.DiscountPercentage ?? 0;
             totalAmount += request.Quantity * (int)Math.Ceiling(gadgetItem.Price * (1 - discountPercentage / 100.0));
+
+            var gadgetDiscount = gadgetItem.GadgetDiscounts
+                        .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow);
+            if (gadgetDiscount != null)
+            {
+                sellerOrderItem.GadgetDiscountId = gadgetDiscount!.Id;
+            }
         }
 
         sellerOrder.SellerOrderItems = sellerOrderItems;
