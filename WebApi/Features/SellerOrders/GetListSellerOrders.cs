@@ -21,6 +21,7 @@ public class GetListSellerOrders : ControllerBase
     {
         public SortByDate SortByDate { get; set; }
         public SellerOrderStatus? Status { get; set; }
+        public string? CustomerPhoneNumber { get; set; }
     }
 
     public enum SortByDate
@@ -35,12 +36,13 @@ public class GetListSellerOrders : ControllerBase
         Description = "API is for get list of seller orders." +
                             "<br>&nbsp; - SortByDate: 'DESC' - Ngày gần nhất, 'ASC' - Ngày xa nhất. Nếu không truyền defaul: 'DESC'" +
                             "<br>&nbsp; - Status: 'Success', 'Pending', 'Cancelled'." +
-                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách selelrOrder của mình." +
-                            "<br>&nbsp; - Seller dùng API này để lấy ra những selelrOrder liên quan đến mình." +
+                            "<br>&nbsp; - Customer dùng API này để lấy ra danh sách sellerOrder của mình." +
+                            "<br>&nbsp; - Seller dùng API này để lấy ra những sellerOrder liên quan đến mình." +
                             "<br>&nbsp; - Response của Seller và Customer là khác nhau, nên gọi thử để biết thêm chi tiết." +
                             "<br>&nbsp; - Price là giá gốc trước khi giảm." +
                             "<br>&nbsp; - DiscountPrice là giá sau khi giảm." +
                             "<br>&nbsp; - DiscountPercentage là phần trăm giảm của gadget." +
+                            "<br>&nbsp; - CustomerPhoneNumber là phone của customer đặt đơn này" +
                             "<br>&nbsp; - LƯU Ý: Trong API này Gadgets chỉ lấy ra gadget đầu tiên, nên muốn xem danh sách gadget có trong order thì gọi API khác."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -57,6 +59,7 @@ public class GetListSellerOrders : ControllerBase
         {
             query = query
                 .Include(so => so.SellerOrderItems)
+                .Include(so => so.CustomerInformation)
                 .Where(od => od.SellerId == currentUser.Seller!.Id);
         } else
         {
@@ -67,6 +70,7 @@ public class GetListSellerOrders : ControllerBase
                     .ThenInclude(soi => soi.Gadget)
                 .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.GadgetDiscount)
+                .Include(so => so.CustomerInformation)
                 .Include(so => so.SellerInformation)
                 .Where(od => od.Order.CustomerId == currentUser.Customer!.Id);
         }
@@ -74,6 +78,11 @@ public class GetListSellerOrders : ControllerBase
         if (request.Status != null)
         {
             query = query.Where(so => so.Status == request.Status);
+        }
+
+        if (request.CustomerPhoneNumber != null)
+        {
+            query = query.Where(so => so.CustomerInformation.PhoneNumber == request.CustomerPhoneNumber);
         }
 
         if (request.SortByDate == SortByDate.DESC)
