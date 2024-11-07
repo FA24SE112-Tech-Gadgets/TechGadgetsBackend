@@ -32,7 +32,7 @@ public class UpdateSellerReplyById : ControllerBase
         }
     }
 
-    [HttpPatch("selelr-reply/{sellerReplyId}")]
+    [HttpPatch("seller-reply/{sellerReplyId}")]
     [Tags("Seller Replies")]
     [SwaggerOperation(
         Summary = "Seller Update Reply By SellerReplyId",
