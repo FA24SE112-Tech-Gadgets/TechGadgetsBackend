@@ -147,8 +147,8 @@ public class CreateGadget : ControllerBase
             - thứ tự của array sẽ được dùng để tạo index tương ứng, hãy lưu ý
 
         - Discount:
-            - Có thể không cần truyền giảm giá ngay từ lúc create. Còn nếu truyền thì ""discountPercentage** và **discountExpiredDate** không được để trống
-            - ""discountPercentage** phải lớn hơn 0 và nhỏ hơn hoặc bẳng 90
+            - Có thể không cần truyền giảm giá ngay từ lúc create. Còn nếu truyền thì **discountPercentage** và **discountExpiredDate** không được để trống
+            - **discountPercentage** phải lớn hơn 0 và nhỏ hơn hoặc bẳng 90
             - **discountExpiredDate** phải lớn hơn thời gian hiện tại
         """
     )]

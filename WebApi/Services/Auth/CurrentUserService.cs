@@ -37,20 +37,27 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor, IOptio
             return null;
         }
 
-        var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+        try
+        {
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            var userInfoJson = principal.Claims.FirstOrDefault(c => c.Type == "UserInfo")?.Value;
 
-        var userInfoJson = principal.Claims.FirstOrDefault(c => c.Type == "UserInfo")?.Value;
+            var userInfo = JsonConvert.DeserializeObject<TokenRequest>(userInfoJson!);
 
-        var userInfo = JsonConvert.DeserializeObject<TokenRequest>(userInfoJson!);
-
-        return await context.Users
-            .Include(u => u.Manager)
-            .Include(u => u.Admin)
-            .Include(u => u.Customer)
-            .Include(u => u.Seller)
-            .Include(u => u.Wallet)
-            .Include(u => u.Devices)
-            .FirstOrDefaultAsync(x => x.Id == userInfo!.Id);
+            return await context.Users
+                .Include(u => u.Manager)
+                .Include(u => u.Admin)
+                .Include(u => u.Customer)
+                .Include(u => u.Seller)
+                .Include(u => u.Wallet)
+                .Include(u => u.Devices)
+                .FirstOrDefaultAsync(x => x.Id == userInfo!.Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
     }
 
     public async Task<Guid> GetCurrentUserId()
