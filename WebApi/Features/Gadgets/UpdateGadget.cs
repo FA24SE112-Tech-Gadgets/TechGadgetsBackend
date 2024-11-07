@@ -146,13 +146,11 @@ public class UpdateGadget : ControllerBase
         - GadgetImages:
             - nếu tạo mới thì id để null, gắn file vào field image
             - nếu xoá thì không cần thêm item vào array
-            - lưu ý rằng chỉ có thêm hoặc xoá, không có sửa
         
         - GadgetDescriptions:
             - nếu tạo mới thì id để null
             - nếu tạo mới image thì gắn file vào field image
             - nếu sửa thì gắn kém id cũ và nội dung cần chỉnh sửa
-            - lưu ý rằng gadgetDescription nếu là image thì chỉ có thêm hoặc xoá, không có sửa
 
         - SpecificationValues:
             - nếu update item thì truyền id cũ 
