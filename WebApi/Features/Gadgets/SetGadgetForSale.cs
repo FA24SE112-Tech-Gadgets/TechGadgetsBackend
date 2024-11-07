@@ -19,7 +19,7 @@ public class SetGadgetForSale : ControllerBase
     [SwaggerOperation(
         Summary = "Set Gadget To For Sale",
         Description = "API for Seller to set gadget to for sale. Note:" +
-                            "<br>&nbsp; - User bị Inactive thì thể cập nhật for sale được."
+                            "<br>&nbsp; - User bị Inactive thì không cập nhật for sale được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
