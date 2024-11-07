@@ -81,7 +81,12 @@ public static class GadgetMapper
                 IsFavorite = gadget.FavoriteGadgets.Any(fg => fg.CustomerId == customerId),
                 Category = gadget.Category.ToCategoryResponse()!,
                 SellerStatus = gadget.Seller.User.Status,
-                GadgetImages = gadget.GadgetImages.Select(g => g.ImageUrl).ToArray(),
+                GadgetImages = gadget.GadgetImages
+                                        .Select(g => new GadgetImageResponse
+                                        {
+                                            Id = g.Id,
+                                            ImageUrl = g.ImageUrl
+                                        }).ToArray(),
                 GadgetDescriptions = gadget.GadgetDescriptions
                                         .Select(g => new GadgetDescriptionResponse
                                         {
