@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -22,8 +21,8 @@ public class ConfirmSellerOrder : ControllerBase
         Summary = "Confirm Seller Order By SellerOrderId",
         Description = "API is for cancel selelr order by sellerOrderId." +
                             "<br>&nbsp; - Seller chỉ được confirm selelrOrder mà liên quan đến bản thân" +
-                            "<br>&nbsp; - Không thể confirm những selelrOrder đã Canceled." +
-                            "<br>&nbsp; - Sau khi selelrOrder confirm success thì hệ thống sẽ tự động sẽ tự động chuyển tiền vào ví Seller." +
+                            "<br>&nbsp; - Không thể confirm những selelrOrder đã Cancelled." +
+                            "<br>&nbsp; - Sau khi sellerOrder confirm success thì hệ thống sẽ tự động sẽ tự động chuyển tiền vào ví Seller." +
                             "<br>&nbsp; - User bị Inactive thì không thể confirm đơn được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]

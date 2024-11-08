@@ -42,7 +42,7 @@ public class AddGadgetToCart : ControllerBase
         Description = "This API is for customer add gadget to cart. Note:" +
                             "<br>&nbsp; - Quantity phải lớn hơn 1." +
                             "<br>&nbsp; - Truyền bao nhiêu add bấy nhiêu." +
-                            "<br>&nbsp; - User bị Inactive thì add to cart được."
+                            "<br>&nbsp; - User bị Inactive thì không add to cart được."
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
