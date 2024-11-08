@@ -46,7 +46,7 @@ public class GetReviewsByGadgetId : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid gadgetId, AppDbContext context)
     {
-        if (await context.Gadgets.AnyAsync(g => g.Id == gadgetId))
+        if (!await context.Gadgets.AnyAsync(g => g.Id == gadgetId))
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_00)
