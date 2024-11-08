@@ -40,7 +40,7 @@ public class UpdateCartItem : ControllerBase
     [SwaggerOperation(
         Summary = "Update Cart Item",
         Description = "This API is for update customer cart item. Note:" +
-                            "<br>&nbsp; - User bị Inactive thì vẫn update cart được."
+                            "<br>&nbsp; - User bị Inactive thì không update cart được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -93,17 +93,20 @@ public class UpdateCartItem : ControllerBase
                 Quantity = request.Quantity
             };
             await context.CartGadgets.AddAsync(newCartGadget);
-        } else if (existingCartGadget != null) // Tìm thấy Gadget
+        }
+        else if (existingCartGadget != null) // Tìm thấy Gadget
         {
             if (request.Quantity == 0)
             {
                 context.CartGadgets.Remove(existingCartGadget);
-            } else
+            }
+            else
             {
                 existingCartGadget.Quantity = request.Quantity;
                 context.CartGadgets.Update(existingCartGadget);
             }
-        } else
+        }
+        else
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_00)

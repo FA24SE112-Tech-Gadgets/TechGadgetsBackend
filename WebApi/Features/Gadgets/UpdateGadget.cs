@@ -130,7 +130,7 @@ public class UpdateGadget : ControllerBase
 
         ### API này không sử dụng được trên swagger, hãy test trên postman
 
-        - User bị Inactive thì thể cập nhật gadget được.
+        - User bị Inactive thì không thể cập nhật gadget được.
 
         - GadgetDescriptions:
             - **image** và **text** có thể null

@@ -38,7 +38,7 @@ public class UpdateManagerInfo : ControllerBase
         Description = "This API is for update manager info. Note:" +
                             "<br>&nbsp; - Truyền field nào update field đó." +
                             "<br>&nbsp; - Chỉ có FullName có thể được update." +
-                            "<br>&nbsp; - User bị Inactive thì cập nhật thông tin được."
+                            "<br>&nbsp; - User bị Inactive thì không cập nhật thông tin được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
