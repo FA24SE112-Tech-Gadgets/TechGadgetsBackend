@@ -19,7 +19,7 @@ public class DeleteCustomerCartItems : ControllerBase
     [SwaggerOperation(
         Summary = "Clear Customer Cart Items",
         Description = "This API is for clearing all items in the customer's cart." +
-                            "<br>&nbsp; - User bị Inactive thì vẫn không clear cart được."
+                            "<br>&nbsp; - User bị Inactive thì không clear cart được."
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]

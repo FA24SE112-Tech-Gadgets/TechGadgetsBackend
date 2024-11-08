@@ -124,7 +124,7 @@ public class CreateReview : ControllerBase
             .AddReason("review", $"Có lỗi xảy ra trong lúc xử lý đánh giá.")
             .Build();
         }
-        if (request.Rating >= 3 && isPositive)
+        if (request.Rating >= 3 && isPositiveContent.HasValue == true)
         {
             isPositive = true;
         }

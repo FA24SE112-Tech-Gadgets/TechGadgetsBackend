@@ -46,6 +46,14 @@ public class GetReviewsByGadgetId : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid gadgetId, AppDbContext context)
     {
+        if (await context.Gadgets.AnyAsync(g => g.Id == gadgetId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("gadget", "Sản phẩm không tồn tại")
+                        .Build();
+        }
+
         var query = context.Gadgets
             .Include(g => g.SellerOrderItems)
             .Where(g => g.Id == gadgetId)
@@ -55,6 +63,7 @@ public class GetReviewsByGadgetId : ControllerBase
                 .ThenInclude(sr => sr != null ? sr.Seller : null)
             .Include(soi => soi.Review)
                 .ThenInclude(r => r != null ? r.Customer : null)
+            .Include(soi => soi.Gadget.Category)
             .AsQueryable();
 
         //Chỉ lấy những item nào có Review va review status = Active

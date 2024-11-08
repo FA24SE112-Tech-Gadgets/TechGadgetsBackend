@@ -18,6 +18,7 @@ public static class ReviewMapper
                 SellerReply = review.SellerReply == null ? null : review.SellerReply.ToSellerReplyResponse(),
                 IsPositive = review.IsPositive,
                 Status = review.Status,
+                CategoryName = review.SellerOrderItem.Gadget.Category.Name,
                 CreatedAt = review.CreatedAt,
                 IsUpdated = review.UpdatedAt != review.CreatedAt
             };

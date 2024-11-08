@@ -87,7 +87,8 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         var currGadget = await context.Gadgets
             .FirstOrDefaultAsync(g => g.Id == gadgetId);
 
-        if (currGadget == null) {
+        if (currGadget == null)
+        {
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WEB_03)
                 .AddReason("gadget", "Sản phẩm không tồn tại")
@@ -98,7 +99,7 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
-            .AddReason("seller", "Người dùng không đủ thẩm quyền để truy cập sản phẩm này.")
+            .AddReason("seller", "Người dùng không đủ thẩm quyền.")
             .Build();
         }
         var existGadgetDiscount = await context.GadgetDiscounts
