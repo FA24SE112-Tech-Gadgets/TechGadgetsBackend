@@ -25,7 +25,7 @@ public class GadgetDetailResponse
     public bool IsFavorite { get; set; }
     public UserStatus SellerStatus { get; set; }
     public CategoryResponse Category { get; set; } = default!;
-    public ICollection<string> GadgetImages { get; set; } = [];
+    public ICollection<GadgetImageResponse> GadgetImages { get; set; } = [];
     public ICollection<GadgetDescriptionResponse> GadgetDescriptions { get; set; } = [];
     public ICollection<SpecificationValueResponse> SpecificationValues { get; set; } = [];
 

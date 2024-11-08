@@ -31,7 +31,7 @@ public class CreateSellerReply : ControllerBase
         }
     }
 
-    [HttpPost("seller-repy/review/{reviewId}")]
+    [HttpPost("seller-reply/review/{reviewId}")]
     [Tags("Seller Replies")]
     [SwaggerOperation(
         Summary = "Seller Create Reply",
