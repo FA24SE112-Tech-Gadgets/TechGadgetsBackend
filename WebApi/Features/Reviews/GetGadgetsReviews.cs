@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
-using WebApi.Features.Reviews.Models;
-using Microsoft.EntityFrameworkCore;
-using WebApi.Services.Auth;
 using WebApi.Features.Reviews.Mappers;
+using WebApi.Features.Reviews.Models;
+using WebApi.Services.Auth;
 
 namespace WebApi.Features.Reviews;
 
@@ -62,7 +62,7 @@ public class GetGadgetsReviews : ControllerBase
             .Where(o => o.CustomerId == currentUser!.Customer!.Id)
             .SelectMany(o => o.SellerOrders)
             .Include(so => so.SellerOrderItems)
-                .ThenInclude(soi => soi.Gadget)
+                .ThenInclude(soi => soi.Gadget.Category)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Review)
                 .ThenInclude(r => r != null ? r.Customer : null)
@@ -146,7 +146,7 @@ public class GetGadgetsReviews : ControllerBase
         {
             var query = context.SellerOrders
                  .Include(so => so.SellerOrderItems)
-                    .ThenInclude(soi => soi.Gadget)
+                    .ThenInclude(soi => soi.Gadget.Category)
                 .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.Review)
                         .ThenInclude(r => r != null ? r.SellerReply : null)

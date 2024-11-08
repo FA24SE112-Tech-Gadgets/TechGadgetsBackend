@@ -21,11 +21,42 @@ public class GetReviewSummaryByGadgetId : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler(Guid gadgetId, AppDbContext context)
     {
-        var avg = await context.Reviews
-                                .Where(r => r.SellerOrderItem.GadgetId == gadgetId)
-                                .Select(r => r.Rating)
-                                .AverageAsync();
+        if (await context.Gadgets.AnyAsync(g => g.Id == gadgetId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("gadget", "Sản phẩm không tồn tại")
+                        .Build();
+        }
 
-        return Ok(avg);
+        var reviewSummary = await context.Reviews
+                                        .Where(r => r.SellerOrderItem.GadgetId == gadgetId && r.Rating >= 1 && r.Rating <= 5)
+                                        .GroupBy(r => r.Rating)
+                                        .Select(g => new
+                                        {
+                                            Rating = g.Key,
+                                            Count = g.Count()
+                                        })
+                                        .ToListAsync();
+
+        var totalReviews = reviewSummary.Sum(r => r.Count);
+        double avgReview = totalReviews > 0
+                                ? (double)reviewSummary.Sum(r => r.Rating * r.Count) / totalReviews
+                                : 0;
+
+        avgReview = Math.Round(avgReview, 1);
+
+        var reviewSummaryResponse = new ReviewSummaryResponse
+        {
+            AvgReview = avgReview,
+            NumOfReview = totalReviews,
+            NumOfFiveStar = reviewSummary.FirstOrDefault(r => r.Rating == 5)?.Count ?? 0,
+            NumOfFourStar = reviewSummary.FirstOrDefault(r => r.Rating == 4)?.Count ?? 0,
+            NumOfThreeStar = reviewSummary.FirstOrDefault(r => r.Rating == 3)?.Count ?? 0,
+            NumOfTwoStar = reviewSummary.FirstOrDefault(r => r.Rating == 2)?.Count ?? 0,
+            NumOfOneStar = reviewSummary.FirstOrDefault(r => r.Rating == 1)?.Count ?? 0
+        };
+
+        return Ok(reviewSummaryResponse);
     }
 }
