@@ -1,6 +1,6 @@
-﻿using WebApi.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using Microsoft.EntityFrameworkCore;
+using WebApi.Data.Entities;
 using WebApi.Services.Notifications;
 
 namespace WebApi.Services.Background.OrderDetails;
@@ -69,9 +69,9 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                     try
                     {
                         string customerTitle = $"Hoàn tiền đơn hàng {wt.SellerOrderId} thành công";
-                        string customerContent = $"Đơn hàng {wt.SellerOrderId} đã được hoàn tiền thành công";
+                        string customerContent = $"Đơn hàng {wt.SellerOrderId} đã được hoàn tiền thành công, mã giao dịch {wt.Id}";
                         string sellerTitle = $"Tiền của đơn hàng {wt.SellerOrderId} đã về!";
-                        string sellerContent = $"Tiền của đơn hàng {wt.SellerOrderId} đã về. Hãy truy cập vào ví để kiểm tra.";
+                        string sellerContent = $"Tiền của đơn hàng {wt.SellerOrderId} đã về. Hãy truy cập vào ví để kiểm tra với mã giao dịch {wt.Id}.";
 
 
                         List<string> deviceTokens = wt.Wallet.User!.Devices.Select(d => d.Token).ToList();
@@ -189,7 +189,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                     try
                     {
                         string customerTitle = $"Đơn hàng {ssot.SellerOrderId} đã quá thời gian xử lí";
-                        string customerContent = $"Đơn hàng {ssot.SellerOrderId} đã quá thời gian xử lí. Hệ thống đã tiến hành hoàn tiền cho bạn.";
+                        string customerContent = $"Đơn hàng {ssot.SellerOrderId} đã quá thời gian xử lí. Hệ thống đã tiến hành hoàn tiền cho bạn với mã giao dịch {walletTracking.Id}.";
                         string sellerTitle = $"Đơn hàng {ssot.SellerOrderId} đã quá thời gian xác nhận";
                         string sellerContent = $"Đơn hàng {ssot.SellerOrderId} đã quá thời gian xác nhận. Bạn đã bỏ lỡ 1 đơn hàng rồi.";
 
@@ -203,6 +203,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                                 customerContent,
                                 new Dictionary<string, string>()
                                 {
+                                    { "walletTrackingId", walletTracking.Id.ToString() },
                                     { "sellerOrderId", ssot.SellerOrderId.ToString() },
                                 }
                             );
