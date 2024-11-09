@@ -106,10 +106,10 @@ public class ConfirmSellerOrder : ControllerBase
 
         try
         {
-            string customerTitle = $"Đơn hàng {sellerOrderId} đã giao thành công";
-            string customerContent = $"Đơn hàng {sellerOrderId} đã giao thành công. Vui lòng đánh giá sản phẩm";
-            string sellerTitle = $"Đơn hàng {sellerOrderId} đã giao thành công";
-            string sellerContent = $"Đơn hàng {sellerOrderId} đã giao thành công. Hệ thống sẽ tiến hành chuyền tiền vào ví của bạn.";
+            string customerTitle = $"Đơn hàng {sellerOrderId} đã xác nhận thành công";
+            string customerContent = $"Đơn hàng {sellerOrderId} đã xác nhận thành công. Bạn có thể đánh giá các sản phẩm trong đơn hàng";
+            string sellerTitle = $"Đơn hàng {sellerOrderId} đã xác nhận thành công";
+            string sellerContent = $"Đơn hàng {sellerOrderId} đã xác nhận thành công. Hệ thống sẽ tiến hành chuyền tiền vào ví của bạn.";
 
             //Tạo thông báo cho seller
             List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
@@ -151,7 +151,7 @@ public class ConfirmSellerOrder : ControllerBase
             }
             await context.Notifications.AddAsync(new Notification
             {
-                UserId = currentUser!.Id,
+                UserId = sellerOrder.Order.Customer.User.Id,
                 Title = customerTitle,
                 Content = customerContent,
                 CreatedAt = createdAt,
