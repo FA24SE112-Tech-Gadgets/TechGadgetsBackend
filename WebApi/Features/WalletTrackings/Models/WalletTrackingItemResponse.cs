@@ -9,6 +9,8 @@ public class WalletTrackingItemResponse
     public int Amount { get; set; }
     public WalletTrackingType Type { get; set; }
     public WalletTrackingStatus Status { get; set; }
+    public Guid? OrderId { get; set; }
+    public Guid? SellerOrderId { get; set; }
     public DateTime? RefundedAt { get; set; }
     public DateTime? DepositedAt { get; set; }
     public DateTime CreatedAt { get; set; }
