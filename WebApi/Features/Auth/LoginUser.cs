@@ -57,7 +57,9 @@ public class LoginUserController : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromBody] Request request, [FromServices] AppDbContext context, [FromServices] TokenService tokenService)
     {
-        var user = await context.Users.FirstOrDefaultAsync(user => user.Email == request.Email);
+        var user = await context.Users
+            .Include(u => u.Devices)
+            .FirstOrDefaultAsync(user => user.Email == request.Email);
 
         if (user == null)
         {
