@@ -106,6 +106,7 @@ public class LoginGoogleController : ControllerBase
 
                 //TH đăng nhập bằng phương thức GG
                 user = await context.Users
+                    .Include(u => u.Devices)
                     .Where(u => u.Email == ggResponse!.Email && u.LoginMethod == LoginMethod.Google)
                     .FirstOrDefaultAsync();
                 if (user != null)
