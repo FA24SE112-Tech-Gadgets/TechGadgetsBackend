@@ -14,8 +14,6 @@ public class NaturalLanguageRequest
     public int MaxPrice { get; set; }
     public bool IsFastCharge { get; set; }
     public bool IsGoodBatteryLife { get; set; }
-    public float MinUsageTime { get; set; }
-    public float MaxUsageTime { get; set; }
     public bool IsWideScreen { get; set; }
     public bool IsFoldable { get; set; }
     public float MinInch { get; set; }
@@ -32,7 +30,7 @@ public class NaturalLanguageRequest
     public List<string> Origins { get; set; } = [];
     public string ReleaseDate { get; set; } = default!;
     public List<string> Colors { get; set; } = [];
-    public bool IsSmartPhone { get; set; }
+    public bool IsAi { get; set; }
     public bool IsSearchingSeller { get; set; }
     public bool IsBestGadget { get; set; }
     public bool IsHighRating { get; set; }
