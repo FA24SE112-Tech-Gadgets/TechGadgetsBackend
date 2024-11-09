@@ -15,7 +15,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
     public async Task<NaturalLanguageRequest?> GetRequestByUserInput(string input)
     {
-        input = input.Length > 256 ? input[0..255] : input;
+        input = input.Length > 512 ? input[0..512] : input;
 
         List<string> purposes =
         [
@@ -33,7 +33,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         List<string> goodBatteryLifeKeywords = ["Pin trâu", "Pin khỏe", "Thời gian sử dụng cao", "Thời lượng pin trâu", "Dung lượng pin trâu", "Chiến game vô tư"];
 
         List<string> highResolutionKeywords = [
-            "Full HD", "QQVGA", "QVGA", "2K", "1.5K", "Retina", "4k"
+            "Full HD", "QQVGA", "QVGA", "2K", "1.5K", "Retina", "4k", "Độ phân giải cao", "Độ phân giải sắc nét"
             ];
 
         List<string> operatingSystems = ["Windows", "Android", "Linux", "MacOS", "ChromeOS", "iOS", "Táo"];
@@ -55,10 +55,12 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> locations = ["Hà Nội", "Hồ Chí Minh", "Cần Thơ", "Đà Nẵng", "Quy Nhơn"];
 
-        List<string> origins = ["Việt Nam", "Trung Quốc", "Mỹ", "Nhật Bản", "Hàn Quốc"];
+        List<string> origins = ["Việt Nam", "Trung Quốc", "Mỹ", "Nhật Bản", "Hàn Quốc", "Đài Loan", "Mỹ", "Nhật Bản", "Ấn Độ", "Đức", "Brazil", "Mexico"];
 
-        List<string> colors = ["Xám", "Xanh Đen", "Bạc", "Vàng",
+        List<string> colors = ["Xám", "Xanh Đen", "Bạc", "Vàng", "Cam", "Đỏ", "Tím", "Nâu",
         "Đen", "Xanh lá", "Xanh dương", "Titan tự nhiên", "Titan Sa Mạc", "Titan Trắng", "Titan Đen", "Xanh Lưu Ly", "Hồng", "Xanh Mòng Két", "Trắng", "Trắng ngọc trai"];
+
+        List<string> AIKeywords = ["AI", "trí tuệ nhân tạo"];
 
         List<string> searchingSellerKeywords = ["Cửa hàng", "Nơi bán", "Nhà phân phối", "Thương hiệu", "Người bán", "Shop", "Nhà cung cấp", "Nơi cung cấp", "Hãng cung cấp", "Người cung cấp"];
 
@@ -76,6 +78,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
+        Now is November, 2024
 
         purposes are: {string.Join(", ", purposes)}
         If user query not mention, give me empty array
@@ -132,11 +135,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
 
         isHighResolution can be true or false
-        you can use this keywork array as a addition reference that results in isHighResolution is true: {string.Join(", ", highResolutionKeywords)}
         If user does not mention, give me false 
 
 
-        operatingSystems are: {string.Join(", ", operatingSystems)}
+        operatingSystems 
         If user query not mention, give me empty array       
 
 
@@ -172,7 +174,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user query not mention, give me empty array
 
         
-        ReleaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
+        releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
         if user does not mention, give me empty string
         
 
@@ -180,8 +182,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user query not mention, give me empty array            
 
 
-        isSmartPhone can be true or false
-        ONLY true if user does mention about 'smart' in the query
+        isAI can be true or false
+        please use this keywork array as a reference that results in isAI is true: {string.Join(", ", AIKeywords)}
         If user does not mention, give me false  
         
 
@@ -269,12 +271,6 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         "isGoodBatteryLife": {
                             "type": "boolean"
                         },
-                        "minUsageTime": {
-                            "type": "number"
-                        },
-                        "maxUsageTime": {
-                            "type": "number"
-                        },
                         "isWideScreen": {
                             "type": "boolean"
                         },
@@ -353,7 +349,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                                 "type": "string"
                             }
                         },
-                        "isSmartPhone": {
+                        "isAi": {
                             "type": "boolean"
                         },
                         "isSearchingSeller": {
@@ -378,9 +374,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             "type": "boolean"
                         }
                     },
-                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","minUsageTime","maxUsageTime","isWideScreen",
+                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
-                                 "conditions","segmentations","locations","origins","releaseDate","colors","isSmartPhone","isSearchingSeller",
+                                 "conditions","segmentations","locations","origins","releaseDate","colors","isAi","isSearchingSeller",
                                  "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller"],
                     "additionalProperties": false
                 }
