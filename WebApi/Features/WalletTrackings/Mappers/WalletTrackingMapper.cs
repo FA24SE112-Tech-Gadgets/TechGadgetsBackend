@@ -16,6 +16,8 @@ public static class WalletTrackingMapper
                 Amount = walletTracking.Amount,
                 Type = walletTracking.Type,
                 Status = walletTracking.Status,
+                OrderId = walletTracking.OrderId,
+                SellerOrderId = walletTracking.SellerOrderId,
                 RefundedAt = walletTracking.RefundedAt,
                 DepositedAt = walletTracking.DepositedAt,
                 CreatedAt = walletTracking.CreatedAt,
