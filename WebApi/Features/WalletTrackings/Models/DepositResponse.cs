@@ -2,6 +2,6 @@
 
 public class DepositResponse
 {
-    public string DepositUrl { get; set; }
+    public string DepositUrl { get; set; } = default!;
     public Guid WalletTrackingId { get; set; }
 }
