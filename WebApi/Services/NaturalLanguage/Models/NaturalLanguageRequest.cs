@@ -30,7 +30,7 @@ public class NaturalLanguageRequest
     public List<string> Origins { get; set; } = [];
     public string ReleaseDate { get; set; } = default!;
     public List<string> Colors { get; set; } = [];
-    public bool IsAIPhone { get; set; }
+    public bool IsAi { get; set; }
     public bool IsSearchingSeller { get; set; }
     public bool IsBestGadget { get; set; }
     public bool IsHighRating { get; set; }

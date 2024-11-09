@@ -199,12 +199,19 @@ public class ProcessNaturalLanguage : ControllerBase
             var originPredicate = PredicateBuilder.New<Seller>(true);
             if (query.Origins.Any())
             {
-                var originVectors = await embeddingService.GetEmbeddings(query.Origins);
+                //var originVectors = await embeddingService.GetEmbeddings(query.Origins);
+
+                //originPredicate = originPredicate.Or(s => s.Gadgets.Any(g =>
+                //    g.SpecificationValues.Any(sv =>
+                //        sv.SpecificationKey.Name == "Xuất xứ"
+                //        && originVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                //    )
+                //));
 
                 originPredicate = originPredicate.Or(s => s.Gadgets.Any(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Xuất xứ"
-                        && originVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                        && query.Origins.Any(o => sv.Value.ToLower().Contains(o.ToLower()))
                     )
                 ));
             }
@@ -450,19 +457,33 @@ public class ProcessNaturalLanguage : ControllerBase
             var operatingSystemPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.OperatingSystems.Any())
             {
-                var operatingSystemVectors = await embeddingService.GetEmbeddings(query.OperatingSystems);
+                //var operatingSystemVectors = await embeddingService.GetEmbeddings(query.OperatingSystems);
+                //operatingSystemPredicate = operatingSystemPredicate.Or(g =>
+                //    g.Category.Name == "Laptop" &&
+                //    g.SpecificationValues.Any(sv =>
+                //        sv.SpecificationKey.Name == "Hệ điều hành"
+                //        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                //));
+
+                //operatingSystemPredicate = operatingSystemPredicate.Or(g =>
+                //    g.Category.Name == "Điện thoại" &&
+                //    g.SpecificationValues.Any(sv =>
+                //        sv.SpecificationKey.Name == "Hệ điều hành"
+                //        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                //));
+
                 operatingSystemPredicate = operatingSystemPredicate.Or(g =>
-                    g.Category.Name != "Laptop" ||
+                    g.Category.Name == "Laptop" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()))
                 ));
 
-                operatingSystemPredicate = operatingSystemPredicate.And(g =>
-                    g.Category.Name != "Điện thoại" ||
+                operatingSystemPredicate = operatingSystemPredicate.Or(g =>
+                    g.Category.Name == "Điện thoại" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && operatingSystemVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()))
                 ));
             }
 
@@ -589,12 +610,19 @@ public class ProcessNaturalLanguage : ControllerBase
             var originPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Origins.Count != 0)
             {
-                var originVectors = await embeddingService.GetEmbeddings(query.Origins);
+                //var originVectors = await embeddingService.GetEmbeddings(query.Origins);
+
+                //originPredicate = originPredicate.Or(g =>
+                //    g.SpecificationValues.Any(sv =>
+                //        sv.SpecificationKey.Name == "Xuất xứ"
+                //        && originVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                //    )
+                //);
 
                 originPredicate = originPredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Xuất xứ"
-                        && originVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                        && query.Origins.Any(o => sv.Value.ToLower().Contains(o.ToLower()))
                     )
                 );
             }
@@ -613,24 +641,35 @@ public class ProcessNaturalLanguage : ControllerBase
             var colorPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Colors.Any())
             {
-                var colorVectors = await embeddingService.GetEmbeddings(query.Colors);
+                //var colorVectors = await embeddingService.GetEmbeddings(query.Colors);
+
+                //colorPredicate = colorPredicate.Or(g =>
+                //    g.SpecificationValues.Any(sv =>
+                //        sv.SpecificationKey.Name == "Màu sắc"
+                //        && colorVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                //    )
+                //);
 
                 colorPredicate = colorPredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Màu sắc"
-                        && colorVectors.Any(vector => 1 - sv.Vector.CosineDistance(vector) >= 0.6)
+                        && query.Colors.Any(c => sv.Value.ToLower().Contains(c.ToLower()))
+                    )
+                );
+
+                colorPredicate = colorPredicate.Or(g
+                    => g.GadgetDescriptions.Any(gd
+                        => query.Colors.Any(c => gd.Value.Substring(gd.Value.ToLower().IndexOf("màu "), 50).Contains(c.ToLower()))
                     )
                 );
             }
 
-            var AIPhonePredicate = PredicateBuilder.New<Gadget>(true);
-            if (query.IsAIPhone)
+            var AIPredicate = PredicateBuilder.New<Gadget>(true);
+            if (query.IsAi)
             {
-                AIPhonePredicate = AIPhonePredicate.Or(g =>
-                    g.Category.Name != "Điện thoại" ||
-                    g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("ai")) ||
-                    g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("trí tuệ nhân tạo")) ||
-                    effectivePrice.Invoke(g) >= 2_000_000
+                AIPredicate = AIPredicate.Or(g =>
+                    g.GadgetDescriptions.Any(desc => desc.Value.Contains(" AI ")) ||
+                    g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("trí tuệ nhân tạo"))
                 );
             }
 
@@ -694,7 +733,7 @@ public class ProcessNaturalLanguage : ControllerBase
                                 .And(originPredicate)
                                 .And(releaseDatePredicate)
                                 .And(colorPredicate)
-                                .And(AIPhonePredicate)
+                                .And(AIPredicate)
                                 .And(energySavingPredicate)
                                 .And(discountedPredicate)
                                 .And(highRatingPredicate)
