@@ -1,4 +1,5 @@
-﻿using WebApi.Services.Background.OrderDetails;
+﻿using WebApi.Services.Background.GadgetDiscounts;
+using WebApi.Services.Background.OrderDetails;
 using WebApi.Services.Background.SellerApplications;
 using WebApi.Services.Background.UserVerifies;
 using WebApi.Services.Background.WalletTrackings;
@@ -14,5 +15,6 @@ public static class BackgroundServicesExtensions
         services.AddHostedService<RejectSellerApplicationService>();
         services.AddHostedService<ExpiredTransactionService>();
         services.AddHostedService<SellerOrderService>();
+        services.AddHostedService<InactiveGadgetDiscountService>();
     }
 }
