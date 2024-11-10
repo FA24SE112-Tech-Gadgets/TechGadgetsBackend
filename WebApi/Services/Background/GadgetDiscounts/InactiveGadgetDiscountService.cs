@@ -1,6 +1,6 @@
-﻿using WebApi.Data.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using Microsoft.EntityFrameworkCore;
+using WebApi.Data.Entities;
 
 namespace WebApi.Services.Background.GadgetDiscounts;
 
@@ -17,7 +17,7 @@ public class InactiveGadgetDiscountService(IServiceProvider serviceProvider) : B
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
                 var expiredGadgetDiscounts = await context.GadgetDiscounts
-                    .Where(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow)
+                    .Where(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate <= DateTime.UtcNow)
                     .ToListAsync(stoppingToken);
 
                 foreach (var ex in expiredGadgetDiscounts)
