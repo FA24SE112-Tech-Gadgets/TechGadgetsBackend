@@ -281,7 +281,7 @@ public class CreateOrder : ControllerBase
                     Content = $"Bạn vừa thanh toán cho đơn hàng {orderId} thành công.",
                     CreatedAt = createdAt,
                     IsRead = false,
-                    Type = NotificationType.SellerOrder
+                    Type = NotificationType.Order,
                 });
                 await context.SaveChangesAsync();
             }

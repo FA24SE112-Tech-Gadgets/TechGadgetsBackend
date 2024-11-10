@@ -17,6 +17,7 @@ public static class NotificationMapper
                 Content = n.Content,
                 IsRead = n.IsRead,
                 Type = n.Type,
+                SellerOrderId = n.SellerOrderId,
                 CreatedAt = n.CreatedAt,
                 Seller = n.User.Seller!.ToSellerNotiResponse(),
                 Customer = n.User.Customer!.ToCustomerNotiResponse(),
