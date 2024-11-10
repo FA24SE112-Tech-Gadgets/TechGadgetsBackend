@@ -114,7 +114,7 @@ public class CreateWalletDeposit : ControllerBase
         }!;
 
         DepositResponse depositResponse = new DepositResponse
-        { 
+        {
             WalletTrackingId = walletTrackingId,
         };
 
@@ -208,7 +208,7 @@ public class CreateWalletDeposit : ControllerBase
                 await fcmNotificationService.SendMultibleNotificationAsync(
                     deviceTokens,
                     "Nạp ví TechGadget",
-                    "Bạn vừa tạo giao dịch nạp tiền vào ví TechGadget. Vui lòng thanh toán trước thời hạn.", 
+                    $"Bạn vừa tạo giao dịch nạp tiền vào ví TechGadget, mã giao dịch {walletTrackingId}. Vui lòng thanh toán trước thời hạn.",
                     new Dictionary<string, string>()
                     {
                         { "walletTrackingId", walletTrackingId.ToString() },

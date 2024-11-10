@@ -160,7 +160,8 @@ public class CancelSellerOrder : ControllerBase
                     Content = customerContent,
                     CreatedAt = createdAt,
                     IsRead = false,
-                    Type = NotificationType.WalletTracking
+                    Type = NotificationType.SellerOrder,
+                    SellerOrderId = sellerOrderId,
                 });
 
                 //Tạo thông báo cho seller
@@ -184,7 +185,8 @@ public class CancelSellerOrder : ControllerBase
                     Content = sellerContent,
                     CreatedAt = createdAt,
                     IsRead = false,
-                    Type = NotificationType.SellerOrder
+                    Type = NotificationType.SellerOrder,
+                    SellerOrderId = sellerOrderId
                 });
             }
             else
@@ -210,7 +212,8 @@ public class CancelSellerOrder : ControllerBase
                     Content = sellerContent,
                     CreatedAt = createdAt,
                     IsRead = false,
-                    Type = NotificationType.SellerOrder
+                    Type = NotificationType.SellerOrder,
+                    SellerOrderId = sellerOrderId
                 });
 
                 //Tạo thông báo cho customer
@@ -234,7 +237,8 @@ public class CancelSellerOrder : ControllerBase
                     Content = customerContent,
                     CreatedAt = createdAt,
                     IsRead = false,
-                    Type = NotificationType.SellerOrder
+                    Type = NotificationType.SellerOrder,
+                    SellerOrderId = sellerOrderId
                 });
             }
             await context.SaveChangesAsync();

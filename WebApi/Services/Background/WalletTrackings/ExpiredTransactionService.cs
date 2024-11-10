@@ -1,5 +1,5 @@
-﻿using WebApi.Data;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Services.Notifications;
 
@@ -49,7 +49,7 @@ public class ExpiredTransactionService(IServiceProvider serviceProvider) : Backg
                     {
                         UserId = walletTracking.Wallet.User!.Id,
                         Title = "Đã hết thời gian thanh toán",
-                        Content = "Đã hết thời gian thanh toán. Vui lòng tạo mới 1 giao dịch khác để tiến hành nạp tiền.",
+                        Content = $"Đã hết thời gian thanh toán, mã giao dịch {walletTracking.Id}. Vui lòng tạo mới 1 giao dịch khác để tiến hành nạp tiền.",
                         CreatedAt = currentTime,
                         IsRead = false,
                         Type = NotificationType.WalletTracking
