@@ -86,6 +86,7 @@ public class CancelSellerOrder : ControllerBase
         }
 
         sellerOrder!.Status = SellerOrderStatus.Cancelled;
+        sellerOrder.UpdatedAt = DateTime.UtcNow;
 
         var customerWallet = await context.Wallets.FirstOrDefaultAsync(w => w.Id == sellerOrder.Order.WalletTracking.WalletId);
 

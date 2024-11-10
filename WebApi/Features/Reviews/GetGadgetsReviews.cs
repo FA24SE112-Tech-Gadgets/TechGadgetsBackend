@@ -61,6 +61,7 @@ public class GetGadgetsReviews : ControllerBase
             .Include(o => o.SellerOrders)
             .Where(o => o.CustomerId == currentUser!.Customer!.Id)
             .SelectMany(o => o.SellerOrders)
+            .Where(so => so.Status == SellerOrderStatus.Success)
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Gadget.Category)
             .Include(so => so.SellerOrderItems)
@@ -115,7 +116,7 @@ public class GetGadgetsReviews : ControllerBase
                     }
                     else
                     {
-                        if (!isReviewed)
+                        if (!isReviewed && so.UpdatedAt > DateTime.UtcNow.AddMinutes(-10))
                         {
                             GadgetReviewResponse gadgetReviewResponse = new GadgetReviewResponse()
                             {
@@ -209,7 +210,7 @@ public class GetGadgetsReviews : ControllerBase
                     }
                     if (request.FilterBy == FilterBy.NotReply && isReviewed)
                     {
-                        if (!isReplied)
+                        if (!isReplied && soi.Review!.CreatedAt > DateTime.UtcNow.AddMinutes(-10))
                         {
                             GadgetReviewResponse gadgetReviewResponse = new GadgetReviewResponse()
                             {

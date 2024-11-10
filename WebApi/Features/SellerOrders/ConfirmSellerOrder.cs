@@ -77,6 +77,7 @@ public class ConfirmSellerOrder : ControllerBase
         }
 
         sellerOrder!.Status = SellerOrderStatus.Success;
+        sellerOrder.UpdatedAt = DateTime.UtcNow;
 
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
 

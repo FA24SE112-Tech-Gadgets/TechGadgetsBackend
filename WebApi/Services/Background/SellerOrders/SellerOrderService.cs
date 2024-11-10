@@ -174,6 +174,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
 
                     //Update OrderDetail status = Cancelled
                     ssot.SellerOrder.Status = SellerOrderStatus.Cancelled;
+                    ssot.SellerOrder.UpdatedAt = DateTime.UtcNow;
 
                     await context.WalletTrackings.AddAsync(walletTracking, stoppingToken);
 

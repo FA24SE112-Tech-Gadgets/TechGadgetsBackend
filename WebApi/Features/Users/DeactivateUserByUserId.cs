@@ -140,6 +140,7 @@ public class DeactivateUserByUserId : ControllerBase
                     .FirstOrDefaultAsync(so => so.Id == sellerOrder.Id);
 
                 sellerOrderDetail!.Status = SellerOrderStatus.Cancelled;
+                sellerOrderDetail.UpdatedAt = DateTime.UtcNow;
 
                 var customerWallet = await context.Wallets.FirstOrDefaultAsync(w => w.Id == sellerOrderDetail.Order.WalletTracking.WalletId);
 
