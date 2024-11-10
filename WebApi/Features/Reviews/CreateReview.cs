@@ -32,8 +32,8 @@ public class CreateReview : ControllerBase
                 .WithMessage("Nội dung đánh giá không được để trống");
 
             RuleFor(r => r.Rating)
-                .InclusiveBetween(0, 5)
-                .WithMessage("Đánh giá phải nằm trong khoảng từ 0 đến 5");
+                .InclusiveBetween(1, 5)
+                .WithMessage("Đánh giá phải nằm trong khoảng từ 1 đến 5");
         }
     }
 
@@ -42,7 +42,7 @@ public class CreateReview : ControllerBase
     [SwaggerOperation(
         Summary = "Customer Create Review",
         Description = "API is for customer create review. Note:" +
-                            "<br>&nbsp; - Rating là số nguyên từ 0 - 5." +
+                            "<br>&nbsp; - Rating là số nguyên từ 1 - 5." +
                             "<br>&nbsp; - Content không được để trống." +
                             "<br>&nbsp; - Mỗi gadget trong 1 đơn hàng chỉ được đánh 1 lần." +
                             "<br>&nbsp;     Ví dụ: Gadget A có trong 3 đơn thì customer có thể đánh giá Gadget A 3 lần" +
