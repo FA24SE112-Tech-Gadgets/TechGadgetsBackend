@@ -328,8 +328,6 @@ public class UpdateGadget : ControllerBase
             }
         }
 
-
-
         List<GadgetDescription> gadgetDescriptions = [];
         int index = 0;
 
@@ -457,6 +455,8 @@ public class UpdateGadget : ControllerBase
             }
         }
 
+
+
         gadget.BrandId = request.BrandId;
         gadget.Name = request.Name;
         gadget.Price = request.Price;
@@ -465,7 +465,6 @@ public class UpdateGadget : ControllerBase
             gadget.ThumbnailUrl = thumbnailUrl;
         }
         gadget.CategoryId = request.CategoryId;
-        gadget.UpdatedAt = DateTime.UtcNow;
         gadget.Condition = request.Condition;
         gadget.ConditionVector = await embeddingService.GetEmbedding(request.Condition);
         gadget.NameVector = await embeddingService.GetEmbedding(request.Name);
@@ -473,6 +472,50 @@ public class UpdateGadget : ControllerBase
         gadget.GadgetImages = gadgetImages;
         gadget.GadgetDescriptions = gadgetDescriptions;
         gadget.SpecificationValues = specificationValues;
+
+        await context.SaveChangesAsync();
+
+
+        var updatedGadget = await context.Gadgets
+                                    .Include(g => g.SpecificationValues)
+                                        .ThenInclude(sv => sv.SpecificationKey)
+                                        .ThenInclude(sv => sv.SpecificationUnits)
+                                    .Include(g => g.Brand)
+                                    .Include(g => g.Category)
+                                    .FirstOrDefaultAsync(g => g.Id == id);
+
+        var gadgetAttribute = $"Tên sản phẩm: {updatedGadget!.Name}; Thể loại sản phẩm: {updatedGadget.Category.Name}; Thương hiệu sản phẩm: {updatedGadget.Brand.Name}; Thông số kỹ thuật: ";
+
+        Dictionary<string, List<string>> specValueDictionary = [];
+        foreach (var specValue in updatedGadget.SpecificationValues)
+        {
+            if (!specValueDictionary.ContainsKey(specValue.SpecificationKey.Name))
+            {
+                specValueDictionary[specValue.SpecificationKey.Name] = [];
+            }
+            if (specValue.SpecificationUnit != null)
+            {
+                specValueDictionary[specValue.SpecificationKey.Name].Add($"{specValue.Value} {specValue.SpecificationUnit.Name}");
+            }
+            else
+            {
+                specValueDictionary[specValue.SpecificationKey.Name].Add($"{specValue.Value}");
+            }
+        }
+
+        foreach (var kvp in specValueDictionary)
+        {
+            var key = kvp.Key;
+            var values = kvp.Value;
+            gadgetAttribute += $"{key}: {string.Join(", ", values)}, ";
+        }
+
+        gadgetAttribute = gadgetAttribute.Length > 3000 ? gadgetAttribute[0..3000] : gadgetAttribute;
+
+        var newVector = await embeddingService.GetEmbeddingOpenAI(gadgetAttribute);
+
+        updatedGadget.Vector = newVector;
+        updatedGadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 
