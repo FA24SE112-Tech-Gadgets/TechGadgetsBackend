@@ -53,7 +53,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> segmentations = ["Giá rẻ", "Giá tốt", "Giá sinh viên", "Tầm trung", "Cao cấp", "Hiện đại"];
 
-        List<string> locations = ["Hà Nội", "Hồ Chí Minh", "Cần Thơ", "Đà Nẵng", "Quy Nhơn"];
+        List<string> locations = ["Hà Nội", "Hồ Chí Minh", "Cần Thơ", "Đà Nẵng", "Quy Nhơn", "Hải Phòng"];
 
         List<string> origins = ["Việt Nam", "Trung Quốc", "Mỹ", "Nhật Bản", "Hàn Quốc", "Đài Loan", "Mỹ", "Nhật Bản", "Ấn Độ", "Đức", "Brazil", "Mexico"];
 

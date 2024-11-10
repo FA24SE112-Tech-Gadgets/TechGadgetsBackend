@@ -239,7 +239,8 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                             Content = sellerContent,
                             CreatedAt = currentTime,
                             IsRead = false,
-                            Type = NotificationType.SellerOrder
+                            Type = NotificationType.SellerOrder,
+                            SellerOrderId = ssot.SellerOrderId,
                         }, stoppingToken);
                         await context.SaveChangesAsync(stoppingToken);
                     }

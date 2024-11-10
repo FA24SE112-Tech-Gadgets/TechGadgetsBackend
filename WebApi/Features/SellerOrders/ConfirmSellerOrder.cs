@@ -132,7 +132,8 @@ public class ConfirmSellerOrder : ControllerBase
                 Content = sellerContent,
                 CreatedAt = createdAt,
                 IsRead = false,
-                Type = NotificationType.SellerOrder
+                Type = NotificationType.SellerOrder,
+                SellerOrderId = sellerOrderId,
             });
 
             //Tạo thông báo cho customer
@@ -156,7 +157,8 @@ public class ConfirmSellerOrder : ControllerBase
                 Content = customerContent,
                 CreatedAt = createdAt,
                 IsRead = false,
-                Type = NotificationType.SellerOrder
+                Type = NotificationType.SellerOrder,
+                SellerOrderId = sellerOrderId,
             });
             await context.SaveChangesAsync();
         }

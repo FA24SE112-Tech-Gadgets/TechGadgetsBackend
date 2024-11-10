@@ -194,7 +194,8 @@ public class DeactivateUserByUserId : ControllerBase
                         Content = customerContent,
                         CreatedAt = createdAt,
                         IsRead = false,
-                        Type = NotificationType.SellerOrder
+                        Type = NotificationType.SellerOrder,
+                        SellerOrderId = sellerOrder.Id
                     });
 
                     await context.SaveChangesAsync();
