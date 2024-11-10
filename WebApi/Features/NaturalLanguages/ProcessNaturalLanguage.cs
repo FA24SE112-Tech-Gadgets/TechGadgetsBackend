@@ -13,6 +13,7 @@ using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.NaturalLanguages.Models;
 using WebApi.Features.Sellers.Mappers;
 using WebApi.Services.AI;
+using WebApi.Services.Auth;
 using WebApi.Services.Embedding;
 
 namespace WebApi.Features.NaturalLanguages;
@@ -44,8 +45,12 @@ public class ProcessNaturalLanguage : ControllerBase
         This API is for searching with natural language
         """
     )]
-    public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, EmbeddingService embeddingService, AppDbContext context)
+    public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, EmbeddingService embeddingService, AppDbContext context,
+        CurrentUserService currentUserService)
     {
+        var user = await currentUserService.GetCurrentUser();
+        var customerId = user?.Customer?.Id;
+
         var query = await naturalLanguageService.GetRequestByUserInput(request.Input);
         if (query == null)
         {
@@ -755,7 +760,7 @@ public class ProcessNaturalLanguage : ControllerBase
                                                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                                                 .Sum(soi => soi.GadgetQuantity)
                                             : 1 - g.Vector!.CosineDistance(inputVector))
-                                        .Select(g => g.ToGadgetResponse(null)!)
+                                        .Select(g => g.ToGadgetResponse(customerId)!)
                                         .Take(30)
                                         .ToListAsync();
 

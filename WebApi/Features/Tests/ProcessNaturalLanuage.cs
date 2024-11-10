@@ -9,7 +9,9 @@ using WebApi.Common.Filters;
 using WebApi.Common.Utils;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Features.Gadgets.Mappers;
 using WebApi.Services.AI;
+using WebApi.Services.Auth;
 using WebApi.Services.Embedding;
 
 namespace WebApi.Features.Tests;
@@ -39,8 +41,12 @@ public class ProcessNaturalLanuage : ControllerBase
         This API is for searching with natural language
         """
     )]
-    public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, EmbeddingService embeddingService, AppDbContext context)
+    public async Task<IActionResult> Handler(Request request, NaturalLanguageService naturalLanguageService, EmbeddingService embeddingService, AppDbContext context,
+        CurrentUserService currentUserService)
     {
+        var user = await currentUserService.GetCurrentUser();
+        var customerId = user?.Customer?.Id;
+
         var query = await naturalLanguageService.GetRequestByUserInput(request.Input);
         if (query == null)
         {
@@ -742,21 +748,36 @@ public class ProcessNaturalLanuage : ControllerBase
             var input = request.Input.Length > 512 ? request.Input[0..512] : request.Input;
             var inputVector = await embeddingService.GetEmbeddingOpenAI(input);
 
+            //var gadgets = await context.Gadgets.AsExpandable()
+            //                            .Where(outerPredicate)
+            //                            .OrderByDescending(g => query.IsBestGadget
+            //                                ? g.SellerOrderItems
+            //                                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+            //                                    .Sum(soi => soi.GadgetQuantity)
+            //                                : 1 - g.Vector!.CosineDistance(inputVector))
+            //                            .Select(g => new
+            //                            {
+            //                                g.Id,
+            //                                g.Name,
+            //                            })
+            //                            .Take(500)
+            //                            .ToListAsync();
+
             var gadgets = await context.Gadgets.AsExpandable()
+                                        .Include(c => c.Seller)
+                                            .ThenInclude(s => s.User)
+                                        .Include(c => c.FavoriteGadgets)
+                                        .Include(g => g.GadgetDiscounts)
                                         .Where(outerPredicate)
+                                        .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
                                         .OrderByDescending(g => query.IsBestGadget
                                             ? g.SellerOrderItems
                                                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                                                 .Sum(soi => soi.GadgetQuantity)
                                             : 1 - g.Vector!.CosineDistance(inputVector))
-                                        .Select(g => new
-                                        {
-                                            g.Id,
-                                            g.Name,
-                                        })
+                                        .Select(g => g.ToGadgetResponse(customerId)!)
                                         .Take(500)
                                         .ToListAsync();
-
 
             var result = new
             {
