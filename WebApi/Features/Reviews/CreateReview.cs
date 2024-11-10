@@ -97,7 +97,7 @@ public class CreateReview : ControllerBase
             .Build();
         }
 
-        if (sellerOrderItem.SellerOrder.CreatedAt <= DateTime.UtcNow.AddMinutes(-10))
+        if (sellerOrderItem.SellerOrder.UpdatedAt <= DateTime.UtcNow.AddMinutes(-10))
         {
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
