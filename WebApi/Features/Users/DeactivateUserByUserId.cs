@@ -187,6 +187,7 @@ public class DeactivateUserByUserId : ControllerBase
                             {
                                 { "sellerOrderId", sellerOrder.Id.ToString() },
                                 { "notiType", NotificationType.SellerOrder.ToString() },
+                                { "userId", sellerOrderDetail.Order.Customer.User.Id.ToString() },
                             }
                         );
                     }

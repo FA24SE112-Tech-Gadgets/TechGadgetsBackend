@@ -152,6 +152,7 @@ public class CancelSellerOrder : ControllerBase
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
                             { "notiType", NotificationType.SellerOrder.ToString() },
+                            { "userId", currentUser.Id.ToString() } ,
                         }
                     );
                 }
@@ -178,6 +179,7 @@ public class CancelSellerOrder : ControllerBase
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
                             { "notiType", NotificationType.SellerOrder.ToString() },
+                            { "userId", sellerOrder.Seller.User.Id.ToString() },
                         }
                     );
                 }
@@ -206,6 +208,7 @@ public class CancelSellerOrder : ControllerBase
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
                             { "notiType", NotificationType.SellerOrder.ToString() },
+                            { "userId", currentUser.Id.ToString() } ,
                         }
                     );
                 }
@@ -232,6 +235,7 @@ public class CancelSellerOrder : ControllerBase
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
                             { "notiType", NotificationType.SellerOrder.ToString() },
+                            { "userId", sellerOrder.Order.Customer.User.Id.ToString() } ,
                         }
                     );
                 }
