@@ -70,7 +70,8 @@ public class GetHotGadgets : ControllerBase
                 SellerStatus = g.Seller.User.Status,
                 Quantity = g.SellerOrderItems
                     .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
-                    .Sum(soi => soi.GadgetQuantity)
+                    .Sum(soi => soi.GadgetQuantity),
+                ThumbnailUrl = g.ThumbnailUrl
             })
             .ToPagedListAsync(request);
         return Ok(gadgets);
