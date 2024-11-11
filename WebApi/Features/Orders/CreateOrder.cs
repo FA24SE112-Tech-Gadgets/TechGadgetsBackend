@@ -94,7 +94,8 @@ public class CreateOrder : ControllerBase
         var sellers = await context.CartGadgets
             .Include(cg => cg.Gadget)
                 .ThenInclude(g => g.Seller)
-                .ThenInclude(s => s.User)
+                    .ThenInclude(s => s.User)
+                        .ThenInclude(u => u.Devices)
             .Where(cg => request.ListGadgetItems.Contains(cg.GadgetId) && cg.CartId == userCart.Id)
             .Select(cg => cg.Gadget.Seller)
             .Distinct()
@@ -146,6 +147,7 @@ public class CreateOrder : ControllerBase
             SellerOrder sellerOrder = new SellerOrder()
             {
                 SellerId = seller.Id,
+                Seller = seller,
                 CustomerInformation = customerInformation!,
                 SellerInformation = sellerInformation!,
                 Status = SellerOrderStatus.Pending,
@@ -260,6 +262,7 @@ public class CreateOrder : ControllerBase
             await context.SaveChangesAsync();
             try
             {
+                //TB cho customer
                 List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
                 if (deviceTokens.Count > 0)
                 {
@@ -270,10 +273,11 @@ public class CreateOrder : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "orderId", orderId.ToString() },
+                            { "notiType", NotificationType.Order.ToString() },
                         }
                     );
                 }
-                //Tạo thông báo
+
                 await context.Notifications.AddAsync(new Notification
                 {
                     UserId = currentUser!.Id,
@@ -283,6 +287,37 @@ public class CreateOrder : ControllerBase
                     IsRead = false,
                     Type = NotificationType.Order,
                 });
+
+                //TB cho seller
+                foreach (var sellerOrder in sellerOrders)
+                {
+                    List<string> sellerDeviceTokens = sellerOrder.Seller.User.Devices.Select(d => d.Token).ToList();
+                    if (sellerDeviceTokens.Count > 0)
+                    {
+                        await fcmNotificationService.SendMultibleNotificationAsync(
+                            sellerDeviceTokens,
+                            "Đơn hàng chờ duyệt",
+                            $"Bạn có đơn hàng {sellerOrder.Id} đang chờ xác nhận",
+                            new Dictionary<string, string>()
+                            {
+                                { "sellerOrderId", sellerOrder.Id.ToString() },
+                                { "notiType", NotificationType.SellerOrder.ToString() },
+                            }
+                        );
+                    }
+
+                    await context.Notifications.AddAsync(new Notification
+                    {
+                        UserId = sellerOrder.Seller.User.Id,
+                        Title = "Đơn hàng chờ duyệt",
+                        Content = $"Bạn có đơn hàng {sellerOrder.Id} đang chờ xác nhận",
+                        CreatedAt = createdAt,
+                        IsRead = false,
+                        Type = NotificationType.SellerOrder,
+                        SellerOrderId = sellerOrder.Id
+                    });
+                }
+
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)

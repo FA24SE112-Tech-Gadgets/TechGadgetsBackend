@@ -212,6 +212,7 @@ public class CreateWalletDeposit : ControllerBase
                     new Dictionary<string, string>()
                     {
                         { "walletTrackingId", walletTrackingId.ToString() },
+                        { "notiType", NotificationType.WalletTracking.ToString() },
                     }
                 );
             }

@@ -151,6 +151,7 @@ public class CancelSellerOrder : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
+                            { "notiType", NotificationType.SellerOrder.ToString() },
                         }
                     );
                 }
@@ -176,6 +177,7 @@ public class CancelSellerOrder : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
+                            { "notiType", NotificationType.SellerOrder.ToString() },
                         }
                     );
                 }
@@ -203,6 +205,7 @@ public class CancelSellerOrder : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
+                            { "notiType", NotificationType.SellerOrder.ToString() },
                         }
                     );
                 }
@@ -228,6 +231,7 @@ public class CancelSellerOrder : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "sellerOrderId", sellerOrderId.ToString() },
+                            { "notiType", NotificationType.SellerOrder.ToString() },
                         }
                     );
                 }

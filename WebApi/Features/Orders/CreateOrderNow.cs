@@ -96,6 +96,7 @@ public class CreateOrderNow : ControllerBase
             .Where(g => g.Id == request.GadgetId)
             .Include(g => g.Seller)
                 .ThenInclude(s => s.User)
+                    .ThenInclude(u => u.Devices)
             .Select(g => g.Seller)
             .FirstOrDefaultAsync();
 
@@ -243,6 +244,7 @@ public class CreateOrderNow : ControllerBase
             await context.SaveChangesAsync();
             try
             {
+                //TB cho customer
                 List<string> deviceTokens = currentUser!.Devices.Select(d => d.Token).ToList();
                 if (deviceTokens.Count > 0)
                 {
@@ -253,10 +255,11 @@ public class CreateOrderNow : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "orderId", orderId.ToString() },
+                            { "notiType", NotificationType.Order.ToString() },
                         }
                     );
                 }
-                //Tạo thông báo
+
                 await context.Notifications.AddAsync(new Notification
                 {
                     UserId = currentUser!.Id,
@@ -266,6 +269,34 @@ public class CreateOrderNow : ControllerBase
                     IsRead = false,
                     Type = NotificationType.Order
                 });
+
+                //TB cho seller
+                List<string> sellerDeviceTokens = seller.User.Devices.Select(d => d.Token).ToList();
+                if (sellerDeviceTokens.Count > 0)
+                {
+                    await fcmNotificationService.SendMultibleNotificationAsync(
+                        sellerDeviceTokens,
+                        "Đơn hàng chờ duyệt",
+                        $"Bạn có đơn hàng {sellerOrder.Id} đang chờ xác nhận",
+                        new Dictionary<string, string>()
+                        {
+                            { "sellerOrderId", sellerOrder.Id.ToString() },
+                            { "notiType", NotificationType.SellerOrder.ToString() },
+                        }
+                    );
+                }
+                //Tạo thông báo
+                await context.Notifications.AddAsync(new Notification
+                {
+                    UserId = seller.User.Id,
+                    Title = "Đơn hàng chờ duyệt",
+                    Content = $"Bạn có đơn hàng {sellerOrder.Id} đang chờ xác nhận",
+                    CreatedAt = createdAt,
+                    IsRead = false,
+                    Type = NotificationType.SellerOrder,
+                    SellerOrderId = sellerOrder.Id
+                });
+
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)

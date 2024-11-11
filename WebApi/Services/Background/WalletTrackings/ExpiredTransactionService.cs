@@ -42,6 +42,7 @@ public class ExpiredTransactionService(IServiceProvider serviceProvider) : Backg
                             new Dictionary<string, string>()
                             {
                                 { "walletTrackingId", walletTracking.Id.ToString()! },
+                                { "notiType", NotificationType.WalletTracking.ToString() },
                             }
                         );
                     }
