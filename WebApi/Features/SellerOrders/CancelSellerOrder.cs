@@ -237,7 +237,7 @@ public class CancelSellerOrder : ControllerBase
                 }
                 await context.Notifications.AddAsync(new Notification
                 {
-                    UserId = currentUser!.Id,
+                    UserId = sellerOrder.Order.Customer.User.Id,
                     Title = customerTitle,
                     Content = customerContent,
                     CreatedAt = createdAt,
