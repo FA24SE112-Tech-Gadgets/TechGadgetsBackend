@@ -103,6 +103,7 @@ public class DeactivateUserByUserId : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "userId", userId.ToString() },
+                            { "notiType", NotificationType.User.ToString() },
                         }
                     );
                 }
@@ -185,6 +186,7 @@ public class DeactivateUserByUserId : ControllerBase
                             new Dictionary<string, string>()
                             {
                                 { "sellerOrderId", sellerOrder.Id.ToString() },
+                                { "notiType", NotificationType.SellerOrder.ToString() },
                             }
                         );
                     }
@@ -225,6 +227,7 @@ public class DeactivateUserByUserId : ControllerBase
                         new Dictionary<string, string>()
                         {
                             { "userId", userId.ToString() },
+                            { "notiType", NotificationType.User.ToString() },
                         }
                     );
                 }

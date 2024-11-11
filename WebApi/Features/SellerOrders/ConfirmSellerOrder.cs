@@ -123,6 +123,7 @@ public class ConfirmSellerOrder : ControllerBase
                     new Dictionary<string, string>()
                     {
                         { "sellerOrderId", sellerOrderId.ToString() },
+                        { "notiType", NotificationType.SellerOrder.ToString() },
                     }
                 );
             }
@@ -148,6 +149,7 @@ public class ConfirmSellerOrder : ControllerBase
                     new Dictionary<string, string>()
                     {
                         { "sellerOrderId", sellerOrderId.ToString() },
+                        { "notiType", NotificationType.SellerOrder.ToString() },
                     }
                 );
             }
