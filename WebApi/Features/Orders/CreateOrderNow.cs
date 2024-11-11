@@ -285,7 +285,7 @@ public class CreateOrderNow : ControllerBase
                         }
                     );
                 }
-                //Tạo thông báo
+
                 await context.Notifications.AddAsync(new Notification
                 {
                     UserId = seller.User.Id,
