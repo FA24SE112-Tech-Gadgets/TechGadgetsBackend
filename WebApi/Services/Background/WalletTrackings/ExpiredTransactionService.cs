@@ -43,6 +43,7 @@ public class ExpiredTransactionService(IServiceProvider serviceProvider) : Backg
                             {
                                 { "walletTrackingId", walletTracking.Id.ToString()! },
                                 { "notiType", NotificationType.WalletTracking.ToString() },
+                                { "userId", walletTracking.Wallet.User.Id.ToString() },
                             }
                         );
                     }

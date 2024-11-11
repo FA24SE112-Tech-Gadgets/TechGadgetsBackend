@@ -274,6 +274,7 @@ public class CreateOrder : ControllerBase
                         {
                             { "orderId", orderId.ToString() },
                             { "notiType", NotificationType.Order.ToString() },
+                            { "userId", currentUser.Id.ToString() },
                         }
                     );
                 }
@@ -302,6 +303,7 @@ public class CreateOrder : ControllerBase
                             {
                                 { "sellerOrderId", sellerOrder.Id.ToString() },
                                 { "notiType", NotificationType.SellerOrder.ToString() },
+                                { "userId", sellerOrder.Seller.User.Id.ToString() },
                             }
                         );
                     }

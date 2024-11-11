@@ -86,6 +86,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                                     { "walletTrackingId", wt.Id.ToString()! },
                                     { "sellerOrderId", wt.SellerOrderId.ToString()! },
                                     { "notiType", NotificationType.WalletTracking.ToString() },
+                                    { "userId", wt.Wallet.User.Id.ToString() },
                                 }
                             );
                         }
@@ -208,6 +209,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                                     { "walletTrackingId", walletTracking.Id.ToString() },
                                     { "sellerOrderId", ssot.SellerOrderId.ToString() },
                                     { "notiType", NotificationType.WalletTracking.ToString() },
+                                    { "userId", ssot.FromUser.Id.ToString() },
                                 }
                             );
                         }
@@ -233,6 +235,7 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                                 {
                                     { "sellerOrderId", ssot.SellerOrderId.ToString() },
                                     { "notiType", NotificationType.SellerOrder.ToString() },
+                                    { "userId", ssot.ToUser.Id.ToString() },
                                 }
                             );
                         }
