@@ -124,6 +124,7 @@ public class ConfirmSellerOrder : ControllerBase
                     {
                         { "sellerOrderId", sellerOrderId.ToString() },
                         { "notiType", NotificationType.SellerOrder.ToString() },
+                        { "userId", currentUser.Id.ToString() },
                     }
                 );
             }
@@ -150,6 +151,7 @@ public class ConfirmSellerOrder : ControllerBase
                     {
                         { "sellerOrderId", sellerOrderId.ToString() },
                         { "notiType", NotificationType.SellerOrder.ToString() },
+                        { "userId", sellerOrder.Order.Customer.User.Id.ToString() },
                     }
                 );
             }

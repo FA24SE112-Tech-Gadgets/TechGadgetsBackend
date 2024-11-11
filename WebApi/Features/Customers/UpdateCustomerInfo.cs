@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
@@ -171,13 +172,27 @@ public class UpdateCustomerInfo : ControllerBase
             customer.PhoneNumber = request.PhoneNumber;
         }
 
-        if (!string.IsNullOrEmpty(request.FullName) || !string.IsNullOrEmpty(request.Address) || !string.IsNullOrEmpty(request.PhoneNumber))
+        if ((!string.IsNullOrEmpty(request.FullName) || !string.IsNullOrEmpty(request.Address) || !string.IsNullOrEmpty(request.PhoneNumber))
+            && await context.CustomerInformation.AnyAsync(ci => ci.CustomerId == currentUser.Customer!.Id))
         {
             await context.CustomerInformation.AddAsync(new CustomerInformation
             {
                 FullName = string.IsNullOrEmpty(request.FullName) ? customer.FullName : request.FullName,
                 Address = string.IsNullOrEmpty(request.Address) ? customer.Address! : request.Address,
                 PhoneNumber = string.IsNullOrEmpty(request.PhoneNumber) ? customer.PhoneNumber! : request.PhoneNumber,
+                CreatedAt = DateTime.UtcNow,
+                CustomerId = customer.Id,
+            });
+        }
+
+        if (!string.IsNullOrEmpty(customer.PhoneNumber) && !string.IsNullOrEmpty(customer.Address)
+            && !await context.CustomerInformation.AnyAsync(ci => ci.CustomerId == currentUser.Customer!.Id))
+        {
+            await context.CustomerInformation.AddAsync(new CustomerInformation
+            {
+                FullName = customer.FullName,
+                Address = customer.Address,
+                PhoneNumber = customer.PhoneNumber,
                 CreatedAt = DateTime.UtcNow,
                 CustomerId = customer.Id,
             });
