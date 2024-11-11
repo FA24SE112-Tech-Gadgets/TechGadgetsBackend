@@ -91,6 +91,7 @@ public class ActivateUserByUserId : ControllerBase
                     new Dictionary<string, string>()
                     {
                         { "userId", userId.ToString() },
+                        { "notiType", NotificationType.User.ToString() },
                     }
                 );
             }
