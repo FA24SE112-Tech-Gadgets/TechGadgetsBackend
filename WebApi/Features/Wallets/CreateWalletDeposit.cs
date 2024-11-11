@@ -213,6 +213,7 @@ public class CreateWalletDeposit : ControllerBase
                     {
                         { "walletTrackingId", walletTrackingId.ToString() },
                         { "notiType", NotificationType.WalletTracking.ToString() },
+                        { "userId", currentUser.Id.ToString() },
                     }
                 );
             }
