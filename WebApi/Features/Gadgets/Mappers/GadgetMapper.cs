@@ -32,6 +32,30 @@ public static class GadgetMapper
         return null;
     }
 
+    public static HotGadgetResponse? ToHotGadgetResponse(this Gadget? g)
+    {
+        if (g != null)
+        {
+            var gadgetDiscount = g.GadgetDiscounts.FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > DateTime.UtcNow);
+            int discountPercentage = g.GadgetDiscounts.Count > 0 && gadgetDiscount != null ? gadgetDiscount.DiscountPercentage : 0;
+            return new HotGadgetResponse
+            {
+                Id = g.Id,
+                Name = g.Name,
+                SellerStatus = g.Seller.User.Status,
+                Quantity = g.SellerOrderItems
+                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+                    .Sum(soi => soi.GadgetQuantity),
+                ThumbnailUrl = g.ThumbnailUrl,
+                Price = g.Price,
+                DiscountPrice = (int)Math.Ceiling(g.Price * (1 - discountPercentage / 100.0)),
+                DiscountPercentage = discountPercentage,
+                DiscountExpiredDate = gadgetDiscount != null ? gadgetDiscount.ExpiredDate : null,
+            };
+        }
+        return null;
+    }
+
     public static GadgetRelatedToSellerResponse? ToGadgetRelatedToSellerResponse(this Gadget? gadget)
     {
         if (gadget != null)
