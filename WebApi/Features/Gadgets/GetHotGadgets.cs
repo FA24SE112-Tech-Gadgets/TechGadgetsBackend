@@ -7,6 +7,7 @@ using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
 using WebApi.Data.Entities;
+using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.Gadgets.Models;
 
 namespace WebApi.Features.Gadgets;
@@ -57,22 +58,14 @@ public class GetHotGadgets : ControllerBase
             .Include(g => g.Seller)
                 .ThenInclude(s => s.User)
             .Include(g => g.FavoriteGadgets)
+            .Include(g => g.GadgetDiscounts)
             .Include(g => g.SellerOrderItems)
                 .ThenInclude(soi => soi.SellerOrder)
             .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.CategoryId == request.CategoryId)
             .OrderByDescending(g => g.SellerOrderItems
                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                 .Sum(soi => soi.GadgetQuantity))
-            .Select(g => new HotGadgetResponse
-            {
-                Id = g.Id,
-                Name = g.Name,
-                SellerStatus = g.Seller.User.Status,
-                Quantity = g.SellerOrderItems
-                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
-                    .Sum(soi => soi.GadgetQuantity),
-                ThumbnailUrl = g.ThumbnailUrl
-            })
+            .Select(g => g.ToHotGadgetResponse())
             .ToPagedListAsync(request);
         return Ok(gadgets);
     }
