@@ -76,6 +76,16 @@ public class ApproveSellerApplication : ControllerBase
                 .AddReason("sellerApplication", "Có lỗi xảy ra trong quá trình duyệt đơn.")
                 .Build();
         }
+
+        await context.SellerInformation.AddAsync(new SellerInformation
+        {
+            ShopName = seller.ShopName,
+            Address = seller.ShopAddress,
+            PhoneNumber = seller.PhoneNumber,
+            CreatedAt = DateTime.UtcNow,
+            SellerId = seller.Id
+        });
+
         await context.Sellers.AddAsync(seller);
         await context.SaveChangesAsync();
 
