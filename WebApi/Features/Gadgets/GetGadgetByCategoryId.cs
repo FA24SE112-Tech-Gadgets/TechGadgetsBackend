@@ -28,6 +28,14 @@ public class GetGadgetByCategoryId : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
+        if (!await context.Categories.AnyAsync(b => b.Id == categoryId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("category", "Thể loại không tồn tại")
+                        .Build();
+        }
+
         var gadgets = await context.Gadgets
             .Include(c => c.Seller)
                 .ThenInclude(s => s.User)
