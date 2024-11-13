@@ -28,6 +28,14 @@ public class GetGadgetByBrandId : ControllerBase
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
+        if (!await context.Brands.AnyAsync(b => b.Id == brandId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("brand", "Thương hiệu không tồn tại")
+                        .Build();
+        }
+
         var gadgets = await context.Gadgets
             .Include(c => c.Seller)
                 .ThenInclude(s => s.User)
