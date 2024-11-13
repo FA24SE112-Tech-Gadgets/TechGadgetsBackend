@@ -55,4 +55,21 @@ public static class SellerMapper
         }
         return null;
     }
+
+    public static SellerResponse? ToSellerResponse(this Seller seller)
+    {
+        if (seller != null)
+        {
+            return new SellerResponse
+            {
+                Id = seller.Id,
+                CompanyName = seller.CompanyName,
+                ShopName = seller.ShopName,
+                ShopAddress = seller.ShopAddress,
+                BusinessModel = seller.BusinessModel,
+                PhoneNumber = seller.PhoneNumber,
+            };
+        }
+        return null;
+    }
 }
