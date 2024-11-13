@@ -19,7 +19,7 @@ public class RequestValidationAttribute<TRequest> : ActionFilterAttribute
 
         var request = context.ActionArguments.Values.OfType<TRequest>().FirstOrDefault();
 
-        var validationResult = await validator.ValidateAsync(request, context.HttpContext.RequestAborted);
+        var validationResult = await validator.ValidateAsync(request!, context.HttpContext.RequestAborted);
         if (!validationResult.IsValid)
         {
             var errorResponse = new TechGadgetErrorResponse
