@@ -23,6 +23,8 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
         public GadgetStatus? GadgetStatus { get; set; }
     }
 
+    public class RequestValidator : PagedRequestValidator<Request>;
+
     [HttpGet("gadgets/category/{categoryId}")]
     [Tags("Gadgets")]
     [SwaggerOperation(
@@ -40,6 +42,14 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
     public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid categoryId, AppDbContext context, [FromServices] CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
+
+        if (!await context.Categories.AnyAsync(b => b.Id == categoryId))
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_00)
+                        .AddReason("category", "Thể loại không tồn tại")
+                        .Build();
+        }
 
         var query = context.Gadgets
             .Include(g => g.Seller)
@@ -139,7 +149,7 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
                 }
             }
 
-            var gadgetResponse = gadgetFiltersResponse.ToListGadgetsResponse(currentUser != null ? currentUser.Customer!.Id : null);
+            var gadgetResponse = gadgetFiltersResponse.ToListGadgetsResponse(currentUser != null ? currentUser?.Customer?.Id : null);
             var response = new PagedList<GadgetResponse>(
                 gadgetResponse!.Skip(skip).Take(pageSize).ToList(),
                 page,
@@ -150,7 +160,7 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
         }
         else
         {
-            var gadgetResponse = gadgets.ToListGadgetsResponse(currentUser != null ? currentUser.Customer!.Id : null);
+            var gadgetResponse = gadgets.ToListGadgetsResponse(currentUser != null ? currentUser?.Customer?.Id : null);
             var response = new PagedList<GadgetResponse>(
                 gadgetResponse!.Skip(skip).Take(pageSize).ToList(),
                 page,
