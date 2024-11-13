@@ -13,8 +13,10 @@ using WebApi.Services.Auth;
 namespace WebApi.Features.Gadgets;
 
 [ApiController]
+[JwtValidation]
+[RolesFilter(Role.Seller)]
 [RequestValidation<Request>]
-public class GetGadgetsBySeller : ControllerBase
+public class GetGadgetsByCurrentSeller : ControllerBase
 {
     public new class Request : PagedRequest
     {
@@ -25,19 +27,18 @@ public class GetGadgetsBySeller : ControllerBase
 
     public class RequestValidator : PagedRequestValidator<Request>;
 
-    [HttpGet("gadgets/categories/{categoryId}/sellers/{sellerId}")]
+    [HttpGet("gadgets/category/{categoryId}/current-seller")]
     [Tags("Gadgets")]
-    [SwaggerOperation(Summary = "Get Gadgets By Category And Seller",
+    [SwaggerOperation(Summary = "Get Gadgets By Category And Related To Current Seller",
         Description = """
-        This API is for retrieving gadgets by category id and seller id
+        This API is for retrieving gadgets by category id with related to current seller
 
         `SortColumn` (optional): name, price, createdAt, updatedAt
         """
     )]
-    public async Task<IActionResult> Handler(Guid categoryId, Guid sellerId, [FromQuery] Request request, AppDbContext context, CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler([FromRoute] Guid categoryId, [FromQuery] Request request, [FromServices] AppDbContext context, CurrentUserService currentUserService)
     {
         var user = await currentUserService.GetCurrentUser();
-        var customerId = user?.Customer?.Id;
 
         if (!await context.Categories.AnyAsync(c => c.Id == categoryId))
         {
@@ -47,28 +48,17 @@ public class GetGadgetsBySeller : ControllerBase
             .Build();
         }
 
-        if (!await context.Sellers.AnyAsync(c => c.Id == sellerId))
-        {
-            throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("seller", "seller không tồn tại")
-            .Build();
-        }
-
         var query = context.Gadgets
-            .Include(c => c.Seller)
-                .ThenInclude(s => s.User)
             .Include(g => g.FavoriteGadgets)
             .Include(g => g.GadgetDiscounts)
-            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
             .AsQueryable();
 
         query = query.OrderByColumn(GetSortProperty(request), request.SortOrder);
 
         var response = await query
             .Where(g => g.Name.Contains(request.Name ?? ""))
-            .Where(g => g.SellerId == sellerId && g.CategoryId == categoryId)
-            .Select(g => g.ToGadgetResponse(customerId))
+            .Where(g => g.SellerId == user!.Seller!.Id && g.CategoryId == categoryId)
+            .Select(g => g.ToGadgetRelatedToSellerResponse())
             .ToPagedListAsync(request);
 
         return Ok(response);
