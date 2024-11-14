@@ -61,13 +61,14 @@ public class GetListSellerOrders : ControllerBase
                 .Include(so => so.SellerOrderItems)
                 .Include(so => so.CustomerInformation)
                 .Where(od => od.SellerId == currentUser.Seller!.Id);
-        } else
+        }
+        else
         {
             query = query
                 .Include(so => so.Order)
                 .Include(so => so.Seller)
                 .Include(so => so.SellerOrderItems)
-                    .ThenInclude(soi => soi.Gadget)
+                    .ThenInclude(soi => soi.Gadget.Seller.User)
                 .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.GadgetDiscount)
                 .Include(so => so.CustomerInformation)
@@ -107,10 +108,12 @@ public class GetListSellerOrders : ControllerBase
                 sellerOrders.TotalItems
             );
             return Ok(orderDetailsResponseList);
-        } else
+        }
+        else
         {
             List<CustomerSellerOrderItemResponse> customerSellerOrderItemResponses = new List<CustomerSellerOrderItemResponse>()!;
-            foreach (var so in sellerOrders.Items) {
+            foreach (var so in sellerOrders.Items)
+            {
                 var sellerInfo = so.SellerInformation;
                 var csoir = so.ToCustomerSellerOrderItemResponse()!;
                 csoir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
