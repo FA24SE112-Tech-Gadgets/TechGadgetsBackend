@@ -71,6 +71,7 @@ public class CreateSellerReply : ControllerBase
         var review = await context.Reviews
             .Include(r => r.SellerOrderItem)
                 .ThenInclude(soi => soi.SellerOrder)
+            .Include(r => r.SellerOrderItem.Gadget)
             .FirstOrDefaultAsync(r => r.Id == reviewId);
         if (review == null)
         {
@@ -93,6 +94,14 @@ public class CreateSellerReply : ControllerBase
             throw TechGadgetException.NewBuilder()
             .WithCode(TechGadgetErrorCode.WEB_02)
             .AddReason("reply", "Người dùng không đủ thẩm quyền để phản hồi đánh giá này.")
+            .Build();
+        }
+
+        if (review.SellerOrderItem.Gadget.Status == GadgetStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", "Sản phẩm đã bị khoá.")
             .Build();
         }
 

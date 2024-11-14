@@ -40,7 +40,7 @@ public class GetListSellerOrderItemsBySellerOrderId : ControllerBase
         var sellerOrder = await context.SellerOrders
             .Include(so => so.Order)
             .Include(so => so.SellerOrderItems)
-                .ThenInclude(soi => soi.Gadget)
+                .ThenInclude(soi => soi.Gadget.Seller.User)
             .FirstOrDefaultAsync(so => so.Id == sellerOrderId);
 
         if (sellerOrder == null)

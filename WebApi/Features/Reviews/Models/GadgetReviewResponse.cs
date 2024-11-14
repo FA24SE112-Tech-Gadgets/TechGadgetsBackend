@@ -10,4 +10,5 @@ public class GadgetReviewResponse
     public string ThumbnailUrl { get; set; } = default!;
     public ReviewResponse? Review { get; set; }
     public GadgetStatus Status { get; set; }
+    public UserStatus SellerStatus { get; set; }
 }

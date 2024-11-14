@@ -1,4 +1,6 @@
-﻿namespace WebApi.Features.SellerOrders.Models;
+﻿using WebApi.Data.Entities;
+
+namespace WebApi.Features.SellerOrders.Models;
 
 public class SellerOrderItemInItemResponse
 {
@@ -10,4 +12,6 @@ public class SellerOrderItemInItemResponse
     public int DiscountPercentage { get; set; }
     public string ThumbnailUrl { get; set; } = default!;
     public int Quantity { get; set; } = default!;
+    public UserStatus SellerStatus { get; set; }
+    public GadgetStatus GadgetStatus { get; set; }
 }
