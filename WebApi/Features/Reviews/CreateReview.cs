@@ -72,6 +72,7 @@ public class CreateReview : ControllerBase
         var sellerOrderItem = await context.SellerOrderItems
             .Include(soi => soi.SellerOrder)
                 .ThenInclude(so => so.Order)
+            .Include(soi => soi.Gadget.Seller.User)
             .FirstOrDefaultAsync(soi => soi.Id == sellerOrderItemId);
         if (sellerOrderItem == null)
         {
@@ -88,6 +89,15 @@ public class CreateReview : ControllerBase
             .AddReason("sellerOrder", "Người dùng không đủ thẩm quyền để đánh giá sản phẩm này.")
             .Build();
         }
+
+        if (sellerOrderItem.Gadget.Status == GadgetStatus.Inactive || sellerOrderItem.Gadget.Seller.User.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+            .WithCode(TechGadgetErrorCode.WEB_00)
+            .AddReason("gadget", "Sản phẩm đã bị khoá, hoặc tài khoản người bán đã bị khoá.")
+            .Build();
+        }
+
 
         if (sellerOrderItem.SellerOrder.Status != SellerOrderStatus.Success)
         {
