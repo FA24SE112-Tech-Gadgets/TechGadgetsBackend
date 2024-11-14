@@ -20,6 +20,8 @@ public static class SellerOrderMapper
                 DiscountPercentage = discountPercentage,
                 ThumbnailUrl = sellerOrderItem.Gadget.ThumbnailUrl,
                 Quantity = sellerOrderItem.GadgetQuantity,
+                GadgetStatus = sellerOrderItem.Gadget.Status,
+                SellerStatus = sellerOrderItem.Gadget.Seller.User.Status
             };
         }
         return null;
@@ -46,7 +48,8 @@ public static class SellerOrderMapper
         if (sellerOrderItems != null && sellerOrderItems.Count > 0)
         {
             return sellerOrderItems
-            .Select(soi => {
+            .Select(soi =>
+            {
                 int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
                 return new SellerOrderItemInItemResponse
                 {
@@ -58,6 +61,8 @@ public static class SellerOrderMapper
                     DiscountPercentage = discountPercentage,
                     ThumbnailUrl = soi.Gadget.ThumbnailUrl,
                     Quantity = soi.GadgetQuantity,
+                    GadgetStatus = soi.Gadget.Status,
+                    SellerStatus = soi.Gadget.Seller.User.Status
                 };
             })
             .ToList();

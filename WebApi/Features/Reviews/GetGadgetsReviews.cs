@@ -65,6 +65,8 @@ public class GetGadgetsReviews : ControllerBase
             .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Gadget.Category)
             .Include(so => so.SellerOrderItems)
+                .ThenInclude(soi => soi.Gadget.Seller.User)
+            .Include(so => so.SellerOrderItems)
                 .ThenInclude(soi => soi.Review)
                 .ThenInclude(r => r != null ? r.Customer : null)
             .Include(so => so.SellerOrderItems)
@@ -110,6 +112,7 @@ public class GetGadgetsReviews : ControllerBase
                                 ThumbnailUrl = soi.Gadget.ThumbnailUrl,
                                 Review = soi.Review!.ToReviewResponse(),
                                 Status = soi.Gadget.Status,
+                                SellerStatus = soi.Gadget.Seller.User.Status
                             }!;
                             gadgetReviewResponses.Add(gadgetReviewResponse);
                         }
@@ -125,6 +128,7 @@ public class GetGadgetsReviews : ControllerBase
                                 Name = soi.Gadget.Name,
                                 ThumbnailUrl = soi.Gadget.ThumbnailUrl,
                                 Status = soi.Gadget.Status,
+                                SellerStatus = soi.Gadget.Seller.User.Status
                             }!;
                             gadgetReviewResponses.Add(gadgetReviewResponse);
                         }
@@ -148,6 +152,8 @@ public class GetGadgetsReviews : ControllerBase
             var query = context.SellerOrders
                  .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.Gadget.Category)
+                .Include(so => so.SellerOrderItems)
+                    .ThenInclude(soi => soi.Gadget.Seller.User)
                 .Include(so => so.SellerOrderItems)
                     .ThenInclude(soi => soi.Review)
                         .ThenInclude(r => r != null ? r.SellerReply : null)
@@ -204,6 +210,7 @@ public class GetGadgetsReviews : ControllerBase
                                 ThumbnailUrl = soi.Gadget.ThumbnailUrl,
                                 Review = soi.Review!.ToReviewResponse(),
                                 Status = soi.Gadget.Status,
+                                SellerStatus = soi.Gadget.Seller.User.Status
                             }!;
                             gadgetReviewResponses.Add(gadgetReviewResponse);
                         }
@@ -220,6 +227,7 @@ public class GetGadgetsReviews : ControllerBase
                                 ThumbnailUrl = soi.Gadget.ThumbnailUrl,
                                 Review = soi.Review!.ToReviewResponse(),
                                 Status = soi.Gadget.Status,
+                                SellerStatus = soi.Gadget.Seller.User.Status
                             }!;
                             gadgetReviewResponses.Add(gadgetReviewResponse);
                         }
