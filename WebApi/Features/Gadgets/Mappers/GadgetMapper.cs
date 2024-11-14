@@ -123,8 +123,16 @@ public static class GadgetMapper
                                         .Select(g => new SpecificationValueResponse
                                         {
                                             Id = g.Id,
-                                            SpecificationKey = g.SpecificationKey.Name,
-                                            SpecificationUnit = g.SpecificationUnit?.Name,
+                                            SpecificationKey = new SpecificationKeyResponse
+                                            {
+                                                Id = g.SpecificationKey.Id,
+                                                Name = g.SpecificationKey.Name
+                                            },
+                                            SpecificationUnit = g.SpecificationUnit != null ? new SpecificationUnitResponse
+                                            {
+                                                Id = g.SpecificationUnit.Id,
+                                                Name = g.SpecificationUnit.Name
+                                            } : null,
                                             Value = g.Value,
                                         }).ToArray(),
             };
