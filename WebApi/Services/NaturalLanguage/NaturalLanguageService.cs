@@ -76,6 +76,8 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> bestSellerKeywords = ["Cửa hàng nổi bật", "bán chạy", "Nhiều người quan tâm"];
 
+        List<string> availableKeywords = ["Còn hàng"];
+
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
         Now is November, 2024
@@ -120,6 +122,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         
         isWideScreen can be true or false
         If user does not mention, give me false
+
+        
+        isSmallScreen can be true or false
+        If user does not mention, give me false        
 
 
         isFoldable can be true or false
@@ -175,7 +181,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         
         releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
-        if user does not mention, give me empty string
+        if user does not mention, give me empty array
         
 
         colors are: {string.Join(", ", colors)}
@@ -220,6 +226,11 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         isBestSeller can be true or false
         you can use this keywork array as a addition reference that results in isBestSeller is true: {string.Join(", ", bestSellerKeywords)}
         If user does not mention, give me false  
+
+
+        isAvailable can be true or false
+        you can use this keywork array as a addition reference that results in isAvailable is true: {string.Join(", ", availableKeywords)}
+        If user does not mention, give me false      
 
 
         User's query: {input}
@@ -272,6 +283,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             "type": "boolean"
                         },
                         "isWideScreen": {
+                            "type": "boolean"
+                        },
+                        "isSmallScreen": {
                             "type": "boolean"
                         },
                         "isFoldable": {
@@ -341,7 +355,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             }
                         },
                         "releaseDate": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         },
                         "colors": {
                             "type": "array",
@@ -372,12 +389,15 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isBestSeller": {
                             "type": "boolean"
+                        },
+                        "isAvailable": {
+                            "type": "boolean"
                         }
                     },
-                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen",
+                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen","isSmallScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
                                  "conditions","segmentations","locations","origins","releaseDate","colors","isAi","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller","isAvailable"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),

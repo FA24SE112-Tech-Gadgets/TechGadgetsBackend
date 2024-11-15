@@ -98,7 +98,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Làm việc", "Văn phòng" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(
                                                 g => g.Name.ToLower().Contains("văn phòng")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("văn phòng"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("công sở"))));
@@ -106,7 +106,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Gaming", "Giải trí" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(
                                                 g => g.Name.ToLower().Contains("gaming")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("gaming"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("giải trí"))
@@ -117,7 +117,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Vận động", "Ngoài trời", "Thể thao" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(
                                                 g => g.Name.Contains("sport")
                                                 || g.Name.ToLower().Contains("chạy bộ")
                                                 || g.Name.ToLower().Contains("thể dục")
@@ -131,7 +131,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Thiết kế đồ họa", "Designer", "IT" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(
                                                 g => g.Name.Contains("đồ hoạ")
                                                 || g.Name.ToLower().Contains("it")
                                                 || g.Name.ToLower().Contains("gaming")
@@ -144,7 +144,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Bơi lội" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(
                                                 g => g.Name.Contains("nước")
                                                 || g.Name.ToLower().Contains("bơi")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("chống nước"))
@@ -190,10 +190,14 @@ public class ProcessNaturalLanuage : ControllerBase
             var locationPredicate = PredicateBuilder.New<Seller>(true);
             if (query.Locations.Any())
             {
-                var locationVectors = await embeddingService.GetEmbeddings(query.Locations);
+                //var locationVectors = await embeddingService.GetEmbeddings(query.Locations);
 
-                locationPredicate = locationPredicate.Or(s =>
-                    locationVectors.Any(vector => 1 - s.AddressVector.CosineDistance(vector) >= 0.5)
+                //locationPredicate = locationPredicate.Or(s =>
+                //    locationVectors.Any(vector => 1 - s.AddressVector.CosineDistance(vector) >= 0.5)
+                //);
+
+                locationPredicate = locationPredicate.Or(g =>
+                    query.Locations.Any(l => g.ShopAddress.ToLower().Contains(l.ToLower()))
                 );
             }
 
@@ -324,14 +328,14 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Làm việc", "Văn phòng" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.ToLower().Contains("văn phòng")
+                    purposePredicate = purposePredicate.And(g => g.Name.ToLower().Contains("văn phòng")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("văn phòng"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("công sở")));
                 }
 
                 if (new List<string> { "Gaming", "Giải trí" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.ToLower().Contains("gaming")
+                    purposePredicate = purposePredicate.And(g => g.Name.ToLower().Contains("gaming")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("gaming"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("giải trí"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("chơi game"))
@@ -341,7 +345,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Vận động", "Ngoài trời", "Thể thao" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.Contains("sport")
+                    purposePredicate = purposePredicate.And(g => g.Name.Contains("sport")
                                                 || g.Name.ToLower().Contains("chạy bộ")
                                                 || g.Name.ToLower().Contains("thể dục")
                                                 || g.Name.ToLower().Contains("thể thao")
@@ -354,7 +358,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Thiết kế đồ họa", "Designer", "IT" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.Contains("đồ hoạ")
+                    purposePredicate = purposePredicate.And(g => g.Name.Contains("đồ hoạ")
                                                 || g.Name.ToLower().Contains("it")
                                                 || g.Name.ToLower().Contains("gaming")
                                                 || g.Name.ToLower().Contains("giải trí")
@@ -366,7 +370,7 @@ public class ProcessNaturalLanuage : ControllerBase
 
                 if (new List<string> { "Bơi lội" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.Contains("nước")
+                    purposePredicate = purposePredicate.And(g => g.Name.Contains("nước")
                                                 || g.Name.ToLower().Contains("bơi")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("chống nước"))
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("kháng nước"))
@@ -396,6 +400,14 @@ public class ProcessNaturalLanuage : ControllerBase
                 wideScreenPredicate = wideScreenPredicate.Or(g =>
                             g.SpecificationValues
                                  .Any(sv => sv.SpecificationKey.Name == "Màn hình" && Convert.ToDouble(sv.Value) >= 16));
+            }
+
+            var smallScreenPredicate = PredicateBuilder.New<Gadget>(true);
+            if (query.IsSmallScreen)
+            {
+                smallScreenPredicate = smallScreenPredicate.Or(g =>
+                            g.SpecificationValues
+                                 .Any(sv => sv.SpecificationKey.Name == "Màn hình" && Convert.ToDouble(sv.Value) < 16));
             }
 
             var foldablePredicate = PredicateBuilder.New<Gadget>(true);
@@ -606,10 +618,14 @@ public class ProcessNaturalLanuage : ControllerBase
             var locationPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Locations.Count != 0)
             {
-                var locationVectors = await embeddingService.GetEmbeddings(query.Locations);
+                //var locationVectors = await embeddingService.GetEmbeddings(query.Locations);
+
+                //locationPredicate = locationPredicate.Or(g =>
+                //    locationVectors.Any(vector => 1 - g.Seller.AddressVector.CosineDistance(vector) >= 0.5)
+                //);
 
                 locationPredicate = locationPredicate.Or(g =>
-                    locationVectors.Any(vector => 1 - g.Seller.AddressVector.CosineDistance(vector) >= 0.5)
+                    query.Locations.Any(l => g.Seller.ShopAddress.ToLower().Contains(l.ToLower()))
                 );
             }
 
@@ -634,12 +650,12 @@ public class ProcessNaturalLanuage : ControllerBase
             }
 
             var releaseDatePredicate = PredicateBuilder.New<Gadget>(true);
-            if (query.ReleaseDate != "")
+            if (query.ReleaseDate.Count != 0)
             {
                 releaseDatePredicate = releaseDatePredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Thời điểm ra mắt"
-                        && (sv.Value == query.ReleaseDate || sv.Value.Contains(query.ReleaseDate))
+                        && query.ReleaseDate.Any(r => sv.Value == r || sv.Value.Contains(r))
                     )
                 );
             }
@@ -717,6 +733,14 @@ public class ProcessNaturalLanuage : ControllerBase
                 );
             }
 
+            var availablePredicate = PredicateBuilder.New<Gadget>(true);
+            if (query.IsAvailable)
+            {
+                availablePredicate = availablePredicate.Or(g =>
+                    g.Quantity > 0 && g.IsForSale == true
+                );
+            }
+
             var outerPredicate = PredicateBuilder.New<Gadget>(true);
             outerPredicate = outerPredicate
                                 .And(pricePredicate)
@@ -726,6 +750,7 @@ public class ProcessNaturalLanuage : ControllerBase
                                 .And(goodBatteryLifePredicate)
                                 .And(fastChargePredicate)
                                 .And(wideScreenPredicate)
+                                .And(smallScreenPredicate)
                                 .And(foldablePredicate)
                                 .And(inchPredicate)
                                 .And(highResolutionPredicate)
