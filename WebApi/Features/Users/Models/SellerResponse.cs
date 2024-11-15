@@ -8,10 +8,9 @@ public class SellerResponse
     public Guid UserId { get; set; }
     public string? CompanyName { get; set; }
     public string ShopName { get; set; } = default!;
-    public string ShippingAddress { get; set; } = default!;
     public string ShopAddress { get; set; } = default!;
     public BusinessModel BusinessModel { get; set; }
     public string? BusinessRegistrationCertificateUrl { get; set; }
-    public string TaxCode = default!;
-    public string PhoneNumber = default!;
+    public string TaxCode { get; set; } = default!;
+    public string PhoneNumber { get; set; } = default!;
 }
