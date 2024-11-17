@@ -87,7 +87,7 @@ public class ProcessNaturalLanuage : ControllerBase
             {
                 if (new List<string> { "Học tập" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(s => s.Gadgets.Any(g =>
+                    purposePredicate = purposePredicate.And(s => s.Gadgets.Any(g =>
                                                 g.Name.ToLower().Contains("học tập")
                                                 || g.Name.ToLower().Contains("sinh viên")
                                                 || g.Name.ToLower().Contains("học sinh")
@@ -318,7 +318,7 @@ public class ProcessNaturalLanuage : ControllerBase
             {
                 if (new List<string> { "Học tập" }.Contains(purpose))
                 {
-                    purposePredicate = purposePredicate.Or(g => g.Name.ToLower().Contains("học tập")
+                    purposePredicate = purposePredicate.And(g => g.Name.ToLower().Contains("học tập")
                                                 || g.Name.ToLower().Contains("sinh viên")
                                                 || g.Name.ToLower().Contains("học sinh")
                                                 || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("học tập"))
@@ -424,7 +424,7 @@ public class ProcessNaturalLanuage : ControllerBase
             var inchPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Categories.Contains("Điện thoại"))
             {
-                inchPredicate = inchPredicate.Or(g =>
+                inchPredicate = inchPredicate.And(g =>
                     g.Category.Name != "Điện thoại" ||
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Màn hình rộng"
@@ -542,15 +542,15 @@ public class ProcessNaturalLanuage : ControllerBase
                 var units = query.Rams.Select(x => x.ExtractNumberAndString().text).ToList();
 
                 ramPredicate = ramPredicate.Or(g =>
-                    g.Category.Name != "Laptop" ||
+                    g.Category.Name == "Laptop" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "RAM"
                         && numbers.Contains(sv.Value)
                         && units.Contains(sv.SpecificationUnit.Name)
                 ));
 
-                ramPredicate = ramPredicate.And(g =>
-                    g.Category.Name != "Điện thoại" ||
+                ramPredicate = ramPredicate.Or(g =>
+                    g.Category.Name == "Điện thoại" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "RAM"
                         && numbers.Contains(sv.Value)
@@ -655,7 +655,7 @@ public class ProcessNaturalLanuage : ControllerBase
                 releaseDatePredicate = releaseDatePredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Thời điểm ra mắt"
-                        && query.ReleaseDate.Any(r => sv.Value == r || sv.Value.Contains(r))
+                        && query.ReleaseDate.Any(r => sv.Value == r || sv.Value.Contains(r) || r.Contains(sv.Value))
                     )
                 );
             }
@@ -741,6 +741,110 @@ public class ProcessNaturalLanuage : ControllerBase
                 );
             }
 
+            var categoryTypePredicate = PredicateBuilder.New<Gadget>(true);
+            foreach (var categoryType in query.CategoryTypes)
+            {
+                if (new List<string> { "Tai nghe Bluetooth" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
+                                                (g.Name.ToLower().Contains("bluetooth")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("bluetooth"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Tai nghe có dây" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
+                                                (g.Name.ToLower().Contains("có dây")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("có dây"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Tai nghe chụp tai" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
+                                                (g.Name.ToLower().Contains("chụp tai")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("chụp tai"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Tai nghe gaming" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
+                                                (g.Name.ToLower().Contains("gaming")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("gaming"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Tai nghe gaming" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
+                                                (g.Name.ToLower().Contains("gaming")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("gaming"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa Bluetooth" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("bluetooth")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("bluetooth"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa kéo" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("kéo")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("kéo"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa karaoke" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("karaoke")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("karaoke"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa điện" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("loa điện")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("loa điện"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa vi tính" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("Loa vi tính")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("Loa vi tính"))
+                                                )
+                                             );
+                }
+
+                if (new List<string> { "Loa thanh" }.Contains(categoryType))
+                {
+                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
+                                                (g.Name.ToLower().Contains("Loa thanh")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("Loa thanh"))
+                                                )
+                                             );
+                }
+
+            }
+
             var outerPredicate = PredicateBuilder.New<Gadget>(true);
             outerPredicate = outerPredicate
                                 .And(pricePredicate)
@@ -768,7 +872,9 @@ public class ProcessNaturalLanuage : ControllerBase
                                 .And(energySavingPredicate)
                                 .And(discountedPredicate)
                                 .And(highRatingPredicate)
-                                .And(positiveReviewPredicate);
+                                .And(positiveReviewPredicate)
+                                .And(availablePredicate)
+                                .And(categoryTypePredicate);
 
             var input = request.Input.Length > 512 ? request.Input[0..512] : request.Input;
             var inputVector = await embeddingService.GetEmbeddingOpenAI(input);

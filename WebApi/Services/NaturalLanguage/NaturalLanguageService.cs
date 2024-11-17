@@ -78,6 +78,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> availableKeywords = ["Còn hàng"];
 
+        List<string> categoryTypeKeywords = ["Tai nghe Bluetooth", "Tai nghe có dây", "Tai nghe chụp tai", "Tai nghe gaming",
+                                            "Loa Bluetooth","Loa kéo","Loa karaoke","Loa điện","Loa vi tính","Loa thanh"];
+
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
         Now is November, 2024
@@ -232,6 +235,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         you can use this keywork array as a addition reference that results in isAvailable is true: {string.Join(", ", availableKeywords)}
         If user does not mention, give me false      
 
+
+        categoryType are: {string.Join(", ", categoryTypeKeywords)}
+        If user query not mention, give me empty array     
 
         User's query: {input}
         ";
@@ -392,12 +398,18 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isAvailable": {
                             "type": "boolean"
-                        }
+                        },
+                        "categoryTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
                     },
                     "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen","isSmallScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
                                  "conditions","segmentations","locations","origins","releaseDate","colors","isAi","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller","isAvailable"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller","isAvailable","categoryTypes"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),

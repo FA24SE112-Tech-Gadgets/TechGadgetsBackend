@@ -40,4 +40,5 @@ public class NaturalLanguageRequest
     public bool IsDiscounted { get; set; }
     public bool IsBestSeller { get; set; }
     public bool IsAvailable { get; set; }
+    public List<string> CategoryTypes { get; set; } = [];
 }
