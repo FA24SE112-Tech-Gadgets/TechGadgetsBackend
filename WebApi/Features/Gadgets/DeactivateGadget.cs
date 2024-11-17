@@ -54,6 +54,7 @@ public class DeactivateGadget : ControllerBase
         }
 
         gadget.Status = GadgetStatus.Inactive;
+        gadget.UpdatedAt = DateTime.UtcNow;
         gadget.IsForSale = false;
 
         await context.SaveChangesAsync();
