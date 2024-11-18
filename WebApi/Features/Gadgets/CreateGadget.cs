@@ -344,7 +344,7 @@ public class CreateGadget : ControllerBase
         context.Gadgets.Add(gadgetToCreate);
         await context.SaveChangesAsync();
 
-        var updatedGadget = await context.Gadgets
+        var createdGadget = await context.Gadgets
                                     .Include(g => g.SpecificationValues)
                                         .ThenInclude(sv => sv.SpecificationKey)
                                         .ThenInclude(sv => sv.SpecificationUnits)
@@ -352,10 +352,10 @@ public class CreateGadget : ControllerBase
                                     .Include(g => g.Category)
                                     .FirstOrDefaultAsync(g => g.Id == gadgetToCreate.Id);
 
-        var gadgetAttribute = $"Tên sản phẩm: {updatedGadget!.Name}; Thể loại sản phẩm: {updatedGadget.Category.Name}; Thương hiệu sản phẩm: {updatedGadget.Brand.Name}; Thông số kỹ thuật: ";
+        var gadgetAttribute = $"Tên sản phẩm: {createdGadget!.Name}; Thể loại sản phẩm: {createdGadget.Category.Name}; Thương hiệu sản phẩm: {createdGadget.Brand.Name}; Thông số kỹ thuật: ";
 
         Dictionary<string, List<string>> specValueDictionary = [];
-        foreach (var specValue in updatedGadget.SpecificationValues)
+        foreach (var specValue in createdGadget.SpecificationValues)
         {
             if (!specValueDictionary.ContainsKey(specValue.SpecificationKey.Name))
             {
@@ -382,8 +382,8 @@ public class CreateGadget : ControllerBase
 
         var newVector = await embeddingService.GetEmbeddingOpenAI(gadgetAttribute);
 
-        updatedGadget.Vector = newVector;
-        updatedGadget.UpdatedAt = DateTime.UtcNow;
+        createdGadget.Vector = newVector;
+        createdGadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 

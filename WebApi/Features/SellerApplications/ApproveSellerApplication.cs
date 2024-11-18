@@ -77,6 +77,9 @@ public class ApproveSellerApplication : ControllerBase
                 .Build();
         }
 
+        await context.Sellers.AddAsync(seller);
+        await context.SaveChangesAsync();
+
         await context.SellerInformation.AddAsync(new SellerInformation
         {
             ShopName = seller.ShopName,
@@ -86,7 +89,7 @@ public class ApproveSellerApplication : ControllerBase
             SellerId = seller.Id
         });
 
-        await context.Sellers.AddAsync(seller);
+
         await context.SaveChangesAsync();
 
         return Ok("Duyệt đơn thành công");

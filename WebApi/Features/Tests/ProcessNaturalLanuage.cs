@@ -828,8 +828,8 @@ public class ProcessNaturalLanuage : ControllerBase
                 if (new List<string> { "Loa vi tính" }.Contains(categoryType))
                 {
                     categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
-                                                (g.Name.ToLower().Contains("Loa vi tính")
-                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("Loa vi tính"))
+                                                (g.Name.ToLower().Contains("loa vi tính")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("loa vi tính"))
                                                 )
                                              );
                 }
@@ -837,8 +837,8 @@ public class ProcessNaturalLanuage : ControllerBase
                 if (new List<string> { "Loa thanh" }.Contains(categoryType))
                 {
                     categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
-                                                (g.Name.ToLower().Contains("Loa thanh")
-                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("Loa thanh"))
+                                                (g.Name.ToLower().Contains("loa thanh")
+                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("loa thanh"))
                                                 )
                                              );
                 }
