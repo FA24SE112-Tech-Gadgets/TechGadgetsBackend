@@ -51,10 +51,10 @@ public class GetSuggestedGadgetsForCurrentCustomer : ControllerBase
                                         .ToListAsync();
 
         var historyGadgetVectors = await context.GadgetHistories
-                                        .Where(gh => gh.CustomerId == customerId && gh.CreatedAt >= DateTime.UtcNow.AddDays(-30))
-                                        .Select(gh => gh.Gadget.Vector!.ToArray())
-                                        .Distinct()
-                                        .ToListAsync();
+                                         .Where(gh => gh.CustomerId == customerId && gh.CreatedAt >= DateTime.UtcNow.AddDays(-30))
+                                         .Select(gh => gh.Gadget.Vector!.ToArray())
+                                         .Distinct()
+                                         .ToListAsync();
 
         var finalVector = CalculateAverage([.. purchasedGadgetVectors, .. favoriteGadgetVectors, .. historyGadgetVectors]);
 
