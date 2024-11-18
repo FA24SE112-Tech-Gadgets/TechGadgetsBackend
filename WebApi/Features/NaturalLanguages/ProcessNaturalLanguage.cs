@@ -742,8 +742,7 @@ public class ProcessNaturalLanguage : ControllerBase
                                 .And(energySavingPredicate)
                                 .And(discountedPredicate)
                                 .And(highRatingPredicate)
-                                .And(positiveReviewPredicate)
-                                ;
+                                .And(positiveReviewPredicate);
 
             var input = request.Input.Length > 512 ? request.Input[0..512] : request.Input;
             var inputVector = await embeddingService.GetEmbeddingOpenAI(input);
