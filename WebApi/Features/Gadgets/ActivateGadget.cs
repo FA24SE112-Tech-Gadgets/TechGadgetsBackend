@@ -55,6 +55,7 @@ public class ActivateGadget : ControllerBase
         }
 
         gadget.Status = GadgetStatus.Active;
+        gadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 

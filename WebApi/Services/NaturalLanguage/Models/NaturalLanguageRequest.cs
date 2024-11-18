@@ -15,6 +15,7 @@ public class NaturalLanguageRequest
     public bool IsFastCharge { get; set; }
     public bool IsGoodBatteryLife { get; set; }
     public bool IsWideScreen { get; set; }
+    public bool IsSmallScreen { get; set; }
     public bool IsFoldable { get; set; }
     public float MinInch { get; set; }
     public float MaxInch { get; set; }
@@ -28,7 +29,7 @@ public class NaturalLanguageRequest
     public List<string> Segmentations { get; set; } = [];
     public List<string> Locations { get; set; } = [];
     public List<string> Origins { get; set; } = [];
-    public string ReleaseDate { get; set; } = default!;
+    public List<string> ReleaseDate { get; set; } = [];
     public List<string> Colors { get; set; } = [];
     public bool IsAi { get; set; }
     public bool IsSearchingSeller { get; set; }
@@ -38,4 +39,6 @@ public class NaturalLanguageRequest
     public bool IsEnergySaving { get; set; }
     public bool IsDiscounted { get; set; }
     public bool IsBestSeller { get; set; }
+    public bool IsAvailable { get; set; }
+    public List<string> CategoryTypes { get; set; } = [];
 }
