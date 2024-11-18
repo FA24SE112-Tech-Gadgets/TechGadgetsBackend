@@ -102,6 +102,7 @@ public static class SellerApplicationMapper
                 ShopAddress = sellerApplication.ShopAddress,
                 BusinessModel = sellerApplication.BusinessModel,
                 PhoneNumber = sellerApplication.PhoneNumber,
+                BusinessRegistrationCertificateUrl = sellerApplication.BusinessRegistrationCertificateUrl,
                 Status = sellerApplication.Status,
                 CreatedAt = sellerApplication.CreatedAt,
             };

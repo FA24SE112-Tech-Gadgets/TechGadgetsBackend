@@ -63,6 +63,7 @@ public class SetGadgetNotForSale : ControllerBase
         }
 
         gadget.IsForSale = false;
+        gadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
 

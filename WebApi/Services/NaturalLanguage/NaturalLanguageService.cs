@@ -76,20 +76,32 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
 
         List<string> bestSellerKeywords = ["Cửa hàng nổi bật", "bán chạy", "Nhiều người quan tâm"];
 
+        List<string> availableKeywords = ["Còn hàng"];
+
+        List<string> categoryTypeKeywords = ["Tai nghe Bluetooth", "Tai nghe có dây", "Tai nghe chụp tai", "Tai nghe gaming",
+                                            "Loa Bluetooth","Loa kéo","Loa karaoke","Loa điện","Loa vi tính","Loa thanh"];
+
+        List<string> endOfYearKeywords = ["Cuối năm", "Cuối"];
+
+        List<string> startOfYearKeywords = ["Đầu năm", "Đầu"];
+
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
         Now is November, 2024
 
         purposes are: {string.Join(", ", purposes)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about purposes, give me empty array
 
 
         brands are: {string.Join(", ", brands)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about brands, give me empty array
 
 
         categories are: {string.Join(", ", categories)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about categories, give me empty array
 
 
         Price
@@ -120,6 +132,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         
         isWideScreen can be true or false
         If user does not mention, give me false
+
+        
+        isSmallScreen can be true or false
+        If user does not mention, give me false        
 
 
         isFoldable can be true or false
@@ -165,17 +181,15 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         segmentations are: {string.Join(", ", segmentations)}
         Only give me items in the array above, if user query not mention anything in the array above, give me empty array
 
-
-        locations are: {string.Join(", ", locations)}
-        If user query not mention, give me empty array
-
         
         origins are: {string.Join(", ", origins)}
         If user query not mention, give me empty array
 
         
-        releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
-        if user does not mention, give me empty string
+        releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY
+        if user mention end of the year, using some words like {string.Join(", ", endOfYearKeywords)} then take these months: 9, 10, 11, 12.
+        if user mention start of the year, using some words like {string.Join(", ", startOfYearKeywords)} then take these months: 1, 2, 3, 4.
+        if user does not mention, give me empty array
         
 
         colors are: {string.Join(", ", colors)}
@@ -221,6 +235,14 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         you can use this keywork array as a addition reference that results in isBestSeller is true: {string.Join(", ", bestSellerKeywords)}
         If user does not mention, give me false  
 
+
+        isAvailable can be true or false
+        you can use this keywork array as a addition reference that results in isAvailable is true: {string.Join(", ", availableKeywords)}
+        If user does not mention, give me false      
+
+
+        categoryType are: {string.Join(", ", categoryTypeKeywords)}
+        If user query not mention, give me empty array     
 
         User's query: {input}
         ";
@@ -272,6 +294,9 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             "type": "boolean"
                         },
                         "isWideScreen": {
+                            "type": "boolean"
+                        },
+                        "isSmallScreen": {
                             "type": "boolean"
                         },
                         "isFoldable": {
@@ -341,7 +366,10 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             }
                         },
                         "releaseDate": {
-                            "type": "string"
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         },
                         "colors": {
                             "type": "array",
@@ -372,12 +400,21 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                         },
                         "isBestSeller": {
                             "type": "boolean"
+                        },
+                        "isAvailable": {
+                            "type": "boolean"
+                        },
+                        "categoryTypes": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     },
-                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen",
+                    "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen","isSmallScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",
                                  "conditions","segmentations","locations","origins","releaseDate","colors","isAi","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isEnergySaving","isDiscounted","isBestSeller","isAvailable","categoryTypes"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),

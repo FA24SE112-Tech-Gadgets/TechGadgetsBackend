@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
 
 namespace WebApi.Features.Tests;
 
@@ -7,10 +9,10 @@ public class TestEndpoint : ControllerBase
 {
     [Tags("Tests")]
     [HttpPost("tests/endpoint")]
-    public async Task<IActionResult> Handler()
+    public async Task<IActionResult> Handler(AppDbContext context)
     {
-        await Task.Delay(20000);
+        var gadget = await context.Gadgets.FirstOrDefaultAsync();
 
-        return Ok();
+        return Ok(gadget!.NameVector);
     }
 }

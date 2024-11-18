@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -12,20 +13,34 @@ namespace WebApi.Features.Gadgets;
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Seller)]
-public class SetGadgetForSale : ControllerBase
+public class UpdateGadgetQuantity : ControllerBase
 {
-    [HttpPut("gadgets/{id}/set-for-sale")]
+    public new class Request
+    {
+        public int Quantity { get; set; }
+    }
+
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Quantity)
+                .GreaterThanOrEqualTo(0).WithMessage("Số lượng phải lớn hơn hoặc bằng 0")
+                .LessThanOrEqualTo(1000).WithMessage("Số lượng phải nhỏ hơn 1000");
+        }
+    }
+
+    [HttpPut("gadgets/{id}/quantity")]
     [Tags("Gadgets")]
     [SwaggerOperation(
-        Summary = "Set Gadget To For Sale",
-        Description = "API for Seller to set gadget to for sale. Note:" +
-                            "<br>&nbsp; - User bị Inactive thì không cập nhật for sale được."
+        Summary = "Update Gadget Quantity",
+        Description = "API for Seller to update gadget quantity"
     )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler(Guid id, AppDbContext context, CurrentUserService currentUserService)
+    public async Task<IActionResult> Handler(Guid id, Request request, AppDbContext context, CurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUser();
 
@@ -62,15 +77,7 @@ public class SetGadgetForSale : ControllerBase
                 .Build();
         }
 
-        if (gadget.IsForSale == true)
-        {
-            throw TechGadgetException.NewBuilder()
-                        .WithCode(TechGadgetErrorCode.WEB_02)
-                        .AddReason("gadget", "Sản phẩm đã trong trạng thái đang kinh doanh từ trước")
-                        .Build();
-        }
-
-        gadget.IsForSale = true;
+        gadget.Quantity = request.Quantity;
         gadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
