@@ -81,20 +81,27 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         List<string> categoryTypeKeywords = ["Tai nghe Bluetooth", "Tai nghe có dây", "Tai nghe chụp tai", "Tai nghe gaming",
                                             "Loa Bluetooth","Loa kéo","Loa karaoke","Loa điện","Loa vi tính","Loa thanh"];
 
+        List<string> endOfYearKeywords = ["Cuối năm", "Cuối"];
+
+        List<string> startOfYearKeywords = ["Đầu năm", "Đầu"];
+
         string myPrompt = $@"
         I have data in postgres of gadgets (phone, laptop, speaker, earphone, headphone,...) that user can search.
         Now is November, 2024
 
         purposes are: {string.Join(", ", purposes)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about purposes, give me empty array
 
 
         brands are: {string.Join(", ", brands)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about brands, give me empty array
 
 
         categories are: {string.Join(", ", categories)}
-        If user query not mention, give me empty array
+        please use the keywork array above as a reference
+        If user query not mention anything about categories, give me empty array
 
 
         Price
@@ -174,16 +181,14 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         segmentations are: {string.Join(", ", segmentations)}
         Only give me items in the array above, if user query not mention anything in the array above, give me empty array
 
-
-        locations are: {string.Join(", ", locations)}
-        If user query not mention, give me empty array
-
         
         origins are: {string.Join(", ", origins)}
         If user query not mention, give me empty array
 
         
-        releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY, EITHER of these only
+        releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY
+        if user mention end of the year, using some words like {string.Join(", ", endOfYearKeywords)} then take these months: 9, 10, 11, 12.
+        if user mention start of the year, using some words like {string.Join(", ", startOfYearKeywords)} then take these months: 1, 2, 3, 4.
         if user does not mention, give me empty array
         
 
@@ -404,7 +409,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
                             "items": {
                                 "type": "string"
                             }
-                        },
+                        }
                     },
                     "required": ["purposes","brands","categories","minPrice","maxPrice","isFastCharge","isGoodBatteryLife","isWideScreen","isSmallScreen",
                                  "isFoldable","minInch","maxInch","isHighResolution","operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","features",

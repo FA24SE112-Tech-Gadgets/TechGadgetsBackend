@@ -494,14 +494,14 @@ public class ProcessNaturalLanuage : ControllerBase
                     g.Category.Name == "Laptop" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()))
+                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()) || os.ToLower().Contains(sv.Value.ToLower()))
                 ));
 
                 operatingSystemPredicate = operatingSystemPredicate.Or(g =>
                     g.Category.Name == "Điện thoại" &&
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Hệ điều hành"
-                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()))
+                        && query.OperatingSystems.Any(os => sv.Value.ToLower().Contains(os.ToLower()) || os.ToLower().Contains(sv.Value.ToLower()))
                 ));
             }
 
@@ -625,7 +625,7 @@ public class ProcessNaturalLanuage : ControllerBase
                 //);
 
                 locationPredicate = locationPredicate.Or(g =>
-                    query.Locations.Any(l => g.Seller.ShopAddress.ToLower().Contains(l.ToLower()))
+                    query.Locations.Any(l => g.Seller.ShopAddress.ToLower().Contains(l.ToLower()) || l.ToLower().Contains(g.Seller.ShopAddress.ToLower()))
                 );
             }
 
@@ -644,7 +644,7 @@ public class ProcessNaturalLanuage : ControllerBase
                 originPredicate = originPredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Xuất xứ"
-                        && query.Origins.Any(o => sv.Value.ToLower().Contains(o.ToLower()))
+                        && query.Origins.Any(o => sv.Value.ToLower().Contains(o.ToLower()) || o.ToLower().Contains(sv.Value.ToLower()))
                     )
                 );
             }
@@ -655,7 +655,7 @@ public class ProcessNaturalLanuage : ControllerBase
                 releaseDatePredicate = releaseDatePredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Thời điểm ra mắt"
-                        && query.ReleaseDate.Any(r => sv.Value == r || sv.Value.Contains(r) || r.Contains(sv.Value))
+                        && query.ReleaseDate.Any(r => sv.Value.Contains(r) || r.Contains(sv.Value))
                     )
                 );
             }
