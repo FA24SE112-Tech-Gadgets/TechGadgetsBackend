@@ -18,6 +18,7 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
 {
     public new class Request : PagedRequest
     {
+        public string? Name { get; set; }
         public List<Guid>? Brands { get; set; }
         public GadgetStatus? GadgetStatus { get; set; }
     }
@@ -51,6 +52,7 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
             .Include(g => g.GadgetDiscounts)
             .Include(g => g.SpecificationValues)
             .Where(g => g.CategoryId == categoryId)
+            .Where(c => c.Name.Contains(request.Name ?? ""))
             .AsQueryable();
 
         if (request.GadgetStatus.HasValue)
