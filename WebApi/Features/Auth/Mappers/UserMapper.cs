@@ -15,6 +15,7 @@ public static class UserMapper
                 Id = user.Id,
                 Role = user.Role,
                 Status = user.Status,
+                LoginMethod = user.LoginMethod
             };
         }
         return null;
