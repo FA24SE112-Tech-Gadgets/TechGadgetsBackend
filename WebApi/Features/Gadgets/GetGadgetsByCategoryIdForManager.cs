@@ -53,6 +53,7 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
             .Include(g => g.SpecificationValues)
             .Where(g => g.CategoryId == categoryId)
             .Where(c => c.Name.Contains(request.Name ?? ""))
+            .OrderByDescending(g => g.IsForSale)
             .AsQueryable();
 
         if (request.GadgetStatus.HasValue)

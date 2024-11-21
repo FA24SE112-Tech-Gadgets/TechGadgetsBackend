@@ -42,6 +42,7 @@ public class GetGadgetByBrandId : ControllerBase
             .Include(c => c.FavoriteGadgets)
             .Include(g => g.GadgetDiscounts)
             .Where(g => g.BrandId == brandId && g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
+            .OrderByDescending(g => g.IsForSale)
             .Select(c => c.ToGadgetResponse(currentUser != null ? currentUser.Customer!.Id : null))
             .ToPagedListAsync(request);
 

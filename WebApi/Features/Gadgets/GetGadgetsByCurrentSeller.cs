@@ -72,7 +72,7 @@ public class GetGadgetsByCurrentSeller : ControllerBase
             "price" => c => c.Price,
             "createdat" => c => c.CreatedAt,
             "updatedat" => c => c.UpdatedAt,
-            _ => c => c.Id
+            _ => c => c.IsForSale
         };
     }
 }

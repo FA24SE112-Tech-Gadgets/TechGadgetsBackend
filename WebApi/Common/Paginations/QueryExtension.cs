@@ -9,8 +9,8 @@ public static class QueryableExtension
             Expression<Func<T, object>> sortExpression,
             SortDir? sortOrder) where T : class
     {
-        return sortOrder?.ToString().ToLower() == "desc"
-            ? query.OrderByDescending(sortExpression)
-            : query.OrderBy(sortExpression);
+        return sortOrder?.ToString().ToLower() == "asc"
+            ? query.OrderBy(sortExpression)
+            : query.OrderByDescending(sortExpression);
     }
 }
