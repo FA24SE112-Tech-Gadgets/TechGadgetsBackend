@@ -43,7 +43,7 @@ public class LoginUserController : ControllerBase
     [HttpPost("auth/login")]
     [Tags("Auth")]
     [SwaggerOperation(
-        Summary = "Login User", 
+        Summary = "Login User",
         Description = "This API is for user login. Note:" +
                             "<br>&nbsp; - deviceToken: Dùng để gửi notification (mỗi 1 máy chỉ có duy nhất 1 deviceToken)." +
                             "<br>&nbsp; - 1 acc thì có thể được đăng nhập bằng nhiều thiết bị (điện thoại, laptop)." +
@@ -82,6 +82,14 @@ public class LoginUserController : ControllerBase
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WEB_03)
                 .AddReason("user", "Người dùng chưa xác thực")
+                .Build();
+        }
+
+        if (user.Status == UserStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_03)
+                .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
                 .Build();
         }
 

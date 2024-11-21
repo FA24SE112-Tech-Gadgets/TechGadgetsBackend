@@ -21,7 +21,7 @@ public class LoginGoogleController : ControllerBase
     [HttpPost("auth/google/{accessToken}")]
     [Tags("Auth")]
     [SwaggerOperation(
-        Summary = "Google login user", 
+        Summary = "Google login user",
         Description = "This API is for user login with Google. Note:" +
                             "<br>&nbsp; - User bị Inactive thì vẫn Login GG vô được (Vì liên quan đến tiền trong ví)."
     )]
@@ -111,6 +111,14 @@ public class LoginGoogleController : ControllerBase
                     .FirstOrDefaultAsync();
                 if (user != null)
                 {
+                    if (user.Status == UserStatus.Inactive)
+                    {
+                        throw TechGadgetException.NewBuilder()
+                            .WithCode(TechGadgetErrorCode.WEB_03)
+                            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+                            .Build();
+                    }
+
                     if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
                     {
                         context.Devices.Add(new Device
