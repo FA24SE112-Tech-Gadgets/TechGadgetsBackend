@@ -11,8 +11,8 @@ public class TestEndpoint : ControllerBase
     [HttpPost("tests/endpoint")]
     public async Task<IActionResult> Handler(AppDbContext context)
     {
-        var gadgets = await context.Gadgets.OrderByDescending(g => g.IsForSale).Select(g => g.IsForSale).ToListAsync();
+        var totalGadgetCount = await context.Gadgets.Where(g => g.SellerId == Guid.Parse("74231b9a-985a-47db-b589-d62c4ec16041")).CountAsync();
 
-        return Ok(gadgets);
+        return Ok(totalGadgetCount);
     }
 }

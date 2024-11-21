@@ -36,22 +36,31 @@ public class GetReviewsHomePage : ControllerBase
                 .ThenInclude(sr => sr != null ? sr.Seller : null)
             .Include(soi => soi.Review)
                 .ThenInclude(r => r != null ? r.Customer : null)
+            .Include(soi => soi.SellerOrder.Order)
             .Include(soi => soi.Gadget.Category)
             .AsQueryable();
 
         query = query.Where(soi => soi.Review != null && soi.Review.Status == Data.Entities.ReviewStatus.Active)
-                     .Where(soi => soi.Review.IsPositive == true)
+                     .Where(soi => soi.Review!.IsPositive == true)
                      .OrderByDescending(soi => soi.Review!.Rating);
 
-        var reviews = await query.ToPagedListAsync(request);
+        var sellerOrderItems = await query.ToListAsync();
 
-        var reviewsResponse = new PagedList<ReviewResponse>(
-            reviews.Items.Select(soi => soi.Review!.ToReviewResponse()!).ToList(),
-            reviews.Page,
-            reviews.PageSize,
-            reviews.TotalItems
-        );
+        var page = request.Page ?? 1;
+        var pageSize = request.PageSize ?? 10;
 
-        return Ok(reviewsResponse);
+        var total = sellerOrderItems.DistinctBy(soi => soi.SellerOrder.Order.CustomerId).Count();
+
+        sellerOrderItems = sellerOrderItems.DistinctBy(soi => soi.SellerOrder.Order.CustomerId)
+                                             .Skip((page - 1) * pageSize)
+                                             .Take(pageSize)
+                                             .ToList();
+
+        var response = new PagedList<ReviewResponse>(
+                sellerOrderItems.Select(soi => soi.Review!.ToReviewResponse()!).ToList(),
+                page, pageSize, total
+            );
+
+        return Ok(response);
     }
 }

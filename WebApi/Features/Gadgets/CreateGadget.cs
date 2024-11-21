@@ -189,6 +189,16 @@ public class CreateGadget : ControllerBase
                         .Build();
         }
 
+        var totalGadgetCount = await context.Gadgets.Where(g => g.SellerId == user.Id).CountAsync();
+
+        if (totalGadgetCount >= 200)
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", "Số lượng sản phẩm tối đa được tạo là 200.")
+                        .Build();
+        }
+
         foreach (var specValue in request.SpecificationValues)
         {
             var specKeyValid = await context.SpecificationKeys
