@@ -45,7 +45,7 @@ public class GetSuggestedGadgetsByGadgetId : ControllerBase
                                 .ThenInclude(s => s.User)
                             .Include(c => c.FavoriteGadgets)
                             .Include(g => g.GadgetDiscounts)
-                            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.Id != gadgetId
+                            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.Id != gadgetId && g.IsForSale == true
                                         && g.CategoryId == sourceGadget.CategoryId)
                             .OrderByDescending(g => 1 - g.Vector!.CosineDistance(sourceGadget.Vector!))
                             .AsQueryable();

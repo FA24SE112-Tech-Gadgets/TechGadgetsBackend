@@ -61,7 +61,7 @@ public class GetHotGadgets : ControllerBase
             .Include(g => g.GadgetDiscounts)
             .Include(g => g.SellerOrderItems)
                 .ThenInclude(soi => soi.SellerOrder)
-            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.CategoryId == request.CategoryId)
+            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.CategoryId == request.CategoryId && g.IsForSale == true)
             .OrderByDescending(g => g.SellerOrderItems
                 .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
                 .Sum(soi => soi.GadgetQuantity))

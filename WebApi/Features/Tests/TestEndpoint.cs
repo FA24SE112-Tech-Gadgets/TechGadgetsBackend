@@ -11,8 +11,8 @@ public class TestEndpoint : ControllerBase
     [HttpPost("tests/endpoint")]
     public async Task<IActionResult> Handler(AppDbContext context)
     {
-        var gadget = await context.Gadgets.FirstOrDefaultAsync();
+        var gadgets = await context.Gadgets.OrderByDescending(g => g.IsForSale).Select(g => g.IsForSale).ToListAsync();
 
-        return Ok(gadget!.NameVector);
+        return Ok(gadgets);
     }
 }
