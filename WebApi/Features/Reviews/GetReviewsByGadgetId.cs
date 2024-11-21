@@ -29,6 +29,8 @@ public class GetReviewsByGadgetId : ControllerBase
         DESC, ASC
     }
 
+    public class RequestValidator : PagedRequestValidator<Request>;
+
     [HttpGet("reviews/gadget/{gadgetId}")]
     [Tags("Reviews")]
     [SwaggerOperation(

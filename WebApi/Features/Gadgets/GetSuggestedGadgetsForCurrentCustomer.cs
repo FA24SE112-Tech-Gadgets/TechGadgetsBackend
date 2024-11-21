@@ -63,7 +63,7 @@ public class GetSuggestedGadgetsForCurrentCustomer : ControllerBase
                                 .ThenInclude(s => s.User)
                             .Include(c => c.FavoriteGadgets)
                             .Include(g => g.GadgetDiscounts)
-                            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
+                            .Where(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active && g.IsForSale == true)
                             .OrderByDescending(g => finalVector.Length != 0 ? 1 - g.Vector!.CosineDistance(new Vector(finalVector)) : 0)
                             .AsQueryable();
 

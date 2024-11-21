@@ -58,6 +58,7 @@ public class GetGadgetsByCategoryIdWithFilter : ControllerBase
             .Include(g => g.GadgetDiscounts)
             .Include(g => g.SpecificationValues)
             .Where(g => g.CategoryId == categoryId && g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
+            .OrderByDescending(g => g.IsForSale)
             .AsQueryable();
 
         if (request.GadgetStatus.HasValue)
