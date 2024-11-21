@@ -82,7 +82,7 @@ public class GetGadgetsBySeller : ControllerBase
             "price" => c => c.Price,
             "createdat" => c => c.CreatedAt,
             "updatedat" => c => c.UpdatedAt,
-            _ => c => c.IsForSale
+            _ => c => c.Id
         };
     }
 }

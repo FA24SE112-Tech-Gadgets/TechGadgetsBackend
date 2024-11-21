@@ -33,6 +33,8 @@ public class GetGadgetsReviews : ControllerBase
         NotReview, Reviewed, NotReply, Replied
     }
 
+    public class RequestValidator : PagedRequestValidator<Request>;
+
     [HttpGet("reviews/seller-order-items")]
     [Tags("Reviews")]
     [SwaggerOperation(
