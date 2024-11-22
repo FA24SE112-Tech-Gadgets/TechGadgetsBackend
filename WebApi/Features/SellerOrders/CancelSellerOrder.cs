@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
@@ -13,6 +14,7 @@ namespace WebApi.Features.SellerOrders;
 [ApiController]
 [JwtValidation]
 [RolesFilter(Role.Customer, Role.Seller)]
+[RequestValidation<Request>]
 public class CancelSellerOrder : ControllerBase
 {
     public new class Request
@@ -20,10 +22,21 @@ public class CancelSellerOrder : ControllerBase
         public string? Reason { get; set; } = default!;
     }
 
+    public class Validator : AbstractValidator<Request>
+    {
+        public Validator()
+        {
+            RuleFor(r => r.Reason)
+                .Cascade(CascadeMode.Stop)
+                .NotNull().WithMessage("Lý do không được để trống.")
+                .NotEmpty().WithMessage("Lý do không được để trống.");
+        }
+    }
+
     [HttpPut("seller-order/{sellerOrderId}/cancel")]
     [Tags("Seller Orders")]
     [SwaggerOperation(
-        Summary = "Cancel Selelr Order By SellerOrderId",
+        Summary = "Cancel Seller Order By SellerOrderId",
         Description = "API is for cancel seller order by sellerOrderId." +
                             "<br>&nbsp; - Customer chỉ được cancel sellerOrder trước khi Seller confirm" +
                             "<br>&nbsp; - Seller và Customer không thể cancel sellerOrder khi đơn đã hoàn thành." +
