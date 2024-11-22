@@ -57,9 +57,15 @@ public class GetNumberOfSellerOrdersBySeller : ControllerBase
                                                 && soi.SellerOrder.UpdatedAt <= DateTime.SpecifyKind(request.End!.Value, DateTimeKind.Utc))
                                     .CountAsync();
 
+        var total = await context.SellerOrderItems
+                                    .Where(soi => soi.SellerOrder.SellerId == currentUser!.Seller!.Id)
+                                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+                                    .CountAsync();
+
         return Ok(new
         {
-            numberOfSellerOrders = response
+            numberOfSellerOrders = response,
+            totalOfSellerOrders = total,
         });
     }
 }

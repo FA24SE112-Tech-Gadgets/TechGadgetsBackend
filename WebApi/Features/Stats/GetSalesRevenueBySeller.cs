@@ -61,9 +61,19 @@ public class GetSalesRevenueBySeller : ControllerBase
                                     })
                                     .SumAsync(s => s.Total);
 
+        var total = await context.SellerOrderItems
+                                     .Where(soi => soi.SellerOrder.SellerId == currentUser!.Seller!.Id)
+                                     .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+                                     .Select(s => new
+                                     {
+                                         Total = s.GadgetQuantity * s.GadgetPrice * (1 - (s.GadgetDiscount != null ? s.GadgetDiscount.DiscountPercentage / 100.0 : 0))
+                                     })
+                                     .SumAsync(s => s.Total);
+
         return Ok(new
         {
-            salesRevenue = response
+            salesRevenue = response,
+            totalRevenue = total,
         });
     }
 }
