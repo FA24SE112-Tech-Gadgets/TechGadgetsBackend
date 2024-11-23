@@ -4,7 +4,8 @@ public class KeywordHistory
 {
     public Guid Id { get; set; }
     public string Keyword { get; set; } = default!;
-    public Guid CustomerId { get; set; }
+    public Guid UserId { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public Customer Customer { get; set; } = default!;
+    public User User { get; set; } = default!;
 }
