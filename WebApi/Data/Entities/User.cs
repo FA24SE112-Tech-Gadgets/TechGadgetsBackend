@@ -9,6 +9,7 @@ public class User
     public LoginMethod LoginMethod { get; set; }
     public UserStatus Status { get; set; }
 
+    public ICollection<KeywordHistory> KeywordHistories { get; set; } = [];
     public Seller? Seller { get; set; }
     public Customer? Customer { get; set; }
     public Manager? Manager { get; set; }
