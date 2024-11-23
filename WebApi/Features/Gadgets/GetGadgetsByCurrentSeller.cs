@@ -61,6 +61,25 @@ public class GetGadgetsByCurrentSeller : ControllerBase
             .Select(g => g.ToGadgetRelatedToSellerResponse())
             .ToPagedListAsync(request);
 
+        if (user?.Id != null && !string.IsNullOrEmpty(request.Name))
+        {
+            var latestKeywordHistory = await context.KeywordHistories
+                                            .OrderByDescending(kh => kh.CreatedAt)
+                                            .FirstOrDefaultAsync();
+
+            if (latestKeywordHistory == null || latestKeywordHistory.Keyword != request.Name)
+            {
+                context.KeywordHistories.Add(new KeywordHistory
+                {
+                    Keyword = request.Name,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                });
+
+                await context.SaveChangesAsync();
+            }
+        }
+
         return Ok(response);
     }
 

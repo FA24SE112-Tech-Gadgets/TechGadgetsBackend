@@ -8,6 +8,7 @@ using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Gadgets.Mappers;
 using WebApi.Features.Gadgets.Models;
+using WebApi.Services.Auth;
 
 namespace WebApi.Features.Gadgets;
 
@@ -35,7 +36,7 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid categoryId, AppDbContext context)
+    public async Task<IActionResult> Handler([FromQuery] Request request, [FromRoute] Guid categoryId, AppDbContext context, CurrentUserService currentUserService)
     {
         if (!await context.Categories.AnyAsync(b => b.Id == categoryId))
         {
@@ -79,6 +80,28 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
             pageSize,
             gadgetResponse!.Count
         );
+
+        var user = await currentUserService.GetCurrentUser();
+
+        if (user?.Id != null && !string.IsNullOrEmpty(request.Name))
+        {
+            var latestKeywordHistory = await context.KeywordHistories
+                                            .OrderByDescending(kh => kh.CreatedAt)
+                                            .FirstOrDefaultAsync();
+
+            if (latestKeywordHistory == null || latestKeywordHistory.Keyword != request.Name)
+            {
+                context.KeywordHistories.Add(new KeywordHistory
+                {
+                    Keyword = request.Name,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow,
+                });
+
+                await context.SaveChangesAsync();
+            }
+        }
+
         return Ok(response);
 
     }

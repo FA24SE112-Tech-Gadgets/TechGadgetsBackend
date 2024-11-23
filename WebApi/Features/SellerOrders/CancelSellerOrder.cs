@@ -24,12 +24,31 @@ public class CancelSellerOrder : ControllerBase
 
     public class Validator : AbstractValidator<Request>
     {
-        public Validator()
+        public Validator(CurrentUserService currentUserService)
         {
             RuleFor(r => r.Reason)
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("Lý do không được để trống.")
-                .NotEmpty().WithMessage("Lý do không được để trống.");
+                .DependentRules(() =>
+                {
+                    RuleFor(r => r.Reason)
+                        .Cascade(CascadeMode.Stop)
+                        .MustAsync(async (request, reason, cancellationToken) =>
+                        {
+                            var currentUser = await currentUserService.GetCurrentUser();
+                            if (currentUser!.Role == Role.Customer)
+                            {
+                                return true;
+                            }
+                            else if (currentUser.Role == Role.Seller)
+                            {
+                                return !string.IsNullOrEmpty(request.Reason);
+                            }
+
+                            return false;
+                        })
+                        .WithMessage("Lý do không được để trống.");
+                });
         }
     }
 

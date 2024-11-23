@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241122131755_ModifyKeywordHistory")]
+    partial class ModifyKeywordHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Admins", (string)null);
+                    b.ToTable("Admins");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.BillingMail", b =>
@@ -62,7 +65,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("BillingMails", (string)null);
+                    b.ToTable("BillingMails");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.BillingMailApplication", b =>
@@ -82,7 +85,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerApplicationId");
 
-                    b.ToTable("BillingMailApplications", (string)null);
+                    b.ToTable("BillingMailApplications");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Brand", b =>
@@ -101,7 +104,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Cart", b =>
@@ -118,7 +121,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("CustomerId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.CartGadget", b =>
@@ -136,7 +139,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("CartGadgets", (string)null);
+                    b.ToTable("CartGadgets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Category", b =>
@@ -151,7 +154,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.CategoryBrand", b =>
@@ -166,7 +169,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("CategoryBrands", (string)null);
+                    b.ToTable("CategoryBrands");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Customer", b =>
@@ -205,7 +208,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.CustomerInformation", b =>
@@ -236,7 +239,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("CustomerInformation", (string)null);
+                    b.ToTable("CustomerInformation");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Device", b =>
@@ -256,7 +259,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Devices", (string)null);
+                    b.ToTable("Devices");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.FavoriteGadget", b =>
@@ -274,7 +277,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("FavoriteGadgets", (string)null);
+                    b.ToTable("FavoriteGadgets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Gadget", b =>
@@ -342,7 +345,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Gadgets", (string)null);
+                    b.ToTable("Gadgets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetDescription", b =>
@@ -369,7 +372,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("GadgetDescriptions", (string)null);
+                    b.ToTable("GadgetDescriptions");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetDiscount", b =>
@@ -398,7 +401,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("GadgetDiscounts", (string)null);
+                    b.ToTable("GadgetDiscounts");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetFilter", b =>
@@ -430,7 +433,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SpecificationUnitId");
 
-                    b.ToTable("GadgetFilters", (string)null);
+                    b.ToTable("GadgetFilters");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetHistory", b =>
@@ -454,7 +457,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("GadgetHistories", (string)null);
+                    b.ToTable("GadgetHistories");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.GadgetImage", b =>
@@ -474,7 +477,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("GadgetId");
 
-                    b.ToTable("GadgetImages", (string)null);
+                    b.ToTable("GadgetImages");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.KeywordHistory", b =>
@@ -482,9 +485,6 @@ namespace WebApi.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Keyword")
                         .IsRequired()
@@ -497,7 +497,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("KeywordHistories", (string)null);
+                    b.ToTable("KeywordHistories");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Manager", b =>
@@ -518,7 +518,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Managers", (string)null);
+                    b.ToTable("Managers");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Notification", b =>
@@ -557,7 +557,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Order", b =>
@@ -573,7 +573,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Review", b =>
@@ -615,7 +615,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("SellerOrderItemId")
                         .IsUnique();
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Seller", b =>
@@ -662,7 +662,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Sellers", (string)null);
+                    b.ToTable("Sellers");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerApplication", b =>
@@ -714,7 +714,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SellerApplications", (string)null);
+                    b.ToTable("SellerApplications");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerInformation", b =>
@@ -745,7 +745,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("SellerInformation", (string)null);
+                    b.ToTable("SellerInformation");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerOrder", b =>
@@ -786,7 +786,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerInformationId");
 
-                    b.ToTable("SellerOrders", (string)null);
+                    b.ToTable("SellerOrders");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerOrderItem", b =>
@@ -818,7 +818,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerOrderId");
 
-                    b.ToTable("SellerOrderItems", (string)null);
+                    b.ToTable("SellerOrderItems");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SellerReply", b =>
@@ -854,7 +854,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("SellerReplies", (string)null);
+                    b.ToTable("SellerReplies");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationKey", b =>
@@ -874,7 +874,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("SpecificationKeys", (string)null);
+                    b.ToTable("SpecificationKeys");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationUnit", b =>
@@ -894,7 +894,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SpecificationKeyId");
 
-                    b.ToTable("SpecificationUnits", (string)null);
+                    b.ToTable("SpecificationUnits");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SpecificationValue", b =>
@@ -928,7 +928,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("SpecificationUnitId");
 
-                    b.ToTable("SpecificationValues", (string)null);
+                    b.ToTable("SpecificationValues");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SystemSellerOrderTracking", b =>
@@ -970,7 +970,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("ToUserId");
 
-                    b.ToTable("SystemSellerOrderTrackings", (string)null);
+                    b.ToTable("SystemSellerOrderTrackings");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.SystemWallet", b =>
@@ -984,7 +984,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SystemWallets", (string)null);
+                    b.ToTable("SystemWallets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.User", b =>
@@ -1014,7 +1014,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.UserVerify", b =>
@@ -1041,7 +1041,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserVerifies", (string)null);
+                    b.ToTable("UserVerifies");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Wallet", b =>
@@ -1061,7 +1061,7 @@ namespace WebApi.Data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Wallets", (string)null);
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.WalletTracking", b =>
@@ -1121,7 +1121,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("WalletId");
 
-                    b.ToTable("WalletTrackings", (string)null);
+                    b.ToTable("WalletTrackings");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Admin", b =>
