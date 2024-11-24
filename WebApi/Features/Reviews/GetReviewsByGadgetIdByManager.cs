@@ -73,6 +73,8 @@ public class GetReviewsByGadgetIdByManager : ControllerBase
             .Include(soi => soi.Gadget.Category)
             .AsQueryable();
 
+        query = query.Where(soi => soi.Review != null);
+
         if (request.IsPositive != null)
         {
             query = query.Where(soi => soi.Review!.IsPositive == request.IsPositive);
