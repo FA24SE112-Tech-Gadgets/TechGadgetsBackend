@@ -1,16 +1,18 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Cryptography;
 using WebApi.Common.Exceptions;
-using WebApi.Data;
-using WebApi.Services.VerifyCode;
-using Microsoft.EntityFrameworkCore;
 using WebApi.Common.Filters;
+using WebApi.Data;
+using WebApi.Data.Entities;
+using WebApi.Services.VerifyCode;
 
 namespace WebApi.Features.Auth;
 
 [ApiController]
+[RolesFilter(Role.Customer, Role.Seller)]
 [RequestValidation<Request>]
 public class ForgotUserPassword : ControllerBase
 {
@@ -46,7 +48,7 @@ public class ForgotUserPassword : ControllerBase
     [HttpPost("auth/forgot-password")]
     [Tags("Auth")]
     [SwaggerOperation(
-        Summary = "Forgot User Password", 
+        Summary = "Forgot User Password",
         Description = "This API is for users that forgot password to change their password. Note:" +
                             "<br>&nbsp; - User bị Inactive thì vẫn forgot password được (Vì liên quan đến tiền trong ví)."
     )]

@@ -5,14 +5,17 @@ using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Common.Paginations;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Features.Reviews.Mappers;
 using WebApi.Features.Reviews.Models;
 
 namespace WebApi.Features.Reviews;
 
 [ApiController]
+[JwtValidation]
+[RolesFilter(Role.Manager)]
 [RequestValidation<Request>]
-public class GetReviewsByGadgetId : ControllerBase
+public class GetReviewsByGadgetIdByManager : ControllerBase
 {
     public new class Request : PagedRequest
     {
@@ -33,11 +36,11 @@ public class GetReviewsByGadgetId : ControllerBase
 
     public class RequestValidator : PagedRequestValidator<Request>;
 
-    [HttpGet("reviews/gadget/{gadgetId}")]
+    [HttpGet("reviews/gadget/{gadgetId}/manager")]
     [Tags("Reviews")]
     [SwaggerOperation(
-        Summary = "Get Reviews By GadgetId",
-        Description = "API is for get list of reviews by gadgetId. Note:" +
+        Summary = "Get Reviews By GadgetId By Manager",
+        Description = "API is for get list of reviews by gadgetId by manager. Note:" +
                             "<br>&nbsp; - Có thể filter theo mới nhất/cũ nhất." +
                             "<br>&nbsp; - Có thể filter theo đánh giá tích cực/tiêu cực." +
                             "<br>&nbsp; - Có thể filter theo đánh giá cao/thấp." +
@@ -69,9 +72,6 @@ public class GetReviewsByGadgetId : ControllerBase
                 .ThenInclude(r => r != null ? r.Customer : null)
             .Include(soi => soi.Gadget.Category)
             .AsQueryable();
-
-        //Chỉ lấy những item nào có Review va review status = Active
-        query = query.Where(soi => soi.Review != null && soi.Review.Status == Data.Entities.ReviewStatus.Active);
 
         if (request.IsPositive != null)
         {
