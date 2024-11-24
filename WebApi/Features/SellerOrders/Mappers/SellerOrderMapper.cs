@@ -93,7 +93,8 @@ public static class SellerOrderMapper
             int totalAmount = 0;
             foreach (var soi in sellerOrder.SellerOrderItems)
             {
-                totalAmount += (soi.GadgetPrice * soi.GadgetQuantity);
+                int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
+                totalAmount += (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0)) * soi.GadgetQuantity;
             }
             return new SellerOrderResponse
             {
