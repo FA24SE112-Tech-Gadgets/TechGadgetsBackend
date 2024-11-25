@@ -55,8 +55,10 @@ public class GetGadgetsByCurrentSeller : ControllerBase
 
         query = query.OrderByColumn(GetSortProperty(request), request.SortOrder);
 
+        request.Name = request.Name?.ToLower();
+
         var response = await query
-            .Where(g => g.Name.Contains(request.Name ?? ""))
+            .Where(g => g.Name.ToLower().Contains(request.Name ?? ""))
             .Where(g => g.SellerId == user!.Seller!.Id && g.CategoryId == categoryId)
             .Select(g => g.ToGadgetRelatedToSellerResponse())
             .ToPagedListAsync(request);

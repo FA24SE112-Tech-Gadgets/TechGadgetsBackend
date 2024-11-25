@@ -47,14 +47,14 @@ public class GetNumberOfSellerOrdersByManager : ControllerBase
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Handler([FromQuery] Request request, AppDbContext context)
     {
-        var response = await context.SellerOrderItems
-                                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
-                                    .Where(soi => soi.SellerOrder.UpdatedAt >= DateTime.SpecifyKind(request.Start!.Value, DateTimeKind.Utc)
-                                                && soi.SellerOrder.UpdatedAt <= DateTime.SpecifyKind(request.End!.Value, DateTimeKind.Utc))
+        var response = await context.SellerOrders
+                                    .Where(so => so.Status == SellerOrderStatus.Success)
+                                    .Where(so => so.UpdatedAt >= DateTime.SpecifyKind(request.Start!.Value, DateTimeKind.Utc)
+                                                && so.UpdatedAt <= DateTime.SpecifyKind(request.End!.Value, DateTimeKind.Utc))
                                     .CountAsync();
 
-        var total = await context.SellerOrderItems
-                                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
+        var total = await context.SellerOrders
+                                    .Where(so => so.Status == SellerOrderStatus.Success)
                                     .CountAsync();
 
         return Ok(new

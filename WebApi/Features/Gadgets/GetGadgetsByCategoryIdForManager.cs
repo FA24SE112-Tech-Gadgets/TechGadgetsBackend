@@ -46,6 +46,8 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
                         .Build();
         }
 
+        request.Name = request.Name?.ToLower();
+
         var query = context.Gadgets
             .Include(g => g.Seller)
                 .ThenInclude(s => s.User)
@@ -53,7 +55,7 @@ public class GetGadgetsByCategoryIdForManager : ControllerBase
             .Include(g => g.GadgetDiscounts)
             .Include(g => g.SpecificationValues)
             .Where(g => g.CategoryId == categoryId)
-            .Where(c => c.Name.Contains(request.Name ?? ""))
+            .Where(c => c.Name.ToLower().Contains(request.Name ?? ""))
             .AsQueryable();
 
         if (request.GadgetStatus.HasValue)
