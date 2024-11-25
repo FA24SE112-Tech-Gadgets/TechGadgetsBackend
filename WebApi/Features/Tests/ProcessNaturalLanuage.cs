@@ -784,15 +784,6 @@ public class ProcessNaturalLanguage : ControllerBase
                                              );
                 }
 
-                if (new List<string> { "Tai nghe gaming" }.Contains(categoryType))
-                {
-                    categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Tai nghe" &&
-                                                (g.Name.ToLower().Contains("gaming")
-                                                || g.GadgetDescriptions.Any(desc => desc.Value.ToLower().Contains("gaming"))
-                                                )
-                                             );
-                }
-
                 if (new List<string> { "Loa Bluetooth" }.Contains(categoryType))
                 {
                     categoryTypePredicate = categoryTypePredicate.And(g => g.Category.Name == "Loa" &&
