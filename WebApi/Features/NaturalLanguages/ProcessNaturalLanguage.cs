@@ -573,10 +573,14 @@ public class ProcessNaturalLanguage : ControllerBase
             var conditionPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Conditions.Any())
             {
-                var conditionVectors = await embeddingService.GetEmbeddings(query.Conditions);
+                //var conditionVectors = await embeddingService.GetEmbeddings(query.Conditions);
 
-                featurePredicate = featurePredicate.Or(g =>
-                    conditionVectors.Any(vector => 1 - g.ConditionVector.CosineDistance(vector) >= 0.5)
+                //featurePredicate = featurePredicate.Or(g =>
+                //    conditionVectors.Any(vector => 1 - g.ConditionVector.CosineDistance(vector) >= 0.5)
+                //);
+
+                conditionPredicate = conditionPredicate.Or(g =>
+                    query.Conditions.Any(c => g.Condition.ToLower().Contains(c.ToLower()) || c.ToLower().Contains(g.Condition.ToLower()))
                 );
             }
 
@@ -862,6 +866,7 @@ public class ProcessNaturalLanguage : ControllerBase
                                 .And(storageCapacityLaptopPredicate)
                                 .And(ramPredicate)
                                 .And(featurePredicate)
+                                .And(conditionPredicate)
                                 .And(segmentationPredicate)
                                 .And(locationPredicate)
                                 .And(originPredicate)

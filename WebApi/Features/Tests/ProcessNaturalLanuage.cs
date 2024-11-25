@@ -18,7 +18,7 @@ namespace WebApi.Features.Tests;
 
 [ApiController]
 [RequestValidation<Request>]
-public class ProcessNaturalLanuage : ControllerBase
+public class ProcessNaturalLanguage : ControllerBase
 {
     public new class Request
     {
@@ -34,7 +34,7 @@ public class ProcessNaturalLanuage : ControllerBase
         }
     }
 
-    [Tags("Tests")]
+    [Tags("Natural Languages")]
     [HttpPost("tests/natural-languages/search")]
     [SwaggerOperation(Summary = "Search With Natural Language",
         Description = """
@@ -574,10 +574,14 @@ public class ProcessNaturalLanuage : ControllerBase
             var conditionPredicate = PredicateBuilder.New<Gadget>(true);
             if (query.Conditions.Any())
             {
-                var conditionVectors = await embeddingService.GetEmbeddings(query.Conditions);
+                //var conditionVectors = await embeddingService.GetEmbeddings(query.Conditions);
 
-                featurePredicate = featurePredicate.Or(g =>
-                    conditionVectors.Any(vector => 1 - g.ConditionVector.CosineDistance(vector) >= 0.5)
+                //featurePredicate = featurePredicate.Or(g =>
+                //    conditionVectors.Any(vector => 1 - g.ConditionVector.CosineDistance(vector) >= 0.5)
+                //);
+
+                conditionPredicate = conditionPredicate.Or(g =>
+                    query.Conditions.Any(c => g.Condition.ToLower().Contains(c.ToLower()) || c.ToLower().Contains(g.Condition.ToLower()))
                 );
             }
 
@@ -863,6 +867,7 @@ public class ProcessNaturalLanuage : ControllerBase
                                 .And(storageCapacityLaptopPredicate)
                                 .And(ramPredicate)
                                 .And(featurePredicate)
+                                .And(conditionPredicate)
                                 .And(segmentationPredicate)
                                 .And(locationPredicate)
                                 .And(originPredicate)
@@ -878,21 +883,6 @@ public class ProcessNaturalLanuage : ControllerBase
 
             var input = request.Input.Length > 512 ? request.Input[0..512] : request.Input;
             var inputVector = await embeddingService.GetEmbeddingOpenAI(input);
-
-            //var gadgets = await context.Gadgets.AsExpandable()
-            //                            .Where(outerPredicate)
-            //                            .OrderByDescending(g => query.IsBestGadget
-            //                                ? g.SellerOrderItems
-            //                                    .Where(soi => soi.SellerOrder.Status == SellerOrderStatus.Success)
-            //                                    .Sum(soi => soi.GadgetQuantity)
-            //                                : 1 - g.Vector!.CosineDistance(inputVector))
-            //                            .Select(g => new
-            //                            {
-            //                                g.Id,
-            //                                g.Name,
-            //                            })
-            //                            .Take(500)
-            //                            .ToListAsync();
 
             var gadgets = await context.Gadgets.AsExpandable()
                                         .Include(c => c.Seller)

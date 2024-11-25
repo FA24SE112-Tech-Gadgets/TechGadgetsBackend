@@ -174,7 +174,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         If user query not mention, give me empty array
 
 
-        conditions are: {string.Join(", ", conditions)}
+        conditions are the condition/state of gadgets like new, old, used,...
         If user query not mention, give me empty array
 
 
@@ -182,7 +182,11 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         Only give me items in the array above, if user query not mention anything in the array above, give me empty array
 
         
-        origins are: {string.Join(", ", origins)}
+        locations are the place gadgets being sold
+        If user query not mention, give me empty array
+
+
+        origins are the place gadgets being made/manufactured
         If user query not mention, give me empty array
 
         
