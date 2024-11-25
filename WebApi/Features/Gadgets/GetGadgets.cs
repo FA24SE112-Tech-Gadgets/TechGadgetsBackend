@@ -50,8 +50,10 @@ public class GetGadgets : ControllerBase
 
         query = query.OrderByColumn(GetSortProperty(request), request.SortOrder);
 
+        request.Name = request.Name?.ToLower();
+
         var response = await query
-                            .Where(c => c.Name.Contains(request.Name ?? ""))
+                            .Where(c => c.Name.ToLower().Contains(request.Name ?? ""))
                             .Select(c => c.ToGadgetResponse(customerId))
                             .ToPagedListAsync(request);
 
