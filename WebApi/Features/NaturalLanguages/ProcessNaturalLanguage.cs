@@ -68,6 +68,7 @@ public class ProcessNaturalLanguage : ControllerBase
         {
             var pricePredicate = PredicateBuilder.New<Seller>(true);
             pricePredicate = pricePredicate.Or(s =>
+                s.Gadgets.Count == 0 ||
                 s.Gadgets.Any(g =>
                      effectivePrice.Invoke(g) >= query.MinPrice
                      && effectivePrice.Invoke(g) <= query.MaxPrice
