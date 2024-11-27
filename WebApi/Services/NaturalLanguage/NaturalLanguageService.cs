@@ -196,7 +196,7 @@ public class NaturalLanguageService(IOptions<OpenAIClientSettings> options, AppD
         if user does not mention, give me empty array
         
 
-        colors are: {string.Join(", ", colors)}
+        colors are the colors of gadgets
         If user query not mention, give me empty array            
 
 
