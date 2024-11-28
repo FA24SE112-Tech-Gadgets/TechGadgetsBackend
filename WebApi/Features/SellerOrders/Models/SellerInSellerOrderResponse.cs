@@ -8,7 +8,7 @@ public class SellerInSellerOrderResponse
     public CustomerInfoResponse CustomerInfo { get; set; } = default!;
     public SellerInfoResponse SellerInfo { get; set; } = default!;
     public int TotalQuantity { get; set; }
-    public int TotalAmount { get; set; }
+    public long TotalAmount { get; set; }
     public Guid SellerOrderId { get; set; }
     public string PaymentMethod { get; set; } = "Ví điện tử TechGadget";
     public DateTime SellerOrderCreatedAt { get; set; }
