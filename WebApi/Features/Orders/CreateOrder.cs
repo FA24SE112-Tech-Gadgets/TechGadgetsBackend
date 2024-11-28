@@ -111,7 +111,7 @@ public class CreateOrder : ControllerBase
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
         var systemWallet = await context.SystemWallets.SingleOrDefaultAsync();
 
-        int totalAmount = 0;
+        long totalAmount = 0;
 
         Guid orderId = Guid.NewGuid();
         Order order = new Order()
@@ -195,7 +195,7 @@ public class CreateOrder : ControllerBase
                     //Tính tổng giá tiền order
                     int discountPercentage = cartGadget.Gadget.GadgetDiscounts
                         .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow)?.DiscountPercentage ?? 0;
-                    totalAmount += cartGadget.Quantity * (int)Math.Ceiling(cartGadget.Gadget.Price * (1 - discountPercentage / 100.0));
+                    totalAmount += cartGadget.Quantity * (long)Math.Ceiling(cartGadget.Gadget.Price * (1 - discountPercentage / 100.0));
 
                     var gadgetDiscount = cartGadget.Gadget.GadgetDiscounts
                         .FirstOrDefault(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate >= DateTime.UtcNow);
