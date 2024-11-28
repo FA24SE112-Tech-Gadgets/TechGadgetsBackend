@@ -122,7 +122,7 @@ public class CancelSellerOrder : ControllerBase
 
         var customerWallet = await context.Wallets.FirstOrDefaultAsync(w => w.Id == sellerOrder.Order.WalletTracking.WalletId);
 
-        int totalAmount = 0;
+        long totalAmount = 0;
         DateTime createdAt = DateTime.UtcNow;
         WalletTracking walletTracking = new WalletTracking()
         {
@@ -156,7 +156,7 @@ public class CancelSellerOrder : ControllerBase
         foreach (var soi in selelrOrderItems)
         {
             int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
-            totalAmount += soi.GadgetQuantity * (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
+            totalAmount += soi.GadgetQuantity * (long)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
             soi.Gadget.Quantity += soi.GadgetQuantity;
         }
 

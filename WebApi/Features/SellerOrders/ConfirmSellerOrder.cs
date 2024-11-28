@@ -81,7 +81,7 @@ public class ConfirmSellerOrder : ControllerBase
 
         var userWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == currentUser!.Id);
 
-        int totalAmount = 0;
+        long totalAmount = 0;
         DateTime createdAt = DateTime.UtcNow;
         WalletTracking walletTracking = new WalletTracking()
         {
@@ -98,7 +98,7 @@ public class ConfirmSellerOrder : ControllerBase
         foreach (var soi in selelrOrderItems)
         {
             int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
-            totalAmount += soi.GadgetQuantity * (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
+            totalAmount += soi.GadgetQuantity * (long)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0));
         }
 
         walletTracking.Amount = totalAmount;
