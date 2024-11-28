@@ -118,12 +118,22 @@ public class GetListSellerOrders : ControllerBase
                 var sellerInfo = so.SellerInformation;
                 var csoir = so.ToCustomerSellerOrderItemResponse()!;
                 csoir.SellerInfo = sellerInfo!.ToSellerInfoResponse()!;
-                int totalAmount = 0;
-                foreach (var g in csoir.Gadgets)
+                long totalAmount = 0;
+                long totalDiscount = 0;
+                int totalQuantity = 0;
+                foreach (var soi in so.SellerOrderItems)
                 {
-                    totalAmount += (g.DiscountPrice * g.Quantity);
+                    int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
+                    totalDiscount += (long)Math.Ceiling(soi.GadgetPrice * discountPercentage / 100.0) * soi.GadgetQuantity;
+                    totalAmount += (long)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0)) * soi.GadgetQuantity;
+                    totalQuantity += soi.GadgetQuantity;
                 }
+
                 csoir.Amount = totalAmount;
+                csoir.DiscountAmount = totalDiscount;
+                csoir.BeforeAppliedDiscountAmount = totalAmount + totalDiscount;
+                csoir.TotalQuantity = totalQuantity;
+
                 customerSellerOrderItemResponses.Add(csoir);
             }
             var orderDetailsResponseList = new PagedList<CustomerSellerOrderItemResponse>(

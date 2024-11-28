@@ -90,17 +90,24 @@ public static class SellerOrderMapper
     {
         if (sellerOrder != null)
         {
-            int totalAmount = 0;
+            long totalAmount = 0;
+            long totalDiscount = 0;
+            int totalQuantity = 0;
             foreach (var soi in sellerOrder.SellerOrderItems)
             {
                 int discountPercentage = soi.GadgetDiscount != null ? soi.GadgetDiscount.DiscountPercentage : 0;
-                totalAmount += (int)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0)) * soi.GadgetQuantity;
+                totalDiscount += (long)Math.Ceiling(soi.GadgetPrice * discountPercentage / 100.0) * soi.GadgetQuantity;
+                totalAmount += (long)Math.Ceiling(soi.GadgetPrice * (1 - discountPercentage / 100.0)) * soi.GadgetQuantity;
+                totalQuantity += soi.GadgetQuantity;
             }
             return new SellerOrderResponse
             {
                 Id = sellerOrder.Id,
                 Customer = sellerOrder.CustomerInformation.ToCustomerInfoResponse()!,
                 Amount = totalAmount,
+                DiscountAmount = totalDiscount,
+                BeforeAppliedDiscountAmount = totalAmount + totalDiscount,
+                TotalQuantity = totalQuantity,
                 Status = sellerOrder.Status,
                 CreatedAt = sellerOrder.CreatedAt,
             };
