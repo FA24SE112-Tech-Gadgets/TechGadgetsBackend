@@ -108,6 +108,7 @@ public class CreateWalletDeposit : ControllerBase
             WalletId = userWallet!.Id,
             PaymentMethod = request.PaymentMethod,
             Amount = request.Amount,
+            BalanceBeforeChange = userWallet.Amount,
             Type = WalletTrackingType.Deposit,
             Status = WalletTrackingStatus.Pending,
             CreatedAt = createdAt,

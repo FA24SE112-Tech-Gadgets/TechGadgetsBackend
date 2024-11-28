@@ -14,6 +14,7 @@ public static class WalletTrackingMapper
                 Id = walletTracking.Id,
                 PaymentMethod = walletTracking.PaymentMethod,
                 Amount = walletTracking.Amount,
+                BalanceBeforeChange = walletTracking.BalanceBeforeChange,
                 Type = walletTracking.Type,
                 Status = walletTracking.Status,
                 OrderId = walletTracking.OrderId,
