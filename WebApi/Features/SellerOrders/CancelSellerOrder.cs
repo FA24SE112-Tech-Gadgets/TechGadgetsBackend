@@ -131,6 +131,7 @@ public class CancelSellerOrder : ControllerBase
             Type = WalletTrackingType.Refund,
             Status = WalletTrackingStatus.Pending,
             CreatedAt = createdAt,
+            BalanceBeforeChange = customerWallet.Amount,
         }!;
 
         if (currentUser!.Role == Role.Customer)

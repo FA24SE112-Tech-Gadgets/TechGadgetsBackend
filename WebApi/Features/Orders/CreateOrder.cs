@@ -249,6 +249,7 @@ public class CreateOrder : ControllerBase
             WalletId = userWallet!.Id,
             Order = order,
             Amount = totalAmount,
+            BalanceBeforeChange = userWallet.Amount + totalAmount,
             Type = WalletTrackingType.Payment,
             Status = WalletTrackingStatus.Success,
             CreatedAt = createdAt,
