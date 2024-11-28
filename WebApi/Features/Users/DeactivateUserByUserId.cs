@@ -155,6 +155,7 @@ public class DeactivateUserByUserId : ControllerBase
                     Type = WalletTrackingType.Refund,
                     Status = WalletTrackingStatus.Pending,
                     CreatedAt = createdAt,
+                    BalanceBeforeChange = customerWallet.Amount,
                 }!;
 
                 //Hoàn lại quantity cho gadget của Seller và tính tổng cho Wallettracking

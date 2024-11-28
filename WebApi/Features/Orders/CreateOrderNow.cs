@@ -231,6 +231,7 @@ public class CreateOrderNow : ControllerBase
             WalletId = userWallet!.Id,
             Order = order,
             Amount = totalAmount,
+            BalanceBeforeChange = userWallet.Amount + totalAmount,
             Type = WalletTrackingType.Payment,
             Status = WalletTrackingStatus.Success,
             CreatedAt = DateTime.UtcNow,
