@@ -90,6 +90,7 @@ public class ConfirmSellerOrder : ControllerBase
             Type = WalletTrackingType.SellerTransfer,
             Status = WalletTrackingStatus.Pending,
             CreatedAt = createdAt,
+            BalanceBeforeChange = userWallet.Amount,
         }!;
 
         //Tính tổng cho Wallettracking

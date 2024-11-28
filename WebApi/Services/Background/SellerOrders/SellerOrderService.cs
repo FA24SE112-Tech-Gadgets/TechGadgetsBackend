@@ -171,7 +171,8 @@ public class SellerOrderService(IServiceProvider serviceProvider) : BackgroundSe
                         Status = WalletTrackingStatus.Success,
                         CreatedAt = currentTime,
                         RefundedAt = currentTime,
-                        Reason = "Đơn của bạn đã quá thời gian chờ xác nhận"
+                        Reason = "Đơn của bạn đã quá thời gian chờ xác nhận",
+                        BalanceBeforeChange = userWallet.Amount - totalAmount,
                     }!;
 
                     //Update OrderDetail status = Cancelled
