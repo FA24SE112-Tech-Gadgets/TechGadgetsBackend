@@ -7,7 +7,8 @@ public class WalletTracking
     public Guid? OrderId { get; set; }
     public Guid? SellerOrderId { get; set; }
     public PaymentMethod? PaymentMethod { get; set; }
-    public int Amount { get; set; }
+    public long Amount { get; set; }
+    public long? BalanceBeforeChange { get; set; }
     public WalletTrackingType Type { get; set; }
     public WalletTrackingStatus Status { get; set; }
     public string? Reason { get; set; }
