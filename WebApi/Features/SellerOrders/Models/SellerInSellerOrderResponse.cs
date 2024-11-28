@@ -9,6 +9,8 @@ public class SellerInSellerOrderResponse
     public SellerInfoResponse SellerInfo { get; set; } = default!;
     public int TotalQuantity { get; set; }
     public long TotalAmount { get; set; }
+    public long DiscountAmount { get; set; }
+    public long BeforeAppliedDiscountAmount { get; set; }
     public Guid SellerOrderId { get; set; }
     public string PaymentMethod { get; set; } = "Ví điện tử TechGadget";
     public DateTime SellerOrderCreatedAt { get; set; }
