@@ -77,9 +77,9 @@ public class GetListUsers : ControllerBase
         if (!string.IsNullOrEmpty(request.Name))
         {
             query = query.Where(u =>
-                (u.Role == Role.Customer && u.Customer!.FullName.Contains(request.Name)) || 
-                (u.Role == Role.Manager && u.Manager!.FullName.Contains(request.Name)) ||
-                (u.Role == Role.Seller && u.Seller!.ShopName.Contains(request.Name))
+                (u.Role == Role.Customer && u.Customer!.FullName.ToLower().Contains(request.Name.ToLower())) ||
+                (u.Role == Role.Manager && u.Manager!.FullName.ToLower().Contains(request.Name.ToLower())) ||
+                (u.Role == Role.Seller && u.Seller!.ShopName.ToLower().Contains(request.Name.ToLower()))
             );
         }
 

@@ -65,6 +65,14 @@ public class CancelGadgetDiscountByGadgetId : ControllerBase
                     .Build();
         }
 
+        if (currGadget.Status == GadgetStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đã bị khoá.")
+                .Build();
+        }
+
         var existGadgetDiscount = await context.GadgetDiscounts
             .FirstOrDefaultAsync(gd => gd.GadgetId == gadgetId && gd.Status == GadgetDiscountStatus.Active);
 

@@ -41,7 +41,7 @@ public class DeactivateGadget : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_00)
-                        .AddReason("gadget", "Sản phẩm không tồn tại")
+                        .AddReason("gadget", "Sản phẩm không tồn tại.")
                         .Build();
         }
 
@@ -49,7 +49,7 @@ public class DeactivateGadget : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                         .WithCode(TechGadgetErrorCode.WEB_02)
-                        .AddReason("gadget", "Sản phẩm đã bị vô hiệu hoá từ trước")
+                        .AddReason("gadget", "Sản phẩm đã bị khoá từ trước.")
                         .Build();
         }
 
@@ -58,6 +58,10 @@ public class DeactivateGadget : ControllerBase
         gadget.IsForSale = false;
 
         await context.SaveChangesAsync();
+
+        await context.GadgetDiscounts
+                        .Where(gd => gd.GadgetId == id && gd.Status == GadgetDiscountStatus.Active)
+                        .ExecuteUpdateAsync(setters => setters.SetProperty(gd => gd.Status, GadgetDiscountStatus.Cancelled));
 
         return Ok("Khóa sản phẩm thành công");
     }

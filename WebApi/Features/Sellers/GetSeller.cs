@@ -30,6 +30,7 @@ public class GetSeller : ControllerBase
         }
 
         var seller = await context.Sellers
+                    .Include(s => s.User)
                     .FirstOrDefaultAsync(s => s.Id == sellerId);
 
         return Ok(seller!.ToSellerResponse());
