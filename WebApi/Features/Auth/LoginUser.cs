@@ -69,6 +69,14 @@ public class LoginUserController : ControllerBase
                 .Build();
         }
 
+        if (user.LoginMethod == LoginMethod.Google)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("user", "Tài khoản này đăng nhập bằng Google")
+                .Build();
+        }
+
         if (!VerifyHashedPassword(user.Password!, request.Password))
         {
             throw TechGadgetException.NewBuilder()
@@ -85,21 +93,15 @@ public class LoginUserController : ControllerBase
                 .Build();
         }
 
-        if (user.Status == UserStatus.Inactive)
-        {
-            throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEB_03)
-                .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
-                .Build();
-        }
+        //if (user.Status == UserStatus.Inactive)
+        //{
+        //    throw TechGadgetException.NewBuilder()
+        //        .WithCode(TechGadgetErrorCode.WEB_03)
+        //        .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+        //        .Build();
+        //}
 
-        if (user.LoginMethod == LoginMethod.Google)
-        {
-            throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEB_02)
-                .AddReason("user", "Tài khoản này đăng nhập bằng Google")
-                .Build();
-        }
+
 
         if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
         {

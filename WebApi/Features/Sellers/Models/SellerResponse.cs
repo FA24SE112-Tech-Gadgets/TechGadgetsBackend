@@ -10,4 +10,5 @@ public class SellerResponse
     public string ShopAddress { get; set; } = default!;
     public BusinessModel BusinessModel { get; set; }
     public string PhoneNumber { get; set; } = default!;
+    public UserStatus Status { get; set; } = default!;
 }

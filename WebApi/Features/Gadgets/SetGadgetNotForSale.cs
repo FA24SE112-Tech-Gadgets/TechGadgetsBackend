@@ -54,6 +54,14 @@ public class SetGadgetNotForSale : ControllerBase
                 .Build();
         }
 
+        if (gadget.Status == GadgetStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("role", "Sản phẩm đã bị khoá, bạn không thể thực hiện hành động này")
+                .Build();
+        }
+
         if (gadget.IsForSale == false)
         {
             throw TechGadgetException.NewBuilder()
@@ -66,6 +74,10 @@ public class SetGadgetNotForSale : ControllerBase
         gadget.UpdatedAt = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+
+        await context.GadgetDiscounts
+                       .Where(gd => gd.GadgetId == id && gd.Status == GadgetDiscountStatus.Active)
+                       .ExecuteUpdateAsync(setters => setters.SetProperty(gd => gd.Status, GadgetDiscountStatus.Cancelled));
 
         return Ok("Cập nhật thành công");
     }

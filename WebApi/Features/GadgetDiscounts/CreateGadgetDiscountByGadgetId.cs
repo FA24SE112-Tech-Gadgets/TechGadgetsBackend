@@ -72,7 +72,7 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WEB_03)
-                .AddReason("seller", "Seller chưa được kích hoạt")
+                .AddReason("seller", "Seller chưa được kích hoạt.")
                 .Build();
         }
 
@@ -80,7 +80,7 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         {
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WEB_03)
-                .AddReason("seller", "Tài khoản Seller đã bị khoá")
+                .AddReason("seller", "Tài khoản Seller đã bị khoá.")
                 .Build();
         }
 
@@ -90,18 +90,35 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         if (currGadget == null)
         {
             throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEB_03)
-                .AddReason("gadget", "Sản phẩm không tồn tại")
+                .WithCode(TechGadgetErrorCode.WEB_00)
+                .AddReason("gadget", "Sản phẩm không tồn tại.")
                 .Build();
         }
 
         if (currGadget.SellerId != user.Seller.Id)
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_02)
+            .WithCode(TechGadgetErrorCode.WEB_03)
             .AddReason("seller", "Người dùng không đủ thẩm quyền.")
             .Build();
         }
+
+        if (currGadget.Status == GadgetStatus.Inactive)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đã bị khoá.")
+                .Build();
+        }
+
+        if (currGadget.IsForSale == false)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đang trong trạng thái ngừng kinh doanh.")
+                .Build();
+        }
+
         var existGadgetDiscount = await context.GadgetDiscounts
             .FirstOrDefaultAsync(gd => gd.GadgetId == gadgetId && gd.Status == GadgetDiscountStatus.Active);
         if (existGadgetDiscount != null)
