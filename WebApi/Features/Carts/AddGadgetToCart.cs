@@ -77,9 +77,25 @@ public class AddGadgetToCart : ControllerBase
         if (!isGadgetExist)
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_00)
-            .AddReason("gadget", "Không tìm thấy sản phẩm này.")
-            .Build();
+                .WithCode(TechGadgetErrorCode.WEB_00)
+                .AddReason("gadget", "Không tìm thấy sản phẩm này.")
+                .Build();
+        }
+
+        if (await context.Gadgets.AnyAsync(g => g.Id == request.GadgetId && g.Status == GadgetStatus.Inactive))
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đã bị khoá.")
+                .Build();
+        }
+
+        if (await context.Gadgets.AnyAsync(g => g.Id == request.GadgetId && g.IsForSale == false))
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đang trong trạng thái ngừng kinh doanh.")
+                .Build();
         }
 
         // Tìm kiếm CartGadget dựa trên CartId và GadgetId
