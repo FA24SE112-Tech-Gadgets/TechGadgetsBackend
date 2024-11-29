@@ -57,7 +57,7 @@ public class SetGadgetForSale : ControllerBase
         if (gadget.Status == GadgetStatus.Inactive)
         {
             throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEA_00)
+                .WithCode(TechGadgetErrorCode.WEB_02)
                 .AddReason("role", "Sản phẩm đã bị khoá, bạn không thể thực hiện hành động này")
                 .Build();
         }
