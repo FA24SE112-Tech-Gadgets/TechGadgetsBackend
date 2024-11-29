@@ -90,7 +90,7 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         if (currGadget == null)
         {
             throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEB_03)
+                .WithCode(TechGadgetErrorCode.WEB_00)
                 .AddReason("gadget", "Sản phẩm không tồn tại.")
                 .Build();
         }
@@ -98,7 +98,7 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         if (currGadget.SellerId != user.Seller.Id)
         {
             throw TechGadgetException.NewBuilder()
-            .WithCode(TechGadgetErrorCode.WEB_02)
+            .WithCode(TechGadgetErrorCode.WEB_03)
             .AddReason("seller", "Người dùng không đủ thẩm quyền.")
             .Build();
         }
@@ -106,8 +106,16 @@ public class CreateGadgetDiscountByGadgetId : ControllerBase
         if (currGadget.Status == GadgetStatus.Inactive)
         {
             throw TechGadgetException.NewBuilder()
-                .WithCode(TechGadgetErrorCode.WEB_03)
+                .WithCode(TechGadgetErrorCode.WEB_02)
                 .AddReason("gadget", "Sản phẩm đã bị khoá.")
+                .Build();
+        }
+
+        if (currGadget.IsForSale == false)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("gadget", "Sản phẩm đang trong trạng thái ngừng kinh doanh.")
                 .Build();
         }
 
