@@ -65,6 +65,14 @@ public class ChangeUserPassword : ControllerBase
             .Build();
         }
 
+        if (currentUser.LoginMethod == LoginMethod.Google)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("user", "Tài khoản này đăng nhập bằng Google")
+                .Build();
+        }
+
         if (!VerifyHashedPassword(currentUser!.Password!, request.OldPassword))
         {
             throw TechGadgetException.NewBuilder()
@@ -72,6 +80,7 @@ public class ChangeUserPassword : ControllerBase
                 .AddReason("password", "Mật khẩu không chính xác")
                 .Build();
         }
+
         bool isOldPassword = request.OldPassword == request.NewPassword;
         if (isOldPassword)
         {
