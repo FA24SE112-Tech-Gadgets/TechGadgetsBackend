@@ -111,13 +111,13 @@ public class LoginGoogleController : ControllerBase
                     .FirstOrDefaultAsync();
                 if (user != null)
                 {
-                    if (user.Status == UserStatus.Inactive)
-                    {
-                        throw TechGadgetException.NewBuilder()
-                            .WithCode(TechGadgetErrorCode.WEB_03)
-                            .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
-                            .Build();
-                    }
+                    //if (user.Status == UserStatus.Inactive)
+                    //{
+                    //    throw TechGadgetException.NewBuilder()
+                    //        .WithCode(TechGadgetErrorCode.WEB_03)
+                    //        .AddReason("user", "Tài khoản của bạn đã bị khóa, không thể thực hiện thao tác này.")
+                    //        .Build();
+                    //}
 
                     if (!request.DeviceToken.IsNullOrEmpty() && !user.Devices.Any(d => d.Token == request.DeviceToken))
                     {
