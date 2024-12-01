@@ -135,10 +135,21 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                     .Build();
         }
 
-        var notExistingSpecificationKeys = await context.SpecificationKeys
-                        .Where(spec => !request.Criteria.Any(criteria => criteria.Type == CriteriaType.Specification && criteria.SpecificationKeyId!.Value == spec.Id))
-                        .Select(spec => spec.Name)
-                        .ToListAsync();
+        List<Guid> notExistingSpecificationKeys = [];
+
+        foreach (var criteria in request.Criteria)
+        {
+            if (criteria.SpecificationKeyId.HasValue)
+            {
+                var exists = await context.SpecificationKeys
+                                  .AnyAsync(spec => spec.Id == criteria.SpecificationKeyId.Value);
+
+                if (!exists)
+                {
+                    notExistingSpecificationKeys.Add(criteria.SpecificationKeyId.Value);
+                }
+            }
+        }
 
         if (notExistingSpecificationKeys.Any())
         {
@@ -147,6 +158,35 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                 .AddReason("specificationKeys", $"Những SpecificationKeyId không tồn tại: {string.Join(", ", notExistingSpecificationKeys)}")
                 .Build();
         }
+
+        var now = DateTime.UtcNow;
+        var group = new NaturalLanguageKeywordGroup
+        {
+            Name = request.Name,
+            Criteria = request.Criteria.Select(c => new Criteria
+            {
+                Type = c.Type,
+                SpecificationKeyId = c.SpecificationKeyId,
+                Contains = c.Contains,
+                MinPrice = c.MinPrice,
+                MaxPrice = c.MaxPrice,
+                CreatedAt = now,
+                UpdatedAt = now
+            }).ToList(),
+            NaturalLanguageKeywords = request.Keywords.Select(k => new NaturalLanguageKeyword
+            {
+                Keyword = k,
+                Status = NaturalLanguageKeywordStatus.Active,
+                CreatedAt = now,
+                UpdatedAt = now
+            }).ToList(),
+            Status = NaturalLanguageKeywordGroupStatus.Active,
+            CreatedAt = now,
+            UpdatedAt = now
+        };
+
+        context.NaturalLanguageKeywordGroups.Add(group);
+        await context.SaveChangesAsync();
 
         return Created();
     }
