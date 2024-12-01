@@ -13,7 +13,7 @@ using WebApi.Data;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241201032336_NaturalLanguageKeywordAndCriteria")]
+    [Migration("20241201111309_NaturalLanguageKeywordAndCriteria")]
     partial class NaturalLanguageKeywordAndCriteria
     {
         /// <inheritdoc />
@@ -224,7 +224,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("CriteriaId");
 
-                    b.ToTable("CriteriaCategory");
+                    b.ToTable("CriteriaCategories");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Customer", b =>
@@ -606,7 +606,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasIndex("NaturalLanguageKeywordGroupId");
 
-                    b.ToTable("NaturalLanguageKeyword");
+                    b.ToTable("NaturalLanguageKeywords");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.NaturalLanguageKeywordGroup", b =>
@@ -631,7 +631,7 @@ namespace WebApi.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NaturalLanguageKeywordGroup");
+                    b.ToTable("NaturalLanguageKeywordGroups");
                 });
 
             modelBuilder.Entity("WebApi.Data.Entities.Notification", b =>
