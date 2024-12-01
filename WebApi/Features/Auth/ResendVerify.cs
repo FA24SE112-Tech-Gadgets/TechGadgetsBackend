@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
+using WebApi.Data.Entities;
 using WebApi.Services.VerifyCode;
 
 namespace WebApi.Features.Auth;
@@ -47,6 +48,14 @@ public class ResendVerifyController : ControllerBase
             throw TechGadgetException.NewBuilder()
                 .WithCode(TechGadgetErrorCode.WEB_00)
                 .AddReason("user", "Người dùng không tồn tại")
+                .Build();
+        }
+
+        if (user.LoginMethod == LoginMethod.Google)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("user", "Tài khoản này đăng nhập bằng Google")
                 .Build();
         }
 
