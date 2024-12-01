@@ -50,13 +50,21 @@ public class GetGadgetById : ControllerBase
         var user = await currentUserService.GetCurrentUser();
         if (user is not null && user.Customer is not null)
         {
-            context.GadgetHistories.Add(new GadgetHistory
+            var latest = await context.GadgetHistories
+                                    .OrderByDescending(gh => gh.CreatedAt)
+                                    .FirstOrDefaultAsync();
+
+            if (latest == null || latest.GadgetId != id)
             {
-                GadgetId = id,
-                Customer = user.Customer,
-                CreatedAt = DateTime.UtcNow,
-            });
-            await context.SaveChangesAsync();
+                context.GadgetHistories.Add(new GadgetHistory
+                {
+                    GadgetId = id,
+                    Customer = user.Customer,
+                    CreatedAt = DateTime.UtcNow,
+                });
+
+                await context.SaveChangesAsync();
+            }
         }
 
         var customerId = user?.Customer?.Id;

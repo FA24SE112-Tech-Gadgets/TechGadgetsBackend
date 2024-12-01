@@ -67,6 +67,14 @@ public class ForgotUserPassword : ControllerBase
                 .Build();
         }
 
+        if (user.LoginMethod == LoginMethod.Google)
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_02)
+                .AddReason("user", "Tài khoản này đăng nhập bằng Google")
+                .Build();
+        }
+
         await verifyCodeService.VerifyUserChangePasswordAsync(user, request.Code);
         user.Password = HashPassword(request.NewPassword);
         await context.SaveChangesAsync();

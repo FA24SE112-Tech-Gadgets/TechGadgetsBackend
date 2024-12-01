@@ -7,6 +7,8 @@ public class Category
 
     public ICollection<CategoryBrand> CategoryBrands { get; set; } = [];
     public ICollection<Brand> Brands { get; set; } = [];
+    public ICollection<Criteria> Criteria { get; set; } = [];
+    public ICollection<CriteriaCategory> CriteriaCategories { get; set; } = [];
     public ICollection<Gadget> Gadgets { get; set; } = [];
     public ICollection<SpecificationKey> SpecificationKeys { get; set; } = [];
 }

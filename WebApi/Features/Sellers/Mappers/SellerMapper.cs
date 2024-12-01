@@ -68,6 +68,7 @@ public static class SellerMapper
                 ShopAddress = seller.ShopAddress,
                 BusinessModel = seller.BusinessModel,
                 PhoneNumber = seller.PhoneNumber,
+                Status = seller.User.Status,
             };
         }
         return null;

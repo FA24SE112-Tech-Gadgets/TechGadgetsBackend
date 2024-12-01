@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Text.RegularExpressions;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
 using WebApi.Data;
@@ -24,7 +25,7 @@ public class UpdateCustomerInfo : ControllerBase
         public string? Address { get; set; }
         public string? CCCD { get; set; }
         public Gender? Gender { get; set; }
-        public DateTime? DateOfBirth { get; set; }
+        public string? DateOfBirth { get; set; }
         public string? PhoneNumber { get; set; }
     }
 
@@ -56,12 +57,12 @@ public class UpdateCustomerInfo : ControllerBase
                 .WithMessage("Giới tính không hợp lệ")
                 .When(r => r.Gender != null); // Chỉ validate nếu Gender được truyền
 
-            RuleFor(r => r.DateOfBirth)
-                .NotEmpty()
-                .WithMessage("Ngày sinh không được để trống")
-                .Must(BeAtLeast18YearsOld)
-                .WithMessage("Phải trên 18 tuổi")
-                .When(r => r.DateOfBirth != null); // Chỉ validate nếu DateOfBirth được truyền
+            //RuleFor(r => r.DateOfBirth)
+            //    .NotEmpty()
+            //    .WithMessage("Ngày sinh không được để trống")
+            //    .Must(BeAtLeast18YearsOld)
+            //    .WithMessage("Phải trên 18 tuổi")
+            //    .When(r => r.DateOfBirth != null); // Chỉ validate nếu DateOfBirth được truyền
 
             RuleFor(r => r.PhoneNumber)
                 .NotEmpty()
@@ -162,9 +163,40 @@ public class UpdateCustomerInfo : ControllerBase
             customer.Gender = request.Gender;
         }
 
-        if (request.DateOfBirth.HasValue)
+        //if (request.DateOfBirth.HasValue)
+        //{
+        //    customer.DateOfBirth = DateTime.SpecifyKind(request.DateOfBirth.Value, DateTimeKind.Utc);
+        //}
+
+        if (!string.IsNullOrEmpty(request.DateOfBirth))
         {
-            customer.DateOfBirth = DateTime.SpecifyKind(request.DateOfBirth.Value, DateTimeKind.Utc);
+            string pattern = @"^\d{4}/\d{2}/\d{2}$";
+
+            if (Regex.IsMatch(request.DateOfBirth, pattern))
+            {
+                DateTime date = DateTime.ParseExact(request.DateOfBirth, "yyyy/MM/dd", null);
+
+                var today = DateTime.Today;
+                var age = today.Year - date.Year;
+                if (date > today.AddYears(-age)) age--;
+                if (age < 18)
+                {
+                    throw TechGadgetException.NewBuilder()
+                           .WithCode(TechGadgetErrorCode.WEB_02)
+                           .AddReason("dateOfBirth", "Phải trên 18 tuổi.")
+                           .Build();
+                }
+
+                DateTime utcDate = DateTime.SpecifyKind(date, DateTimeKind.Utc);
+                customer.DateOfBirth = utcDate;
+            }
+            else
+            {
+                throw TechGadgetException.NewBuilder()
+                    .WithCode(TechGadgetErrorCode.WEB_02)
+                    .AddReason("dateOfBirth", "Ngày sinh không hợp lệ.")
+                    .Build();
+            }
         }
 
         if (!string.IsNullOrEmpty(request.PhoneNumber))
