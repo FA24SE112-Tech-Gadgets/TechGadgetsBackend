@@ -12,7 +12,7 @@ namespace WebApi.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "NaturalLanguageKeywordGroup",
+                name: "NaturalLanguageKeywordGroups",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -23,7 +23,7 @@ namespace WebApi.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NaturalLanguageKeywordGroup", x => x.Id);
+                    table.PrimaryKey("PK_NaturalLanguageKeywordGroups", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -44,9 +44,9 @@ namespace WebApi.Data.Migrations
                 {
                     table.PrimaryKey("PK_Criteria", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Criteria_NaturalLanguageKeywordGroup_NaturalLanguageKeyword~",
+                        name: "FK_Criteria_NaturalLanguageKeywordGroups_NaturalLanguageKeywor~",
                         column: x => x.NaturalLanguageKeywordGroupId,
-                        principalTable: "NaturalLanguageKeywordGroup",
+                        principalTable: "NaturalLanguageKeywordGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -57,7 +57,7 @@ namespace WebApi.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NaturalLanguageKeyword",
+                name: "NaturalLanguageKeywords",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -69,17 +69,17 @@ namespace WebApi.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NaturalLanguageKeyword", x => x.Id);
+                    table.PrimaryKey("PK_NaturalLanguageKeywords", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_NaturalLanguageKeyword_NaturalLanguageKeywordGroup_NaturalL~",
+                        name: "FK_NaturalLanguageKeywords_NaturalLanguageKeywordGroups_Natura~",
                         column: x => x.NaturalLanguageKeywordGroupId,
-                        principalTable: "NaturalLanguageKeywordGroup",
+                        principalTable: "NaturalLanguageKeywordGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "CriteriaCategory",
+                name: "CriteriaCategories",
                 columns: table => new
                 {
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -87,15 +87,15 @@ namespace WebApi.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CriteriaCategory", x => new { x.CategoryId, x.CriteriaId });
+                    table.PrimaryKey("PK_CriteriaCategories", x => new { x.CategoryId, x.CriteriaId });
                     table.ForeignKey(
-                        name: "FK_CriteriaCategory_Categories_CategoryId",
+                        name: "FK_CriteriaCategories_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CriteriaCategory_Criteria_CriteriaId",
+                        name: "FK_CriteriaCategories_Criteria_CriteriaId",
                         column: x => x.CriteriaId,
                         principalTable: "Criteria",
                         principalColumn: "Id",
@@ -113,13 +113,13 @@ namespace WebApi.Data.Migrations
                 column: "SpecificationKeyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CriteriaCategory_CriteriaId",
-                table: "CriteriaCategory",
+                name: "IX_CriteriaCategories_CriteriaId",
+                table: "CriteriaCategories",
                 column: "CriteriaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NaturalLanguageKeyword_NaturalLanguageKeywordGroupId",
-                table: "NaturalLanguageKeyword",
+                name: "IX_NaturalLanguageKeywords_NaturalLanguageKeywordGroupId",
+                table: "NaturalLanguageKeywords",
                 column: "NaturalLanguageKeywordGroupId");
         }
 
@@ -127,16 +127,16 @@ namespace WebApi.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CriteriaCategory");
+                name: "CriteriaCategories");
 
             migrationBuilder.DropTable(
-                name: "NaturalLanguageKeyword");
+                name: "NaturalLanguageKeywords");
 
             migrationBuilder.DropTable(
                 name: "Criteria");
 
             migrationBuilder.DropTable(
-                name: "NaturalLanguageKeywordGroup");
+                name: "NaturalLanguageKeywordGroups");
         }
     }
 }
