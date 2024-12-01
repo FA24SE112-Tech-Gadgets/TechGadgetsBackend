@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 using WebApi.Common.Exceptions;
 using WebApi.Common.Filters;
@@ -121,10 +122,31 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                 .Build();
         }
 
-        var existingKeywords = await context.
-                    .Where(k => request.Keywords.Contains(k.Name))
-                    .Select(k => k.Name)
+        var existingKeywords = await context.NaturalLanguageKeywords
+                    .Where(k => request.Keywords.Any(rk => rk.ToLower() == k.Keyword.ToLower()))
+                    .Select(k => k.Keyword.ToLower())
                     .ToListAsync();
+
+        if (existingKeywords.Any())
+        {
+            throw TechGadgetException.NewBuilder()
+                    .WithCode(TechGadgetErrorCode.WEB_01)
+                    .AddReason("keywords", $"Những từ khoá đã tồn tại: {string.Join(", ", existingKeywords)}")
+                    .Build();
+        }
+
+        var notExistingSpecificationKeys = await context.SpecificationKeys
+                        .Where(spec => !request.Criteria.Any(criteria => criteria.Type == CriteriaType.Specification && criteria.SpecificationKeyId!.Value == spec.Id))
+                        .Select(spec => spec.Name)
+                        .ToListAsync();
+
+        if (notExistingSpecificationKeys.Any())
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_00)
+                .AddReason("specificationKeys", $"Những SpecificationKeyId không tồn tại: {string.Join(", ", notExistingSpecificationKeys)}")
+                .Build();
+        }
 
         return Created();
     }
