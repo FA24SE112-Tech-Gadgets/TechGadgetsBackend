@@ -1,6 +1,5 @@
 ﻿using WebApi.Data.Entities;
 using WebApi.Features.Categories.Mappers;
-using WebApi.Features.Gadgets.Models;
 using WebApi.Features.NaturalLanguageKeywords.Models;
 
 namespace WebApi.Features.NaturalLanguageKeywords.Mappers;
@@ -36,7 +35,8 @@ public static class NaturalLanguageKeywordGroupMapper
                 SpecificationKey = criteria.SpecificationKey is not null ? new SpecificationKeyResponse
                 {
                     Id = criteria.SpecificationKey.Id,
-                    Name = criteria.SpecificationKey.Name
+                    Name = criteria.SpecificationKey.Name,
+                    Category = criteria.SpecificationKey.Category.ToCategoryResponse()!,
                 } : null,
                 Contains = criteria.Contains,
                 MinPrice = criteria.MinPrice,

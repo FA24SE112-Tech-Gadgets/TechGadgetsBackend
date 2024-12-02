@@ -1,6 +1,5 @@
 ﻿using WebApi.Data.Entities;
 using WebApi.Features.Categories.Models;
-using WebApi.Features.Gadgets.Models;
 
 namespace WebApi.Features.NaturalLanguageKeywords.Models;
 
