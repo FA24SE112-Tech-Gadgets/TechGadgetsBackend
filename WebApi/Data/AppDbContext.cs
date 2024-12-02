@@ -6,44 +6,48 @@ namespace WebApi.Data;
 
 public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
-    public DbSet<Admin> Admins { get; set; }
-    public DbSet<BillingMail> BillingMails { get; set; }
-    public DbSet<BillingMailApplication> BillingMailApplications { get; set; }
-    public DbSet<Brand> Brands { get; set; }
-    public DbSet<Cart> Carts { get; set; }
-    public DbSet<CartGadget> CartGadgets { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<CategoryBrand> CategoryBrands { get; set; }
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<CustomerInformation> CustomerInformation { get; set; }
-    public DbSet<Device> Devices { get; set; }
-    public DbSet<FavoriteGadget> FavoriteGadgets { get; set; }
-    public DbSet<Gadget> Gadgets { get; set; }
-    public DbSet<GadgetDescription> GadgetDescriptions { get; set; }
-    public DbSet<GadgetDiscount> GadgetDiscounts { get; set; }
-    public DbSet<GadgetFilter> GadgetFilters { get; set; }
-    public DbSet<GadgetHistory> GadgetHistories { get; set; }
-    public DbSet<GadgetImage> GadgetImages { get; set; }
-    public DbSet<KeywordHistory> KeywordHistories { get; set; }
-    public DbSet<Manager> Managers { get; set; }
-    public DbSet<Notification> Notifications { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<Review> Reviews { get; set; }
-    public DbSet<Seller> Sellers { get; set; }
-    public DbSet<SellerApplication> SellerApplications { get; set; }
-    public DbSet<SellerInformation> SellerInformation { get; set; }
-    public DbSet<SellerOrder> SellerOrders { get; set; }
-    public DbSet<SellerOrderItem> SellerOrderItems { get; set; }
-    public DbSet<SellerReply> SellerReplies { get; set; }
-    public DbSet<SpecificationKey> SpecificationKeys { get; set; }
-    public DbSet<SpecificationUnit> SpecificationUnits { get; set; }
-    public DbSet<SpecificationValue> SpecificationValues { get; set; }
-    public DbSet<SystemSellerOrderTracking> SystemSellerOrderTrackings { get; set; }
-    public DbSet<SystemWallet> SystemWallets { get; set; }
-    public DbSet<User> Users { get; set; }
-    public DbSet<UserVerify> UserVerifies { get; set; }
-    public DbSet<Wallet> Wallets { get; set; }
-    public DbSet<WalletTracking> WalletTrackings { get; set; }
+    public DbSet<Admin> Admins { get; set; } = default!;
+    public DbSet<BillingMail> BillingMails { get; set; } = default!;
+    public DbSet<BillingMailApplication> BillingMailApplications { get; set; } = default!;
+    public DbSet<Brand> Brands { get; set; } = default!;
+    public DbSet<Cart> Carts { get; set; } = default!;
+    public DbSet<CartGadget> CartGadgets { get; set; } = default!;
+    public DbSet<Category> Categories { get; set; } = default!;
+    public DbSet<CategoryBrand> CategoryBrands { get; set; } = default!;
+    public DbSet<Criteria> Criteria { get; set; } = default!;
+    public DbSet<CriteriaCategory> CriteriaCategories { get; set; } = default!;
+    public DbSet<Customer> Customers { get; set; } = default!;
+    public DbSet<CustomerInformation> CustomerInformation { get; set; } = default!;
+    public DbSet<Device> Devices { get; set; } = default!;
+    public DbSet<FavoriteGadget> FavoriteGadgets { get; set; } = default!;
+    public DbSet<Gadget> Gadgets { get; set; } = default!;
+    public DbSet<GadgetDescription> GadgetDescriptions { get; set; } = default!;
+    public DbSet<GadgetDiscount> GadgetDiscounts { get; set; } = default!;
+    public DbSet<GadgetFilter> GadgetFilters { get; set; } = default!;
+    public DbSet<GadgetHistory> GadgetHistories { get; set; } = default!;
+    public DbSet<GadgetImage> GadgetImages { get; set; } = default!;
+    public DbSet<KeywordHistory> KeywordHistories { get; set; } = default!;
+    public DbSet<Manager> Managers { get; set; } = default!;
+    public DbSet<NaturalLanguageKeyword> NaturalLanguageKeywords { get; set; } = default!;
+    public DbSet<NaturalLanguageKeywordGroup> NaturalLanguageKeywordGroups { get; set; } = default!;
+    public DbSet<Notification> Notifications { get; set; } = default!;
+    public DbSet<Order> Orders { get; set; } = default!;
+    public DbSet<Review> Reviews { get; set; } = default!;
+    public DbSet<Seller> Sellers { get; set; } = default!;
+    public DbSet<SellerApplication> SellerApplications { get; set; } = default!;
+    public DbSet<SellerInformation> SellerInformation { get; set; } = default!;
+    public DbSet<SellerOrder> SellerOrders { get; set; } = default!;
+    public DbSet<SellerOrderItem> SellerOrderItems { get; set; } = default!;
+    public DbSet<SellerReply> SellerReplies { get; set; } = default!;
+    public DbSet<SpecificationKey> SpecificationKeys { get; set; } = default!;
+    public DbSet<SpecificationUnit> SpecificationUnits { get; set; } = default!;
+    public DbSet<SpecificationValue> SpecificationValues { get; set; } = default!;
+    public DbSet<SystemSellerOrderTracking> SystemSellerOrderTrackings { get; set; } = default!;
+    public DbSet<SystemWallet> SystemWallets { get; set; } = default!;
+    public DbSet<User> Users { get; set; } = default!;
+    public DbSet<UserVerify> UserVerifies { get; set; } = default!;
+    public DbSet<Wallet> Wallets { get; set; } = default!;
+    public DbSet<WalletTracking> WalletTrackings { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
