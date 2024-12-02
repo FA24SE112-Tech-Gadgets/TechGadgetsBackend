@@ -40,10 +40,10 @@ public class GetNaturalLanguageKeywordGroups : ControllerBase
     public async Task<IActionResult> Handler([FromQuery] Request request, AppDbContext context)
     {
         var query = context.NaturalLanguageKeywordGroups
-                                    .Include(g => g.Criteria)
+                                    .Include(g => g.Criteria.OrderByDescending(c => c.UpdatedAt))
                                         .ThenInclude(c => c.Categories)
                                     .Include(g => g.Criteria.OrderByDescending(c => c.UpdatedAt))
-                                        .ThenInclude(c => c.SpecificationKey)
+                                        .ThenInclude(c => c.SpecificationKey!.Category)
                                     .Include(g => g.NaturalLanguageKeywords.OrderByDescending(k => k.UpdatedAt))
                                     .AsQueryable();
 

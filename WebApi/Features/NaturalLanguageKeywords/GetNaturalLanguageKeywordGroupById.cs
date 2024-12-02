@@ -28,10 +28,10 @@ public class GetNaturalLanguageKeywordGroupById : ControllerBase
     public async Task<IActionResult> Handler(Guid id, AppDbContext context, CurrentUserService currentUserService)
     {
         var group = await context.NaturalLanguageKeywordGroups
-                                    .Include(g => g.Criteria)
+                                    .Include(g => g.Criteria.OrderByDescending(c => c.UpdatedAt))
                                         .ThenInclude(c => c.Categories)
                                     .Include(g => g.Criteria.OrderByDescending(c => c.UpdatedAt))
-                                        .ThenInclude(c => c.SpecificationKey)
+                                        .ThenInclude(c => c.SpecificationKey!.Category)
                                     .Include(g => g.NaturalLanguageKeywords.OrderByDescending(k => k.UpdatedAt))
                                     .FirstOrDefaultAsync(g => g.Id == id);
 
