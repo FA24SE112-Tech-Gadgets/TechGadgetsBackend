@@ -38,7 +38,7 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
         public Validator()
         {
             RuleFor(r => r.Name)
-                .NotEmpty().WithMessage("Tên nhóm không được để trống");
+                .NotEmpty().WithMessage("Tên nhóm không được để trống.");
 
             RuleFor(r => r.Keywords)
                 .NotEmpty().WithMessage("Danh sách từ khoá không được để trống.")
@@ -55,6 +55,16 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                     .NotEmpty()
                     .When(c => c.Type != CriteriaType.Specification)
                     .WithMessage("Danh sách thể loại áp dụng không được để trống khi Type khác Specification.");
+
+                c.RuleFor(x => x.Categories)
+                    .Must(c => c.Distinct().Count() == c.Count)
+                    .When(c => c.Type != CriteriaType.Specification)
+                    .WithMessage("Danh sách thể loại không được có giá trị trùng lặp.");
+
+                c.RuleFor(c => c.Categories)
+                    .Empty()
+                    .When(c => c.Type == CriteriaType.Specification)
+                    .WithMessage("Danh sách thể loại áp dụng phải để trống với Type Specification.");
 
                 c.RuleFor(c => c.Contains)
                     .NotEmpty()
@@ -87,15 +97,26 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                     .WithMessage("MinPrice không được để trống khi Type là Price.")
                     .GreaterThanOrEqualTo(0)
                     .When(c => c.Type == CriteriaType.Price)
-                    .WithMessage("MinPrice phải lớn hơn hoặc bằng 0 khi Type là Price.");
+                    .WithMessage("MinPrice phải lớn hơn hoặc bằng 0 khi Type là Price.")
+                    .LessThanOrEqualTo(150_000_000)
+                    .When(c => c.Type == CriteriaType.Price)
+                    .WithMessage("MinPrice phải nhỏ hơn hoặc bằng 150 triệu khi Type là Price.");
 
                 c.RuleFor(c => c.MaxPrice)
                     .NotNull()
                     .When(c => c.Type == CriteriaType.Price)
                     .WithMessage("MaxPrice không được để trống khi Type là Price.")
+                    .GreaterThanOrEqualTo(0)
+                    .When(c => c.Type == CriteriaType.Price)
+                    .WithMessage("MaxPrice phải lớn hơn hoặc bằng 0 khi Type là Price.")
                     .LessThanOrEqualTo(150_000_000)
                     .When(c => c.Type == CriteriaType.Price)
                     .WithMessage("MaxPrice phải nhỏ hơn hoặc bằng 150 triệu khi Type là Price.");
+
+                c.RuleFor(c => c)
+                    .Must(c => c.MaxPrice >= c.MinPrice)
+                    .When(c => c.Type == CriteriaType.Price)
+                    .WithMessage("MinPrice không được nhỏ hơn MaxPrice.");
 
             });
         }
@@ -104,7 +125,24 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
     [HttpPost("natural-language-keyword-groups")]
     [Tags("Natural Language Keywords")]
     [SwaggerOperation(
-        Summary = "Manager Create Natural Language Keyword Group"
+        Summary = "Manager Create Natural Language Keyword Group",
+        Description = """
+        ### Keywords:
+        mảng `keywords` phải chứa ít nhất 1 item
+
+        ### Criteria:
+        mảng `criteria` phải chứa ít nhất 1 item
+
+        *Các item trong mảng:* 
+
+        `Type`: Specification, Name, Description, Condition, Price
+        
+        - `Specification`: phải cung cấp specificationKeyId
+        - `Name, Description, Condition`: phải cung cấp contains
+        - `Price`: phải cung cấp minPrice, maxPrice. (giá trị trong khoảng 0 - 150 triệu)
+        
+        Nếu type là `Specification` thì `categories` để mảng rỗng, còn lại các type khác phải chứa ít nhất 1 item
+        """
     )]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(TechGadgetErrorResponse), StatusCodes.Status400BadRequest)]
@@ -139,7 +177,7 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
 
         foreach (var criteria in request.Criteria)
         {
-            if (criteria.SpecificationKeyId.HasValue)
+            if (criteria.SpecificationKeyId.HasValue && criteria.Type == CriteriaType.Specification)
             {
                 var exists = await context.SpecificationKeys
                                   .AnyAsync(spec => spec.Id == criteria.SpecificationKeyId.Value);
@@ -159,6 +197,30 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                 .Build();
         }
 
+        List<Guid> notExistingCategoryIds = [];
+
+        foreach (var criteria in request.Criteria)
+        {
+            foreach (var categoryId in criteria.Categories)
+            {
+                var exists = await context.Categories
+                                  .AnyAsync(c => c.Id == categoryId);
+
+                if (!exists)
+                {
+                    notExistingCategoryIds.Add(categoryId);
+                }
+            }
+        }
+
+        if (notExistingCategoryIds.Any())
+        {
+            throw TechGadgetException.NewBuilder()
+                .WithCode(TechGadgetErrorCode.WEB_00)
+                .AddReason("categories", $"Những CategoryId không tồn tại: {string.Join(", ", notExistingCategoryIds)}")
+                .Build();
+        }
+
         var now = DateTime.UtcNow;
         var group = new NaturalLanguageKeywordGroup
         {
@@ -171,7 +233,11 @@ public class CreateNaturalLanguageKeywordGroup : ControllerBase
                 MinPrice = c.MinPrice,
                 MaxPrice = c.MaxPrice,
                 CreatedAt = now,
-                UpdatedAt = now
+                UpdatedAt = now,
+                CriteriaCategories = c.Categories.Select(c => new CriteriaCategory
+                {
+                    CategoryId = c
+                }).ToList()
             }).ToList(),
             NaturalLanguageKeywords = request.Keywords.Select(k => new NaturalLanguageKeyword
             {
