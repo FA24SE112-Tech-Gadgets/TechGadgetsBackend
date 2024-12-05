@@ -10,14 +10,18 @@ using WebApi.Common.Utils;
 using WebApi.Data;
 using WebApi.Data.Entities;
 using WebApi.Features.Gadgets.Mappers;
+using WebApi.Features.NaturalLanguages.Models;
+using WebApi.Features.Sellers.Mappers;
 using WebApi.Services.Auth;
 using WebApi.Services.Embedding;
 using WebApi.Services.NaturalLanguage;
 
-namespace WebApi.Features.Tests;
+namespace WebApi.Features.NaturalLanguages;
 
 [ApiController]
 [RequestValidation<Request>]
+[JwtValidation]
+[RolesFilter(Role.Customer)]
 public class ProcessNaturalLanguageV2 : ControllerBase
 {
     public new class Request
@@ -34,8 +38,8 @@ public class ProcessNaturalLanguageV2 : ControllerBase
         }
     }
 
-    [Tags("Tests")]
-    [HttpPost("tests/natural-languages-v2/search")]
+    [Tags("Natural Languages")]
+    [HttpPost("natural-languages-v2/search")]
     [SwaggerOperation(Summary = "Search With Natural Language",
         Description = """
         This API is for searching with natural language
@@ -346,29 +350,23 @@ public class ProcessNaturalLanguageV2 : ControllerBase
 
             var sellers = await context.Sellers.AsExpandable()
                                  .Where(sellerPredicate)
+                                 .Where(s => s.User.Status == UserStatus.Active)
                                  .OrderByDescending(s => query.IsBestSeller
                                             ? s.SellerOrders
                                                 .Where(so => so.Status == SellerOrderStatus.Success)
                                                 .SelectMany(so => so.SellerOrderItems)
                                                 .Sum(soi => soi.GadgetQuantity)
                                             : 0)
-                                 .Select(s => new
-                                 {
-                                     s.Id,
-                                     s.ShopName
-                                 })
-                                 .Take(200)
+                                 .Select(s => s.ToSellerDetailResponse()!)
+                                 .Take(30)
                                  .ToListAsync();
 
-            var result = new
+            return Ok(new ProcessNaturalLanguageResponse
             {
-                query,
-                total = sellers.Count,
-                sellers
-            };
-
-            return Ok(result);
-
+                Count = sellers.Count,
+                Sellers = sellers,
+                Type = "seller"
+            });
         }
         else
         {
@@ -647,16 +645,15 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                                                 .Sum(soi => soi.GadgetQuantity)
                                             : 1 - g.Vector!.CosineDistance(inputVector))
                                         .Select(g => g.ToGadgetResponse(customerId)!)
-                                        .Take(500)
+                                        .Take(30)
                                         .ToListAsync();
 
-            var result = new
+            return Ok(new ProcessNaturalLanguageResponse
             {
-                query,
-                total = gadgets.Count,
-                gadgets
-            };
-            return Ok(result);
+                Count = gadgets.Count,
+                Gadgets = gadgets,
+                Type = "gadget"
+            });
         }
         return Ok(query);
     }
