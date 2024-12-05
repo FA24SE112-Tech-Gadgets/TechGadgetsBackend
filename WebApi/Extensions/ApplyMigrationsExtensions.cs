@@ -127,6 +127,16 @@ public static class ApplyMigrationsExtensions
         //await InitGadgets(context, embeddingService);
         //await InitGadgetDiscounts(context);
         //await InitGadgetVectors(context, embeddingService);
+
+        //if (!await context.NaturalLanguageKeywordGroups.AnyAsync())
+        //{
+        //    foreach (var group in NaturalLanguageKeywordGroupSeed.Default)
+        //    {
+        //        context.NaturalLanguageKeywordGroups.Add(group);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
+
     }
 
     private static async Task InitGadgets(AppDbContext context, EmbeddingService embeddingService)
