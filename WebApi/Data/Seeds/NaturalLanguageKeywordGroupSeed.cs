@@ -572,7 +572,7 @@ public static class NaturalLanguageKeywordGroupSeed
         },
         new NaturalLanguageKeywordGroup {
             Id = Guid.Parse("6998ee77-b9e8-4663-b7f6-611f6ea9f01b"),
-            Name = "Bơi lội",
+            Name = "Kháng nước",
             CreatedAt = now,
             UpdatedAt = now,
             Status = NaturalLanguageKeywordGroupStatus.Active,
@@ -581,53 +581,18 @@ public static class NaturalLanguageKeywordGroupSeed
                     Status = NaturalLanguageKeywordStatus.Active,
                     CreatedAt = now,
                     UpdatedAt = now,
-                    Keyword = "bơi lội",
-                    Id = Guid.Parse("a1369d43-4d66-45a9-8519-5af40526227c")
-                }
+                    Keyword = "kháng nước",
+                    Id = Guid.Parse("eac4c4b0-32d7-48c7-9d4f-0357e2de7a38")
+                },
+                new NaturalLanguageKeyword {
+                    Status = NaturalLanguageKeywordStatus.Active,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    Keyword = "chống nước",
+                    Id = Guid.Parse("a905bc05-9944-440a-9805-9c6fb1605f7e")
+                },
             ],
             Criteria = [
-                 new Criteria {
-                     CreatedAt = now,
-                     UpdatedAt = now,
-                     Type = CriteriaType.Name,
-                     Contains = "nước",
-                     Id = Guid.Parse("b2b8d597-b213-4303-a0d5-318604468242"),
-                     CriteriaCategories = [
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("458d7752-e45e-444a-adf9-f7201c07acd1")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("9f6ac480-e673-49ec-9bc0-7566cca80b86")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa")
-                        },
-                     ]
-                 },
-                new Criteria {
-                     CreatedAt = now,
-                     UpdatedAt = now,
-                     Type = CriteriaType.Name,
-                     Contains = "bơi",
-                     Id = Guid.Parse("633ca31e-382c-4607-8a22-3bf5e5867abb"),
-                     CriteriaCategories = [
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("458d7752-e45e-444a-adf9-f7201c07acd1")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("9f6ac480-e673-49ec-9bc0-7566cca80b86")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa")
-                        },
-                     ]
-                 },
                 new Criteria {
                      CreatedAt = now,
                      UpdatedAt = now,
@@ -655,27 +620,6 @@ public static class NaturalLanguageKeywordGroupSeed
                      Type = CriteriaType.Description,
                      Contains = "kháng nước",
                      Id = Guid.Parse("a01748a5-31a0-4527-ba66-a7335ed68ad4"),
-                     CriteriaCategories = [
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
-                        },
-                        new CriteriaCategory {
-                            CategoryId = Guid.Parse("458d7752-e45e-444a-adf9-f7201c07acd1")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("9f6ac480-e673-49ec-9bc0-7566cca80b86")
-                        },
-                         new CriteriaCategory {
-                            CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa")
-                        },
-                     ]
-                 },
-                new Criteria {
-                     CreatedAt = now,
-                     UpdatedAt = now,
-                     Type = CriteriaType.Description,
-                     Contains = "bơi",
-                     Id = Guid.Parse("0751958c-309d-45ca-88ab-fb9660dda6ba"),
                      CriteriaCategories = [
                         new CriteriaCategory {
                             CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
@@ -885,7 +829,7 @@ public static class NaturalLanguageKeywordGroupSeed
                     Status = NaturalLanguageKeywordStatus.Active,
                     CreatedAt = now,
                     UpdatedAt = now,
-                    Keyword = "tầm trung",
+                    Keyword = "giá tầm trung",
                     Id = Guid.Parse("f77cd1d9-b10d-4fc3-9ed2-064aae671216")
                 },
             ],
@@ -1548,6 +1492,73 @@ public static class NaturalLanguageKeywordGroupSeed
                         }
                      ]
                  },
+            ]
+        },
+        new NaturalLanguageKeywordGroup {
+            Id = Guid.Parse("029f8544-ca97-4139-866a-3da8afba058f"),
+            Name = "Pin trâu",
+            CreatedAt = now,
+            UpdatedAt = now,
+            Status = NaturalLanguageKeywordGroupStatus.Active,
+            NaturalLanguageKeywords = [
+                new NaturalLanguageKeyword {
+                    Status = NaturalLanguageKeywordStatus.Active,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    Keyword = "pin trâu",
+                    Id = Guid.Parse("6940602c-9d94-45ae-9425-cf4a90e0690b")
+                },
+                new NaturalLanguageKeyword {
+                    Status = NaturalLanguageKeywordStatus.Active,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    Keyword = "pin khoẻ",
+                    Id = Guid.Parse("8d769ec5-142e-40ca-ba99-ce691cc1bd23")
+                },
+            ],
+            Criteria = [
+                 new Criteria {
+                     CreatedAt = now,
+                     UpdatedAt = now,
+                     Type = CriteriaType.Description,
+                     Contains = "pin trâu",
+                     Id = Guid.Parse("6ef188c5-e603-43b3-801e-13f99760dd4a"),
+                     CriteriaCategories = [
+                        new CriteriaCategory {
+                            CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
+                        },
+                        new CriteriaCategory {
+                            CategoryId = Guid.Parse("458d7752-e45e-444a-adf9-f7201c07acd1")
+                        },
+                         new CriteriaCategory {
+                            CategoryId = Guid.Parse("9f6ac480-e673-49ec-9bc0-7566cca80b86")
+                        },
+                         new CriteriaCategory {
+                            CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa")
+                        },
+                     ]
+                 },
+                new Criteria {
+                     CreatedAt = now,
+                     UpdatedAt = now,
+                     Type = CriteriaType.Description,
+                     Contains = "pin khoẻ",
+                     Id = Guid.Parse("0cdfaf90-e9cc-4e04-8a94-1de8816ee04d"),
+                     CriteriaCategories = [
+                        new CriteriaCategory {
+                            CategoryId = Guid.Parse("ea4183e8-5a94-401c-865d-e000b5d2b72d")
+                        },
+                        new CriteriaCategory {
+                            CategoryId = Guid.Parse("458d7752-e45e-444a-adf9-f7201c07acd1")
+                        },
+                         new CriteriaCategory {
+                            CategoryId = Guid.Parse("9f6ac480-e673-49ec-9bc0-7566cca80b86")
+                        },
+                         new CriteriaCategory {
+                            CategoryId = Guid.Parse("bb65a310-e28e-4226-a562-0b6ea27f4faa")
+                        },
+                     ]
+                 }
             ]
         },
     ];
