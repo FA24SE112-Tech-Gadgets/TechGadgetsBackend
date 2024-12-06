@@ -65,7 +65,7 @@ public class CreateGadget : ControllerBase
 
             RuleFor(r => r.Price)
                 .GreaterThan(0).WithMessage("Giá phải lớn hơn 0")
-                .LessThanOrEqualTo(100_000_000).WithMessage("Giá phải nhỏ hơn 100 triệu");
+                .LessThanOrEqualTo(150_000_000).WithMessage("Giá phải nhỏ hơn 150 triệu");
 
             RuleFor(r => r.ThumbnailUrl)
                 .NotNull().WithMessage("Thumbnail không được để trống");
