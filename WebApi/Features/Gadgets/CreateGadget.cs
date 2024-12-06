@@ -199,6 +199,14 @@ public class CreateGadget : ControllerBase
                         .Build();
         }
 
+        if (request.GadgetImages.Count > 3 || request.GadgetDescriptions.Count(g => g.Type == GadgetDescriptionType.Image) > 3)
+        {
+            throw TechGadgetException.NewBuilder()
+                        .WithCode(TechGadgetErrorCode.WEB_02)
+                        .AddReason("gadget", "Vượt quá số lượng ảnh cho phép, tối đa 3 với hình ảnh mẫu và tối đa 3 với hình ảnh trong mô tả.")
+                        .Build();
+        }
+
         foreach (var specValue in request.SpecificationValues)
         {
             var specKeyValid = await context.SpecificationKeys

@@ -30,6 +30,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     public DbSet<Manager> Managers { get; set; } = default!;
     public DbSet<NaturalLanguageKeyword> NaturalLanguageKeywords { get; set; } = default!;
     public DbSet<NaturalLanguageKeywordGroup> NaturalLanguageKeywordGroups { get; set; } = default!;
+    public DbSet<NaturalLanguagePrompt> NaturalLanguagePrompts { get; set; } = default!;
     public DbSet<Notification> Notifications { get; set; } = default!;
     public DbSet<Order> Orders { get; set; } = default!;
     public DbSet<Review> Reviews { get; set; } = default!;

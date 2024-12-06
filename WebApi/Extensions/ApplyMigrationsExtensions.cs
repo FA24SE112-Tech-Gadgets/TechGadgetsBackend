@@ -137,6 +137,15 @@ public static class ApplyMigrationsExtensions
         //    await context.SaveChangesAsync();
         //}
 
+        //if (!await context.NaturalLanguagePrompts.AnyAsync())
+        //{
+        //    foreach (var prompt in NaturalLanguagePromptSeed.Default)
+        //    {
+        //        context.NaturalLanguagePrompts.Add(prompt);
+        //    }
+        //    await context.SaveChangesAsync();
+        //}
+
     }
 
     private static async Task InitGadgets(AppDbContext context, EmbeddingService embeddingService)

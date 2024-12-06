@@ -58,7 +58,7 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
 
         List<string> discountKeywords = ["Giảm giá", "Khuyến mãi"];
 
-        List<string> bestSellerKeywords = ["Cửa hàng nổi bật", "bán chạy", "Nhiều người quan tâm"];
+        List<string> bestSellerKeywords = ["nổi bật", "bán chạy"];
 
         List<string> availableKeywords = ["Còn hàng"];
 
@@ -113,7 +113,7 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
         releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY
         if user mention end of the year, using some words like {string.Join(", ", endOfYearKeywords)} then take these months: 9, 10, 11, 12.
         if user mention start of the year, using some words like {string.Join(", ", startOfYearKeywords)} then take these months: 1, 2, 3, 4.
-        if user does not mention, give me empty array
+        ONLY add result if user did mention about. If user does not mention, give me empty array
         
 
         colors are the colors of gadgets
