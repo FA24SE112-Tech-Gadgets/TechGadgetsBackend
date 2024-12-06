@@ -33,8 +33,8 @@ public class UpdateReviewByReviewId : ControllerBase
                 .When(r => r.Content != null); // Chỉ validate nếu Content được truyền
 
             RuleFor(r => r.Rating)
-                .InclusiveBetween(0, 5)
-                .WithMessage("Đánh giá phải nằm trong khoảng từ 0 đến 5")
+                .InclusiveBetween(1, 5)
+                .WithMessage("Đánh giá phải nằm trong khoảng từ 1 đến 5")
                 .When(r => r.Rating != null); // Chỉ validate nếu Rating được truyền
         }
     }
@@ -44,7 +44,7 @@ public class UpdateReviewByReviewId : ControllerBase
     [SwaggerOperation(
         Summary = "Customer Update Review By ReviewId",
         Description = "API is for customer update review by reviewId. Note:" +
-                            "<br>&nbsp; - Rating là số nguyên từ 0 - 5." +
+                            "<br>&nbsp; - Rating là số nguyên từ 1 - 5." +
                             "<br>&nbsp; - Nội dung không được để trống." +
                             "<br>&nbsp; - Truyền field nào update field đó." +
                             "<br>&nbsp; - Chỉ được thay đổi đánh giá 1 lần." +
