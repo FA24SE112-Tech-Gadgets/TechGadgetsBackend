@@ -66,7 +66,7 @@ public class UpdateGadget : ControllerBase
 
             RuleFor(r => r.Price)
                 .GreaterThan(0).WithMessage("Giá phải lớn hơn 0")
-                .LessThanOrEqualTo(100_000_000).WithMessage("Giá phải nhỏ hơn 100 triệu");
+                .LessThanOrEqualTo(150_000_000).WithMessage("Giá phải nhỏ hơn 150 triệu");
 
             RuleFor(r => r.CategoryId)
                 .NotEmpty().WithMessage("CategoryId không được để trống");
