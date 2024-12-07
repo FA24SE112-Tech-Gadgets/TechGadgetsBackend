@@ -260,7 +260,7 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                 colorPredicate = colorPredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Màu sắc"
-                        && query.Colors.Any(c => sv.Value.ToLower().Contains(c.ToLower()))
+                        && query.Colors.Any(c => sv.Value.ToLower().Contains(c.ToLower()) || c.ToLower().Contains(sv.Value.ToLower()))
                     )
                 );
 
@@ -564,7 +564,7 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                 colorPredicate = colorPredicate.Or(g =>
                     g.SpecificationValues.Any(sv =>
                         sv.SpecificationKey.Name == "Màu sắc"
-                        && query.Colors.Any(c => sv.Value.ToLower().Contains(c.ToLower()))
+                        && query.Colors.Any(c => sv.Value.ToLower().Contains(c.ToLower()) || c.ToLower().Contains(sv.Value.ToLower()))
                     )
                 );
 
