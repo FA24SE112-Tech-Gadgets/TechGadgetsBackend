@@ -111,9 +111,10 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
 
         
         releaseDate can be year which the string format is YYYY or can be month/year which the string format is MM/YYYY
+        only one of the above format, nothing else
         if user mention end of the year, using some words like {string.Join(", ", endOfYearKeywords)} then take these months: 9, 10, 11, 12.
         if user mention start of the year, using some words like {string.Join(", ", startOfYearKeywords)} then take these months: 1, 2, 3, 4.
-        ONLY add result if user did mention about. If user does not mention, give me empty array
+        ONLY add result if user DID mention about release date. If user does not mention, give me empty array
         
 
         colors are the colors of gadgets
