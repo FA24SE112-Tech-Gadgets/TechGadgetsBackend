@@ -25,4 +25,5 @@ public class NaturalLanguageRequestV2
     public bool IsBestSeller { get; set; }
     public bool IsAvailable { get; set; }
     public string SellerName { get; set; } = default!;
+    public List<int> RefreshRates { get; set; } = [];
 }

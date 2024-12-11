@@ -288,6 +288,16 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                 );
             }
 
+            var refreshRatePredicate = PredicateBuilder.New<Gadget>(true);
+            if (query.RefreshRates.Count > 0)
+            {
+                refreshRatePredicate = refreshRatePredicate.And(g =>
+                    g.Category.Name == "Laptop" && g.SpecificationValues.Any(
+                            sv => sv.SpecificationKey.Name == "Tần số quét" && query.RefreshRates.Any(rr => rr.ToString() == sv.Value)
+                        )
+                );
+            }
+
             var gadgetPredicate = PredicateBuilder.New<Gadget>(true);
             gadgetPredicate = gadgetPredicate
                                 .And(keywordGroupPredicate)
@@ -304,6 +314,7 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                                 .And(colorPredicate)
                                 .And(discountedPredicate)
                                 .And(availablePredicate)
+                                .And(refreshRatePredicate)
                                 .And(g => g.Status == GadgetStatus.Active && g.Seller.User.Status == UserStatus.Active)
                                 ;
 
@@ -611,6 +622,16 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                 );
             }
 
+            var refreshRatePredicate = PredicateBuilder.New<Gadget>(true);
+            if (query.RefreshRates.Count > 0)
+            {
+                refreshRatePredicate = refreshRatePredicate.And(g =>
+                    g.Category.Name == "Laptop" && g.SpecificationValues.Any(
+                            sv => sv.SpecificationKey.Name == "Tần số quét" && query.RefreshRates.Any(rr => rr.ToString() == sv.Value)
+                        )
+                );
+            }
+
             var outerPredicate = PredicateBuilder.New<Gadget>(true);
             outerPredicate = outerPredicate
                                 .And(keywordGroupPredicate)
@@ -629,6 +650,7 @@ public class ProcessNaturalLanguageV2 : ControllerBase
                                 .And(highRatingPredicate)
                                 .And(positiveReviewPredicate)
                                 .And(availablePredicate)
+                                .And(refreshRatePredicate)
                                 ;
 
             var input = request.Input.Length > 512 ? request.Input[0..512] : request.Input;
