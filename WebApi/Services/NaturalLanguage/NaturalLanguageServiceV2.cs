@@ -161,6 +161,10 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
         usually user will mention this after mention some keywords: {string.Join(", ", searchingSellerKeywords)}
         If user does not mention, give me empty string
 
+        
+        refreshRates is the refreshRates of the gadget
+        If user query not mention, give me empty array  
+
 
         keywords are: 
         {string.Join(", ", keywords)}
@@ -302,12 +306,18 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
                             "items": {
                                 "type": "string"
                             }
+                        },
+                        "refreshRates": {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
                         }
                     },
                     "required": ["brands","categories","minPrice","maxPrice",
                                  "operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","locations","origins","releaseDate","colors","isSearchingSeller",
                                  "isBestGadget","isHighRating","isPositiveReview","isDiscounted","minDiscount","maxDiscount",
-                                 "isBestSeller","isAvailable","sellerName","keywords"],
+                                 "isBestSeller","isAvailable","sellerName","keywords","refreshRates"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
