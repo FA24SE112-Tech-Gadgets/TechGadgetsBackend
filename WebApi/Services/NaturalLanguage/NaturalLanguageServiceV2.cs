@@ -144,6 +144,7 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
         isDiscounted can be true or false
         you can use this keywork array as a addition reference that results in isDiscounted is true: {string.Join(", ", discountKeywords)}
         If user does not mention, give me false        
+        When isDiscounted is true, give me minDiscount and maxDiscount, in range 0..100        
 
 
         isBestSeller can be true or false
@@ -281,6 +282,12 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
                         "isDiscounted": {
                             "type": "boolean"
                         },
+                        "minDiscount": {
+                            "type": "number"
+                        },
+                        "maxDiscount": {
+                            "type": "number"
+                        },
                         "isBestSeller": {
                             "type": "boolean"
                         },
@@ -299,7 +306,8 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
                     },
                     "required": ["brands","categories","minPrice","maxPrice",
                                  "operatingSystems","storageCapacitiesPhone","storageCapacitiesLaptop","rams","locations","origins","releaseDate","colors","isSearchingSeller",
-                                 "isBestGadget","isHighRating","isPositiveReview","isDiscounted","isBestSeller","isAvailable","sellerName","keywords"],
+                                 "isBestGadget","isHighRating","isPositiveReview","isDiscounted","minDiscount","maxDiscount",
+                                 "isBestSeller","isAvailable","sellerName","keywords"],
                     "additionalProperties": false
                 }
                 """u8.ToArray()),
