@@ -163,6 +163,7 @@ public class NaturalLanguageServiceV2(IOptions<OpenAIClientSettings> options, Ap
 
         
         refreshRates is the refreshRates of the gadget
+        User usually mention like 144Hz, 60Hz, then you should add 144, 60 to the array
         If user query not mention, give me empty array  
 
 
