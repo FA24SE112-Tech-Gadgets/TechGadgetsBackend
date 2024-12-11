@@ -20,6 +20,8 @@ public class NaturalLanguageRequestV2
     public bool IsHighRating { get; set; }
     public bool IsPositiveReview { get; set; }
     public bool IsDiscounted { get; set; }
+    public int MinDiscount { get; set; }
+    public int MaxDiscount { get; set; }
     public bool IsBestSeller { get; set; }
     public bool IsAvailable { get; set; }
     public string SellerName { get; set; } = default!;
