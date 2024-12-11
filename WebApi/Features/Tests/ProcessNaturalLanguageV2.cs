@@ -271,7 +271,8 @@ public class ProcessNaturalLanguageV2 : ControllerBase
             if (query.IsDiscounted)
             {
                 discountedPredicate = discountedPredicate.Or(g =>
-                    g.GadgetDiscounts.Any(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > currentDate)
+                    g.GadgetDiscounts.Any(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > currentDate && gd.DiscountPercentage >= query.MinDiscount
+                    && gd.DiscountPercentage <= query.MaxDiscount)
                 );
             }
 
@@ -581,7 +582,8 @@ public class ProcessNaturalLanguageV2 : ControllerBase
             if (query.IsDiscounted)
             {
                 discountedPredicate = discountedPredicate.Or(g =>
-                    g.GadgetDiscounts.Any(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > currentDate)
+                    g.GadgetDiscounts.Any(gd => gd.Status == GadgetDiscountStatus.Active && gd.ExpiredDate > currentDate && gd.DiscountPercentage >= query.MinDiscount
+                    && gd.DiscountPercentage <= query.MaxDiscount)
                 );
             }
 
